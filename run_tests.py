@@ -24,7 +24,7 @@ with open('test_config.json', 'r') as test_config:
     node_addresses.append('root@' + node_address)
 
 for node_address in node_addresses:
-  print(subprocess.run(['sudo', 'ssh', node_address, 'pwd']).stdout)
+  print(subprocess.run(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', node_address, 'pwd']).stdout)
 
 # for alg in ALGORITHMS:
 
