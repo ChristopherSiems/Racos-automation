@@ -1,12 +1,10 @@
 {
-  "experiment_name": "",
-  "nodes": [
-    "node-1",
-    "node-2",
-    "node-3",
-    "node-4",
-    "node-5",
-    "node-6"
-  ],
-  "address" : ".HyflowTM-PG0.utah.cloudlab.us"
+  "node_addresses" : [
+    "pc777.emulab.net",
+    "pc749.emulab.net",
+    "pc770.emulab.net",
+    "pc778.emulab.net",
+    "pc739.emulab.net",
+    "pc740.emulab.net"
+  ]
 }

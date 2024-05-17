@@ -18,16 +18,13 @@ RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1
 
 # Finalize configuration and build internal ssh addresses
 node_addresses : typing.List[str] = []
-with open('test_config.json', 'r+') as test_config:
+with open('test_config.json', 'r') as test_config:
   config_data = json.load(test_config)
-  config_data['experiment_name'] = input('enter the name of this experiment: ')
-  test_config.truncate(0)
-  json.dump(config_data, test_config)
-  for node in config_data['nodes']:
+  for node in config_data['node_addresses']:
     node_addresses.append('root@' + node + '.' + config_data['experiment_name'] + config_data['address'])
 
 for node_address in node_addresses:
-  print(subprocess.run('ssh ' + node_address + ' pwd').stdout)
+  print(subprocess.run(['sudo', 'ssh', remote_url, command]).stdout)
 
 # for alg in ALGORITHMS:
 
