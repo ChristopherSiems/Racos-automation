@@ -105,7 +105,6 @@ def main(node_addresses : typing.List[str], username : str, client_address : str
       ssh_rebooter.exec_command(REBOOT_COMMAND + '\n')
       print('$ ' + REBOOT_COMMAND)
       ssh_rebooter.close()
-    #SSH.exec_command('sudo echo ' + profile_string + ' > profile.sh')
     
 if __name__ == '__main__':
   if len(argv) < 4:
