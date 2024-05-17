@@ -1,6 +1,6 @@
+import sys
 import typing
 import paramiko
-from sys import argv
 from getpass import getpass
 from time import sleep
 import json
@@ -107,7 +107,7 @@ def main(node_addresses : typing.List[str], username : str, client_address : str
       ssh_rebooter.close()
     
 if __name__ == '__main__':
-  if len(argv) < 4:
+  if len(sys.argv) < 4:
     print('error: incorrect args\nformat: `python /path/to/auto_testing_0.1.py <space separated list of node addresses wrapped in \"> <your username> <client address>')
   else:
-    main(argv[1].split(), argv[2], argv[3])
+    main(sys.argv[1].split(), sys.argv[2], sys.argv[3])
