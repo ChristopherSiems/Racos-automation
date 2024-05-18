@@ -14,17 +14,19 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 }
 RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
 
-def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int) -> None:
+def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE)
   sleep(disconnect_timeout)
-  return ssh_process.stdout.read().decode('utf-8')
+  if give_out:
+    return ssh_process.stdout.read().decode('utf-8')
+  ssh_process.stdout.close()
 
 # Kill running ETCD before trying to do anything
 def kill_nodes(node_addresses : typing.List[str]) -> None:
   print('= killing running ETCD processes =')
   for node_address in node_addresses[:-1]:
     print('== ' + node_address + ' ==')
-    remote_execute(node_address, 'killall etcd', .5)
+    remote_execute(node_address, 'killall etcd')
     print('$ sudo killall etcd')
   print('all processes killed')
 
@@ -52,7 +54,7 @@ for alg in ALGORITHMS:
   # Determining the Raft leader
   raft_leader_endpoint : str = None
   if alg == RAFT:
-    for node_data in json.loads(remote_execute(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json', 15)):
+    for node_data in json.loads(remote_execute(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json', return_out = True)):
       node_status : typing.Dict = node_data['Status']
       if node_status['header']['member_id'] == node_status['leader']:
         raft_leader_endpoint = node_data['Endpoint']
