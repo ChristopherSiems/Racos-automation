@@ -40,7 +40,7 @@ for alg in ALGORITHMS:
   print('= killing running ETCD processes =')
   for node_address in node_addresses:
     print('== ' + node_address + ' ==')
-    remote_execute(node_address, 'killall etcd', 60)
+    remote_execute(node_address, 'killall etcd')
     print('$ sudo killall etcd')
   print('all processes killed')
 
@@ -48,7 +48,7 @@ for alg in ALGORITHMS:
   for node_address in node_addresses:
     print('== ' + node_address + ' ==')
     cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute(node_address, cmd, 60)
+    remote_execute(node_address, cmd)
     print('$ ' + cmd)
 
 sys.exit(0)
