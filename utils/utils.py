@@ -9,5 +9,4 @@ def remote_execute(remote_address : str, cmd : str) -> None:
       break
   
   ssh_process.stdout.close()
-  ssh_process.stderr.close()
   ssh_process.wait()
