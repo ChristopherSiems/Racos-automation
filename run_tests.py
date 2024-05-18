@@ -5,18 +5,17 @@ from time import sleep
 
 RAFT : str = 'raft 2'
 KILL_ETCD : str = 'killall etcd'
-ENCODING : str = 'utf-8'
 PROFILE_CONFIGS : typing.Dict[str, str]= {
   "rabia 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload",
   "raft 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload",
   "paxos 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload"
 }
 
-def remote_execute(remote_address : str, cmd : str, return_out : bool = False) -> typing.Union[None, str]:
+def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
   if return_out:
-    return ssh_process.stdout.read().decode(ENCODING)
+    return ssh_process.stdout.read().decode('utf-8')
   ssh_process.stdout.close()
 
 def kill_nodes() -> None:
