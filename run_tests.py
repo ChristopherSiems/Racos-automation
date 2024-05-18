@@ -11,7 +11,7 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
   "paxos 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload"
 }
 
-def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
+def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 1, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
   if return_out:
@@ -43,8 +43,8 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   print('= ' + alg + ' =')
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
-    cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute(node_address, cmd, 30)
+    run_cmd : str = 'sh /local/run.sh ' + alg
+    remote_execute(node_address, run_cmd, 30)
     print('$ ' + cmd)
   
   client_address : str = node_addresses[-1]
@@ -60,7 +60,9 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
         break
   profile_string : str = PROFILE_CONFIGS[alg].replace('XXXX', raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
 
-  print(profile_string)
-  remote_execute(client_address, 'echo ' + profile_string + ' > /local/go-ycsb/workloads/profile.sh')
-  print(remote_execute(client_address, 'cat /local/go-ycsb/workloads/profile.sh', return_out = True))
+  setup_cmd : str = 'echo ' + profile_string + ' > /local/go-ycsb/workloads/profile.sh'
+  remote_execute(client_address, setup_cmd)
+  print('$ ' + setup_cmd)
+  profile_cmd : str = 'cat /local/go-ycsb/workloads/profile.sh'
+  print(subprocess.run(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', client_address, 'cat /local/go-ycsb/workloads/profile.sh'], stdout = subprocess.PIPE, stderr = subprocess.STDOUT))
 kill_nodes()
