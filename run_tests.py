@@ -2,12 +2,11 @@ import typing
 import json
 import subprocess
 from time import sleep
-import sys
 
 RACOS : str = 'rabia 2'
 RAFT : str = 'raft 2'
 RSPAXOS : str = 'paxos 2'
-ALGORITHMS : typing.List[str] = [RACOS, RSPAXOS]
+ALGORITHMS : typing.List[str] = [RAFT, RACOS, RSPAXOS]
 PROFILE_CONFIGS : typing.Dict[str, str]= {
   "rabia 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload",
   "raft 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload",
@@ -15,9 +14,19 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 }
 RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
 
-def remote_execute(remote_address : str, cmd : str, disconnect_timeout : 1) -> None:
-  ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int) -> None:
+  ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE)
   sleep(disconnect_timeout)
+  return ssh_process.stdout.read().decode('utf-8')
+
+# Kill running ETCD before trying to do anything
+def kill_nodes(node_addresses : typing.List[str]) -> None:
+  print('= killing running ETCD processes =')
+  for node_address in node_addresses[:-1]:
+    print('== ' + node_address + ' ==')
+    remote_execute(node_address, 'killall etcd', .5)
+    print('$ sudo killall etcd')
+  print('all processes killed')
 
 # Finalize configuration and build internal ssh addresses
 node_addresses : typing.List[str] = []
@@ -27,27 +36,31 @@ with open('test_config.json', 'r') as test_config:
     node_addresses.append('root@' + node_address)
 
 for alg in ALGORITHMS:
-
-  # Kill running ETCD before trying to do anything
-  print('= killing running ETCD processes =')
-  for node_address in node_addresses[:-1]:
-    print('== ' + node_address + ' ==')
-    remote_execute(node_address, 'killall etcd', .5)
-    print('$ sudo killall etcd')
-  print('all processes killed')
+  kill_nodes(node_addresses[:-1])
 
   # Initialize each algorithm
   print('= ' + alg + ' =')
   for node_address in node_addresses[:-1]:
     print('== ' + node_address + ' ==')
     cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute(node_address, cmd, 30)
+    remote_execute(node_address, cmd, 15)
     print('$ ' + cmd)
   
-  profile_string : str = PROFILE_CONFIGS[alg]
-  print(profile_string)
+  client_address : str = node_addresses[-1]
+  print('= ' + client_address + ' =')
 
-sys.exit(0)
+  # Determining the Raft leader
+  raft_leader_endpoint : str = None
+  if alg == RAFT:
+    for node_data in json.loads(remote_execute(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json', 15)):
+      node_status : typing.Dict = node_data['Status']
+      if node_status['header']['member_id'] == node_status['leader']:
+        raft_leader_endpoint = node_data['Endpoint']
+        break
+  profile_string : str = PROFILE_CONFIGS[alg].replace('XXXX', raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
+
+  print(profile_string)
+kill_nodes(node_addresses[:-1])
 
 #   # Connect to each node and initialize the algorithm
 #   print('= ' + alg + ' =')
