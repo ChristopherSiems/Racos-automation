@@ -8,4 +8,4 @@ def remote_execute(remote_address : str, cmd : str) -> None:
   for line in ssh_process.stdout:
     sleep(1)
   
-  ssh_process.terminate
+  ssh_process.terminate()
