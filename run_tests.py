@@ -1,6 +1,5 @@
 import typing
 import json
-from utils.utils import *
 import sys
 
 RACOS : str = 'rabia 2'
@@ -13,6 +12,11 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
   "paxos 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload"
 }
 RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
+
+def remote_execute(remote_address : str, cmd : str, ssh_timeout : int) -> None:
+  ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+  ssh_process.stdout.close()
+
 
 # Finalize configuration and build internal ssh addresses
 node_addresses : typing.List[str] = []
