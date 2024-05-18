@@ -1,7 +1,7 @@
 import subprocess
 
 def remote_execute(remote_address : str, cmd : str, ssh_timeout : int) -> None:
-  ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd])
+  ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
   try:
     ssh_process.communicate(timeout = ssh_timeout)
   except subprocess.TimeoutExpired:
