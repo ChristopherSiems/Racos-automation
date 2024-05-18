@@ -22,7 +22,7 @@ def remote_execute(remote_address : str, cmd : str, ssh_timeout : int) -> None:
   # Check for algorithm to finish initialization
   prev_stdout = ssh_process.stdout.read().decode('utf-8')
   sleep(4)
-  while prev_stdout != ssh_p:
+  while prev_stdout != ssh_process.stdout.read().decode('utf-8'):
     prev_stdout = ssh_process.stdout.read().decode('utf-8')
     sleep(4)
   ssh_process.stdout.close()
