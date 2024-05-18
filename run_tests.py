@@ -30,18 +30,22 @@ for alg in ALGORITHMS:
 
   # Kill running ETCD before trying to do anything
   print('= killing running ETCD processes =')
-  for node_address in node_addresses:
+  for node_address in node_addresses[:-1]:
     print('== ' + node_address + ' ==')
     remote_execute(node_address, 'killall etcd', .5)
     print('$ sudo killall etcd')
   print('all processes killed')
 
+  # Initialize each algorithm
   print('= ' + alg + ' =')
-  for node_address in node_addresses:
+  for node_address in node_addresses[:-1]:
     print('== ' + node_address + ' ==')
     cmd : str = 'sh /local/run.sh ' + alg
     remote_execute(node_address, cmd, 30)
     print('$ ' + cmd)
+  
+  profile_string : str = PROFILE_CONFIGS[alg]
+  print(profile_string)
 
 sys.exit(0)
 
