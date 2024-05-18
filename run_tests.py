@@ -31,7 +31,7 @@ node_addresses : typing.List[str] = []
 with open('test_config.json', 'r') as test_config:
   config_data = json.load(test_config)
   for i in range(1, config_data['node_count'] + 1):
-    node_addresses.append('root@node-' + str(i) + '.' + config_data['experiment_name'] + '.HyflowTM.emulab.net')
+    node_addresses.append('root@node-' + str(i) + '.' + config_data['experiment_name'] + config_data['domain'])
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
