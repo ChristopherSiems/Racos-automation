@@ -1,6 +1,6 @@
 import typing
 import json
-import subprocess
+from utils.utils import *
 
 RACOS : str = 'rabia 2'
 RAFT : str = 'raft 2'
@@ -23,10 +23,12 @@ with open('test_config.json', 'r') as test_config:
   for node_address in config_data['node_addresses']:
     node_addresses.append('root@' + node_address)
 
-for node_address in node_addresses:
-  print(subprocess.run(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', node_address, 'pwd']).stdout)
+for alg in ALGORITHMS:
 
-# for alg in ALGORITHMS:
+  # Kill running ETCD before trying to do anything
+  print('= killing running ETCD processes =')
+  for node_address in node_addresses:
+    remote_execute(node_address, 'killall etcd')
 
 #   # Connects to each server to make sure they are all fully booted before trying to do anything
 #   # If this step is skipped issues will emerge when servers try to communicate
@@ -81,15 +83,3 @@ for node_address in node_addresses:
 #   profile_string : str = PROFILE_CONFIGS[alg].replace('XXXX', raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
 #   print('profile configuration:\n' + profile_string)
 #   ssh_profiler.close()
-
-#   # Reboots are servers
-#   # Each algorithm can have a clean slate in testing
-#   print('= rebooting servers =')
-#   for server_address in server_addresses:
-#     print('== ' + server_address + ' ==')
-#     ssh_rebooter : paramiko.SSHClient = paramiko.SSHClient()
-#     ssh_rebooter.set_missing_host_key_policy(ADD_MISSING_HOST)
-#     ssh_rebooter.connect(server_address, 22, username, ssh_password)
-#     ssh_rebooter.exec_command(REBOOT_COMMAND + '\n')
-#     print('$ ' + REBOOT_COMMAND)
-#     ssh_rebooter.close()
