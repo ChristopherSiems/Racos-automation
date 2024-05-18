@@ -1,6 +1,8 @@
 import typing
 import json
 import subprocess
+from copyimport copy
+from time import sleep
 import sys
 
 RACOS : str = 'rabia 2'
@@ -16,8 +18,14 @@ RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1
 
 def remote_execute(remote_address : str, cmd : str, ssh_timeout : int) -> None:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+  
+  # Check for algorithm to finish initialization
+  prev_stdout = copy(ssh_process.stdout)
+  sleep(4)
+  while prev_stdout != ssh_p:
+    prev_stdout = copy(ssh_process.stdout)
+    sleep(4)
   ssh_process.stdout.close()
-
 
 # Finalize configuration and build internal ssh addresses
 node_addresses : typing.List[str] = []
