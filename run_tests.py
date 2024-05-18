@@ -12,7 +12,7 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 }
 
 def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
-  ssh_process = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+  ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
   if return_out:
     return ssh_process.stdout.read().decode('utf-8')
@@ -31,8 +31,9 @@ def kill_nodes() -> None:
 node_addresses : typing.List[str] = []
 with open('test_config.json', 'r') as test_config:
   config_data = json.load(test_config)
+  username : str = subprocess.run(['logname'], stdout = subprocess.PIPE)
   for node_address in config_data['node_addresses']:
-    node_addresses.append('root@' + node_address)
+    node_addresses.append(username + node_address)
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
@@ -46,7 +47,7 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
     remote_execute(node_address, cmd, 15)
     print('$ ' + cmd)
   
-  client_address : str = nodes_exclusive
+  client_address : str = node_addresses[-1]
   print('= ' + client_address + ' =')
 
   # Determining the Raft leader
