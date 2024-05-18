@@ -28,10 +28,8 @@ def kill_nodes() -> None:
 
 # Finalize configuration and build internal ssh addresses
 node_addresses : typing.List[str] = []
-with open('test_config.json', 'r') as test_config:
-  config_data = json.load(test_config)
-  for node_address in config_data['node_addresses']:
-    node_addresses.append('root@' + node_address)
+for node_address in ['10.10.1.1:2379', '10.10.1.2:2379', '10.10.1.2.2379', '10.10.1.3:2379', '10.10.1.4:2379', '10.10.1.5:2379']:
+  node_addresses.append('root@' + node_address)
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
