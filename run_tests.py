@@ -17,7 +17,7 @@ RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1
 def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE)
   sleep(disconnect_timeout)
-  if give_out:
+  if return_out:
     return ssh_process.stdout.read().decode('utf-8')
   ssh_process.stdout.close()
 
