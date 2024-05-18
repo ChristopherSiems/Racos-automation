@@ -31,9 +31,8 @@ def kill_nodes() -> None:
 node_addresses : typing.List[str] = []
 with open('test_config.json', 'r') as test_config:
   config_data = json.load(test_config)
-  username : str = subprocess.run(['logname'], stdout = subprocess.PIPE)
   for node_address in config_data['node_addresses']:
-    node_addresses.append(username + node_address)
+    node_addresses.append('root@' + node_address)
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
