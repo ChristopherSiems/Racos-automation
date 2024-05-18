@@ -18,7 +18,6 @@ def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0
     return ssh_process.stdout.read().decode('utf-8')
   ssh_process.stdout.close()
 
-# Kill running ETCD before trying to do anything
 def kill_nodes() -> None:
   print('= killing running ETCD processes =')
   for node_address in nodes_exclusive:
@@ -36,6 +35,8 @@ with open('test_config.json', 'r') as test_config:
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
+
+  # Kill running ETCD before trying to do anything
   kill_nodes()
 
   # Initialize each algorithm
@@ -60,4 +61,6 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   profile_string : str = PROFILE_CONFIGS[alg].replace('XXXX', raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
 
   print(profile_string)
+  remote_execute(client_address, 'echo ' + profile_string + ' > /local/go-ycsb/workloads/profile.sh')
+  print(remote_execute(client_address, 'cat local/go-ycsb/workloads/profile.sh', return_out = True))
 kill_nodes()
