@@ -40,6 +40,8 @@ for alg in ALGORITHMS:
     remote_execute(node_address, cmd)
     print('$ ' + cmd)
 
+sys.exit(0)
+
 #   # Connect to each node and initialize the algorithm
 #   print('= ' + alg + ' =')
 #   for node_address in node_addresses:
