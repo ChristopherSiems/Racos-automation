@@ -14,7 +14,6 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
-  print(ssh_process.stdout.read().decode('utf-8'))
   if return_out:
     return ssh_process.stdout.read().decode('utf-8')
   ssh_process.stdout.close()
@@ -31,8 +30,8 @@ def kill_nodes() -> None:
 node_addresses : typing.List[str] = []
 with open('test_config.json', 'r') as test_config:
   config_data = json.load(test_config)
-  for i in range(config_data['node_count'] + 1):
-    node_addresses.append('root@node-' + i + '.' + config_data['experiment_name'] + '.HyflowTM.emulab.net')
+  for i in range(1, config_data['node_count'] + 1):
+    node_addresses.append('root@node-' + str(i) + '.' + config_data['experiment_name'] + '.HyflowTM.emulab.net')
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
