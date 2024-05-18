@@ -5,17 +5,18 @@ from time import sleep
 
 RAFT : str = 'raft 2'
 KILL_ETCD : str = 'killall etcd'
+ENCODING : str = 'utf-8'
 PROFILE_CONFIGS : typing.Dict[str, str]= {
   "rabia 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload",
   "raft 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload",
   "paxos 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379\" -P /local/go-ycsb/workloads/workload"
 }
 
-def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
+def remote_execute(remote_address : str, cmd : str, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
   if return_out:
-    return ssh_process.stdout.read().decode('utf-8')
+    return ssh_process.stdout.read().decode(ENCODING)
   ssh_process.stdout.close()
 
 def kill_nodes() -> None:
@@ -53,9 +54,7 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   # Determining the Raft leader
   raft_leader_endpoint : str = None
   if alg == RAFT:
-    data = remote_execute(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json', return_out = True)
-    print(data)
-    for node_data in json.loads(data):
+    for node_data in json.loads(remote_execute(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json', disconnect_timeout= 15, return_out = True)):
       node_status : typing.Dict = node_data['Status']
       if node_status['header']['member_id'] == node_status['leader']:
         raft_leader_endpoint = node_data['Endpoint']
@@ -64,5 +63,5 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
 
   print(profile_string)
   remote_execute(client_address, 'echo ' + profile_string + ' > /local/go-ycsb/workloads/profile.sh')
-  print(remote_execute(client_address, 'cat local/go-ycsb/workloads/profile.sh', return_out = True))
+  print(remote_execute(client_address, 'cat /local/go-ycsb/workloads/profile.sh', return_out = True))
 kill_nodes()
