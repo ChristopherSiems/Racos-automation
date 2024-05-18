@@ -1,7 +1,6 @@
 import typing
 import json
 import subprocess
-from copy import copy
 from time import sleep
 import sys
 
@@ -16,16 +15,9 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 }
 RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
 
-def remote_execute(remote_address : str, cmd : str) -> None:
+def remote_execute(remote_address : str, cmd : str, disconnect_timeout : 1) -> None:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-  
-  # Check for algorithm to finish initialization
-  prev_stdout = ssh_process.stdout.read().decode('utf-8')
-  sleep(1)
-  while prev_stdout != ssh_process.stdout.read().decode('utf-8'):
-    prev_stdout = ssh_process.stdout.read().decode('utf-8')
-    sleep(1)
-  ssh_process.stdout.close()
+  sleep(disconnect_timeout)
 
 # Finalize configuration and build internal ssh addresses
 node_addresses : typing.List[str] = []
@@ -40,7 +32,7 @@ for alg in ALGORITHMS:
   print('= killing running ETCD processes =')
   for node_address in node_addresses:
     print('== ' + node_address + ' ==')
-    remote_execute(node_address, 'killall etcd')
+    remote_execute(node_address, 'killall etcd', .5)
     print('$ sudo killall etcd')
   print('all processes killed')
 
@@ -48,7 +40,7 @@ for alg in ALGORITHMS:
   for node_address in node_addresses:
     print('== ' + node_address + ' ==')
     cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute(node_address, cmd)
+    remote_execute(node_address, cmd, 30)
     print('$ ' + cmd)
 
 sys.exit(0)
