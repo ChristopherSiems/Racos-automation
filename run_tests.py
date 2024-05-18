@@ -1,7 +1,7 @@
 import typing
 import json
 import subprocess
-from copyimport copy
+from copy import copy
 from time import sleep
 import sys
 
