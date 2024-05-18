@@ -16,15 +16,15 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 }
 RAFT_NETWORK_COMMAND : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
 
-def remote_execute(remote_address : str, cmd : str, ssh_timeout : int) -> None:
+def remote_execute(remote_address : str, cmd : str) -> None:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   
   # Check for algorithm to finish initialization
   prev_stdout = ssh_process.stdout.read().decode('utf-8')
-  sleep(4)
+  sleep(1)
   while prev_stdout != ssh_process.stdout.read().decode('utf-8'):
     prev_stdout = ssh_process.stdout.read().decode('utf-8')
-    sleep(4)
+    sleep(1)
   ssh_process.stdout.close()
 
 # Finalize configuration and build internal ssh addresses
