@@ -5,7 +5,7 @@ from utils.utils import *
 RACOS : str = 'rabia 2'
 RAFT : str = 'raft 2'
 RSPAXOS : str = 'paxos 2'
-ALGORITHMS : typing.List[str] = [RACOS, RAFT, RSPAXOS]
+ALGORITHMS : typing.List[str] = [RACOS, RSPAXOS]
 RUN_COMMAND : str = 'sudo sh /local/run.sh'
 ENCODING : str = 'utf-8'
 PROFILE_CONFIGS : typing.Dict[str, str]= {
@@ -28,13 +28,17 @@ for alg in ALGORITHMS:
   # Kill running ETCD before trying to do anything
   print('= killing running ETCD processes =')
   for node_address in node_addresses:
+    print('== ' + node_address + ' ==')
     remote_execute(node_address, 'killall etcd')
+    print('$ sudo killall etcd')
+  print('all processes killed')
 
-#   # Connects to each server to make sure they are all fully booted before trying to do anything
-#   # If this step is skipped issues will emerge when servers try to communicate
-#   # This script is fast enough to start initializing the algorithms then ask the first nodes to start work before all nodes have booted, causing errors
-#   print('= checking servers =')
-#   for node_address in node_addresses:
+  print('= ' + alg + ' =')
+  for node_address in node_addresses:
+    print('== ' + node_address + ' ==')
+    cmd : str = 'sh /local/run.sh ' + alg
+    remote_execute(node_address, cmd)
+    print('$ ' + cmd)
 
 #   # Connect to each node and initialize the algorithm
 #   print('= ' + alg + ' =')
