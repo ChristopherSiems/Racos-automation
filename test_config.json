@@ -1,10 +1,4 @@
 {
-  "node_addresses" : [
-    "pc765.emulab.net",
-    "pc827.emulab.net",
-    "pc770.emulab.net",
-    "pc777.emulab.net",
-    "pc831.emulab.net",
-    "pc778.emulab.net"
-  ]
+  "experiment_name" : "",
+  "node_count" : 0
 }

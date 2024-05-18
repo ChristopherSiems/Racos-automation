@@ -31,8 +31,8 @@ def kill_nodes() -> None:
 node_addresses : typing.List[str] = []
 with open('test_config.json', 'r') as test_config:
   config_data = json.load(test_config)
-  for node_address in config_data['node_addresses']:
-    node_addresses.append('root@' + node_address)
+  for i in range(config_data['node_count'] + 1):
+    node_addresses.append('root@node-' + i + '.' + config_data['experiment_name'] + '.HyflowTM.emulab.net')
 
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 for alg in [RAFT, 'rabia 2', 'paxos 2']:
