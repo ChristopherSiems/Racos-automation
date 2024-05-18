@@ -14,8 +14,8 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0, return_out : bool = False) -> typing.Union[None, str]:
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
+  print(ssh_process.stdout.read().decode('utf-8'))
   if return_out:
-    print(ssh_process.stdout.read().decode('utf-8'))
     return ssh_process.stdout.read().decode('utf-8')
   ssh_process.stdout.close()
 
