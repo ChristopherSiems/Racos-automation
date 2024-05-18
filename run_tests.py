@@ -15,6 +15,7 @@ def remote_execute(remote_address : str, cmd : str, disconnect_timeout : int = 0
   ssh_process = subprocess.Popen(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', remote_address, cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
   if return_out:
+    print(ssh_process.stdout.read().decode('utf-8'))
     return ssh_process.stdout.read().decode('utf-8')
   ssh_process.stdout.close()
 
