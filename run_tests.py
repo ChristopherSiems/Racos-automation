@@ -64,5 +64,5 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   remote_execute(client_address, setup_cmd)
   print('$ ' + setup_cmd)
   profile_cmd : str = 'cat /local/go-ycsb/workloads/profile.sh'
-  print(subprocess.run(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', client_address, 'cat /local/go-ycsb/workloads/profile.sh'], stdout = subprocess.PIPE, stderr = subprocess.STDOUT))
+  print(subprocess.run(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', client_address, profile_cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT).stdout)
 kill_nodes()
