@@ -13,7 +13,7 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
 }
 
 def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_timeout : int = 1) -> None:
-  subprocess.Popen(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+  ssh_process = subprocess.Popen(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
   sleep(disconnect_timeout)
   ssh_process.stdout.close()
 
