@@ -46,7 +46,7 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
     run_cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute_async(node_address, run_cmd, 30)
+    remote_execute_async(node_address, run_cmd, 45)
     print('$ ' + run_cmd)
   
   client_address : str = node_addresses[-1]
