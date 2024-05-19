@@ -46,7 +46,7 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
     run_cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute_async(node_address, run_cmd, 45)
+    remote_execute_async(node_address, run_cmd, 30)
     print('$ ' + run_cmd)
   print('all algorithms initialized')
   
@@ -66,5 +66,4 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
   setup_cmd : str = 'echo "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh'
   remote_execute_async(client_address, setup_cmd)
   print('$ ' + setup_cmd)
-  print(remote_execute_sync(client_address, 'cat /local/go-ycsb/workloads/profile.sh'))
 kill_nodes()
