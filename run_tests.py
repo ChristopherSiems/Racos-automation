@@ -48,6 +48,7 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
     run_cmd : str = 'sh /local/run.sh ' + alg
     remote_execute_async(node_address, run_cmd, 45)
     print('$ ' + run_cmd)
+  print('all algorithms initialized')
   
   client_address : str = node_addresses[-1]
   print('= ' + client_address + ' =')
