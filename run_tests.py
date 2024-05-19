@@ -63,7 +63,7 @@ for alg in [RAFT, 'rabia 2', 'paxos 2']:
         break
   profile_string : str = PROFILE_CONFIGS[alg].replace('XXXX', raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
 
-  setup_cmd : str = 'echo ' + profile_string + ' > /local/go-ycsb/workloads/profile.sh'
+  setup_cmd : str = 'echo "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh'
   remote_execute_async(client_address, setup_cmd)
   print('$ ' + setup_cmd)
   print(remote_execute_sync(client_address, 'cat /local/go-ycsb/workloads/profile.sh'))
