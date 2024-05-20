@@ -13,4 +13,6 @@ def kill_nodes(node_addresses : typing.List[str]) -> None:
   print('all processes killed')
 
 if __name__ == '__main__':
+  from generate_node_list import generate_node_list
+  from remote_execute import remote_execute_async
   kill_nodes(generate_node_list()[:-1])
