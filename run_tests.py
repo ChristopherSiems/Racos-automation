@@ -32,7 +32,7 @@ for alg in ['rabia 2', 'paxos 2', RAFT]:
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
     run_cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute_async(node_address, run_cmd, 15)
+    remote_execute_async(node_address, run_cmd, 30)
     print('$ ' + run_cmd)
   print('all algorithms initialized')
   
