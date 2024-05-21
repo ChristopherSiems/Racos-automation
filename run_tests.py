@@ -57,7 +57,7 @@ for alg in ['rabia 2', 'paxos 2', RAFT]:
   # Running tests
   data_pattern = re.compile(r'^\w+,\d+,d+$', re.M)
   for i in [1, 6, 13, 66, 133, 666, 1333, 2000]:
-    remote_execute_async(client_address, f'echo "recordcount=1\noperationcount=1000\nworkload=core\nreadallfields=true\nfieldcount=1\nfieldlength={str(i)}000\nreadpropotion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nrequestdistribution=uniform\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload')
+    remote_execute_async(client_address, f'echo "recordcount=1000\noperationcount=1000\nworkload=core\nreadallfields=true\nreadproportion=0.5\nupdateproportion=0.5\nscanproportion=0\ninsertproportion=0\nrequestdistribution=uniform\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload')
     # temp = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
     # print(temp)
     subprocess.run(['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no', client_address, 'sh /local/go-ycsb/workloads/profile.sh'])
