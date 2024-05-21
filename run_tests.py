@@ -65,16 +65,3 @@ for alg in ['rabia 2', 'paxos 2', RAFT]:
     # print(performance_datapoints)
     
 kill_nodes(nodes_exclusive)
-
-recordcount=1000
-operationcount=1000
-workload=core
-
-readallfields=true
-
-readproportion=0.5
-updateproportion=0.5
-scanproportion=0
-insertproportion=0
-
-requestdistribution=uniform
