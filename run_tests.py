@@ -3,8 +3,15 @@ import json
 from utils.generate_node_list import generate_node_list
 from utils.kill_nodes import kill_nodes
 from utils.remote_execute import *
+import re
+import pandas
 
 RAFT : str = 'raft 2'
+ALG_TO_NAME : typing.Dict[str, str] = {
+  'rabia 2' : 'Racos',
+  'paxos 2' : 'RS-PAXOS',
+  'raft 2' : 'Raft'
+}
 PROFILE_CONFIGS : typing.Dict[str, str]= {
   "rabia 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload",
   "raft 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"XXXX\" -P /local/go-ycsb/workloads/workload",
@@ -21,11 +28,11 @@ for alg in ['rabia 2', 'paxos 2', RAFT]:
   kill_nodes(nodes_exclusive)
 
   # Initialize each algorithm
-  print('= ' + alg + ' =')
+  print('= ' + ALG_TO_NAME[alg] + ' =')
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
     run_cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute_async(node_address, run_cmd, 30)
+    remote_execute_async(node_address, run_cmd, 15)
     print('$ ' + run_cmd)
   print('all algorithms initialized')
   
@@ -42,7 +49,16 @@ for alg in ['rabia 2', 'paxos 2', RAFT]:
         break
   profile_string : str = PROFILE_CONFIGS[alg].replace('XXXX', raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
 
+  # Setup profile shell script
   setup_cmd : str = 'echo "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh'
   remote_execute_async(client_address, setup_cmd)
   print('$ ' + setup_cmd)
+
+  # Running tests
+  data_pattern = re.compile(r'^\w+,\d+,d+$', re.M)
+  for i in [1, 6, 13, 66, 133, 666, 1333, 2000]:
+    remote_execute_async(client_address, f'echo "recordcount=1\nfieldcount=1\nfieldlength={str(i)}000\noperationcount=100000\nworkload=core\nreadpropotion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0.0\ninsertproportion=0.0\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload')
+    performance_datapoints = pandas.DataFrame(columns = ['operation', 'timestamp', 'latency'], data = data_pattern.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')))
+    print(performance_datapoints)
+
 kill_nodes(nodes_exclusive)

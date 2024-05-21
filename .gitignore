@@ -163,3 +163,4 @@ cython_debug/
 
 # Racos-automation specific ignores
 test.json
+test.txt
