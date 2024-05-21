@@ -60,5 +60,5 @@ for alg in ['rabia 2', 'paxos 2', RAFT]:
     remote_execute_async(client_address, f'echo "recordcount=1\nfieldcount=1\nfieldlength={str(i)}000\noperationcount=100000\nworkload=core\nreadpropotion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0.0\ninsertproportion=0.0\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload')
     performance_datapoints = pandas.DataFrame(columns = ['operation', 'timestamp', 'latency'], data = data_pattern.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')))
     print(performance_datapoints)
-
+    
 kill_nodes(nodes_exclusive)
