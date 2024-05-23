@@ -21,7 +21,11 @@ for test_data in all_tests:
     while True:
       print('testing ' + str(curr_operation_count) + ' counts')
       remote_execute_async(client_address, 'echo ' + test_data[1]['workload'].format(variable = str(curr_variable), operation_count = str(curr_operation_count)) + ' > /local/go-ycsb/workloads/workload')
-      curr_error : float = abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/profile.sh'))[-1])[0]))
+      temp = RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/profile.sh'))
+      print(temp)
+      temp = temp[-1]
+      print(temp)
+      curr_error : float = abs(30 - float(FLOAT_PATTERN.findall(temp)[0]))
       print('error amount ' + str(curr_error))
       if curr_error > best_error:
         break
