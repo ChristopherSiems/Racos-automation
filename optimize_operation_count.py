@@ -23,7 +23,7 @@ for alg in ALG_TO_NAME:
   setup_alg(nodes_addresses, alg)
   for test_data in all_tests:
     for variable in test_data[1]['variable']:
-      print('== ' + variable + ' ==')
+      print('== ' + str(variable) + ' ==')
       operation_count : int = 2000
       best_error : float = float('inf')
       while True:
