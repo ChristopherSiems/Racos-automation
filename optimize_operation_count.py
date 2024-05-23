@@ -2,14 +2,16 @@ import re
 from sys import argv
 import typing
 import json
-from utils.remote_execute import *
 
+from utils.remote_execute import remote_execute_async, remote_execute_sync
+
+ENCODING : str = 'utf-8'
 FLOAT_PATTERN : re.Pattern = re.compile(r'\d+\.\d+')
 RUNTIME_PATTERN : re.Pattern = re.compile(r'Run finished, takes \d+\.\d+')
 
 all_tests : typing.List[typing.Tuple[str, typing.Dict[str, typing.Union[typing.List[int], typing.List[float], str]]]] = []
 for test_config in argv[2:]:
-  with open('tests/' + test_config + '.json', 'r') as config_file:
+  with open('tests/' + test_config + '.json', 'r', encoding = ENCODING) as config_file:
     all_tests.append((test_config, json.load(config_file)))
 client_address : str = argv[1]
 for test_data in all_tests:
@@ -27,5 +29,5 @@ for test_data in all_tests:
       curr_operation_count += 1000
     test_data[1]['operation_count'].append(curr_operation_count - 1000)
 for test_data in all_tests:
-  with open('tests/' + test_data[0] + '.json', 'w') as config_file:
+  with open('tests/' + test_data[0] + '.json', 'w', encoding = ENCODING) as config_file:
     json.dump(test_data[1], config_file, indent = 2)
