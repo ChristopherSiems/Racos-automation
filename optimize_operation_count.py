@@ -19,8 +19,6 @@ all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.U
 nodes_addresses, all_tests = configure_tests()
 client_address : str = nodes_addresses[-1]
 
-print(all_tests)
-
 for alg in ALG_TO_NAME:
   setup_alg(nodes_addresses, alg)
   for test_data in all_tests:
