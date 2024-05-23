@@ -19,6 +19,8 @@ all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.U
 nodes_addresses, all_tests = configure_tests()
 client_address : str = nodes_addresses[-1]
 
+print(all_tests)
+
 for alg in ALG_TO_NAME:
   setup_alg(nodes_addresses, alg)
   for test_data in all_tests:
@@ -28,7 +30,9 @@ for alg in ALG_TO_NAME:
       while True:
         print('testing ' + str(operation_count) + ' counts')
         remote_execute_async(client_address, 'echo ' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + ' > /local/go-ycsb/workloads/workload')
-        curr_error : float = abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/profile.sh'))[-1])[0]))
+        temp = remote_execute_sync(client_address, 'sh /local/go-ycsb/profile.sh')
+        print(temp)
+        curr_error : float = abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(temp)[-1])[0]))
         print('error amount ' + str(curr_error))
         if curr_error > best_error:
           break
