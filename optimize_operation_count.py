@@ -29,7 +29,7 @@ for alg in ALG_TO_NAME:
       best_error : float = float('inf')
       while True:
         print('testing ' + str(operation_count) + ' counts')
-        temp = 'echo ' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + ' > /local/go-ycsb/workloads/workload'
+        temp = 'echo "' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload'
         print(temp)
         remote_execute_async(client_address, temp)
         curr_error : float = abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh'))[-1])[0]))
