@@ -25,7 +25,7 @@ for alg in ALG_TO_NAME:
     if len(test_data[1]['raft-operation_count']) == len(test_data[1]['variable']):
       continue
     for variable in test_data[1]['variable']:
-      print('== ' + str(variable) + ' ==')
+      print('=== ' + str(variable) + ' ===')
       operation_count : int = 10000
       best_error : float = float('inf')
       while True:
