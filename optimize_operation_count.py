@@ -22,6 +22,8 @@ client_address : str = nodes_addresses[-1]
 for alg in ALG_TO_NAME:
   setup_alg(nodes_addresses, alg)
   for test_data in all_tests:
+    if len(test_data['raft-operation_count']) == len(test_data['variable']):
+      continue
     for variable in test_data[1]['variable']:
       print('== ' + str(variable) + ' ==')
       operation_count : int = 2000
@@ -34,7 +36,7 @@ for alg in ALG_TO_NAME:
         if curr_error > best_error:
           break
         best_error = curr_error
-        operation_count += 1000
+        operation_count += 2000
       curr_operations : typing.List[int] = test_data[1][ALG_TO_NAME[alg] + '-operation_count']
       curr_operations.append(operation_count - 1000)
       print('operation counts: ' + str(curr_operations))
