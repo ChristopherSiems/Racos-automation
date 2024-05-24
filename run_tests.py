@@ -31,7 +31,7 @@ for alg in ALG_TO_NAME:
       print('$ ' + workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
       pandas.DataFrame({
-        'alg' : alg,
+        'alg' : ALG_TO_NAME[alg],
         'unit_sizes' : unit_size,
         'output' : [int(line.split(',')[-1]) for line in LINE_PATTERN.findall(remote_execute_sync(client_address, profile_cmd))]
       }).to_csv('data/' + test[0] + '.csv', mode = 'a', header = False, index = False)
