@@ -23,7 +23,7 @@ for alg in ALG_TO_NAME:
     test_data = test[1]
     for variable, operation_count, data_size in zip(test_data['variable'], test_data[ALG_TO_NAME[alg] + '-operation_count'], test_data['data_sizes']):
       client_address : str = nodes_addresses[-1]
-      remote_execute_async(client_address, 'echo "' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload')
+      remote_execute_async(client_address, 'echo "' + test_data['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload')
       profiling_output : typing.List[str] = [line.split(',')[-1] for line in LINE_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh'))]
       print(profiling_output)
 kill_nodes(nodes_addresses[:-1])
