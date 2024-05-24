@@ -20,7 +20,7 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str) -> None:
   nodes_exclusive : typing.List[str] = nodes_addresses[:-1]
   kill_nodes(nodes_exclusive)
   print('= ' + ALG_TO_NAME[alg] + ' =')
-  for node_address in nodes_addresses[:-1]:
+  for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
     run_cmd : str = 'sh /local/run.sh ' + alg
     remote_execute_async(node_address, run_cmd, 60)

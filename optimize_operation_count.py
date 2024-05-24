@@ -5,6 +5,7 @@ import json
 from utils.configure_tests import configure_tests
 from utils.setup_alg import setup_alg
 from utils.remote_execute import remote_execute_async, remote_execute_sync
+from utils.kill_nodes import kill_nodes
 
 ALG_TO_NAME : typing.Dict[str, str] = {
   'rabia 2' : 'racos',
@@ -40,6 +41,7 @@ for alg in ALG_TO_NAME:
       curr_operations : typing.List[int] = test_data[1][ALG_TO_NAME[alg] + '-operation_count']
       curr_operations.append(operation_count - 10000)
       print('operation counts: ' + str(curr_operations))
+kill_nodes(nodes_addresses[:-1])
 for test_data in all_tests:
   with open('tests/' + test_data[0] + '.json', 'w', encoding = 'utf-8') as config_file:
     json.dump(test_data[1], config_file, indent = 2)
