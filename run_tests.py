@@ -37,3 +37,5 @@ for alg in ALG_TO_NAME:
       }).to_csv('data/' + test[0] + '.csv', mode = 'a', header = False, index = False)
       print('$ ' + profile_cmd)
 kill_nodes(nodes_addresses[:-1])
+for test in all_tests:
+  
