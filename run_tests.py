@@ -19,7 +19,6 @@ nodes_addresses : typing.List[str]
 all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[typing.List[float], typing.List[int], str]]]]]
 nodes_addresses, all_tests = configure_tests()
 
-
 for alg in ALG_TO_NAME:
   setup_alg(nodes_addresses, alg)
   for test in all_tests:
