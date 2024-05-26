@@ -27,23 +27,12 @@ for alg in ALG_TO_NAME:
       continue
     for variable in test_data[1]['variable']:
       print('=== ' + str(variable) + ' ===')
-      operation_count : int = 5000
+      operation_count : int = 10000
       best_error : float = float('inf')
       while True:
         print('testing ' + str(operation_count) + ' operations')
         remote_execute_async(client_address, 'echo "' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload')
-        print('async complete')
-        temp = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
-        print(temp)
-        temp2 = RUNTIME_PATTERN.findall(temp)
-        print(temp2)
-        temp3 = temp2[-1]
-        print(temp3)
-        temp4 = FLOAT_PATTERN.findall(temp3)
-        print(temp4)
-        temp5 = temp4[0]
-        print(temp5)
-        curr_error : float = round(abs(30 - float(temp5)), 2)
+        curr_error : float = round(abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh'))[-1])[0])), 2)
         print('error amount: ' + str(curr_error))
         if curr_error > best_error:
           break
