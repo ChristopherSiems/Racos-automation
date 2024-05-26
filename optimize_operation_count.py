@@ -27,7 +27,7 @@ for alg in ALG_TO_NAME:
       continue
     for variable in test_data[1]['variable']:
       print('=== ' + str(variable) + ' ===')
-      operation_count : int = 1000
+      operation_count : int = 2000
       best_error : float = float('inf')
       while True:
         print('testing ' + str(operation_count) + ' operations')
@@ -37,9 +37,9 @@ for alg in ALG_TO_NAME:
         if curr_error > best_error:
           break
         best_error = curr_error
-        operation_count += 1000
+        operation_count += 2000
       curr_operations : typing.List[int] = test_data[1][ALG_TO_NAME[alg] + '-operation_count']
-      curr_operations.append(operation_count - 1000)
+      curr_operations.append(operation_count - 2000)
       print('operation counts: ' + str(curr_operations))
 kill_nodes(nodes_addresses[:-1])
 for test_data in all_tests:
