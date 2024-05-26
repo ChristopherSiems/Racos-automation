@@ -27,7 +27,7 @@ for alg in ALG_TO_NAME:
       continue
     for variable in test_data[1]['variable']:
       print('=== ' + str(variable) + ' ===')
-      operation_count : int = 10000
+      operation_count : int = 5000
       best_error : float = float('inf')
       while True:
         print('testing ' + str(operation_count) + ' operations')
