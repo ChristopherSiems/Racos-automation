@@ -32,9 +32,7 @@ for alg in ALG_TO_NAME:
       while True:
         print('testing ' + str(operation_count) + ' operations')
         remote_execute_async(client_address, 'echo "' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload')
-        temp = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
-        print(temp)
-        curr_error : float = round(abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(temp)[-1])[0])), 2)
+        curr_error : float = round(abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh'))[-1])[0])), 2)
         print('error amount: ' + str(curr_error))
         if curr_error > best_error:
           break
