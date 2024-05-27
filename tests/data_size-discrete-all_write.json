@@ -1,6 +1,6 @@
 {
   "unit_sizes" : [1.2, 6.6, 13.3, 66.7, 133.3, 666.7, 1333.3, 2000.0],
   "variable" : [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 1500000],
-  "operation_count" : [128000, 64000, 32000, 16000, 8000, 4000, 2000, 1000],
+  "operation_count" : [12800, 6400, 3200, 1600, 800, 400, 200, 100],
   "workload" : "recordcount=5000\nfieldcount=1\nfieldlength={variable}\noperationcount={operation_count}\nworkload=core\nreadallfields=true\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nthreadcount=50\nrequestdistribution=zipfian\nmeasurementtype=raw"
 }
