@@ -26,13 +26,17 @@ for alg in ALG_TO_NAME:
     if len(test_data[1]['raft-operation_count']) == len(test_data[1]['variable']):
       continue
     for variable in test_data[1]['variable']:
-      print('=== ' + str(variable) + ' ===')
+      variable_value : str = str(variable)
+      print('=== ' + variable_value + ' ===')
       operation_count : int = 10000
       best_error : float = float('inf')
       while True:
-        print('testing ' + str(operation_count) + ' operations')
-        remote_execute_async(client_address, 'echo "' + test_data[1]['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload')
-        curr_error : float = round(abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh'))[-1])[0])), 2)
+        operation_count_value : str = str(operation_count)
+        print('testing ' + operation_count_value + ' operations')
+        remote_execute_async(client_address, 'echo "' + test_data[1]['workload'].format(variable = variable_value, operation_count = operation_count_value) + '" > /local/go-ycsb/workloads/workload')
+        temp = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
+        print(temp)
+        curr_error : float = round(abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(temp)[-1])[0])), 2)
         print('error amount: ' + str(curr_error))
         if curr_error > best_error:
           break
