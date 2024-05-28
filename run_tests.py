@@ -23,9 +23,9 @@ for alg in ALG_TO_NAME:
   setup_alg(nodes_addresses, alg)
   for test in all_tests:
     test_data = test[1]
-    for variable, unit_size, operation_count in zip(test_data['variable'], test_data['unit_sizes'], test_data['operation_count']):
+    for variable, unit_size, operation_count in zip(test_data['variable'], test_data['unit_sizes'], test_data[ALG_TO_NAME[alg] + '-operation_count']):
       client_address : str = nodes_addresses[-1]
-      workload_cmd : str = 'echo "' + test_data['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload'
+      workload_cmd : str = 'echo "' + test_data['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '\nmeasurementtype=raw" > /local/go-ycsb/workloads/workload'
       remote_execute_async(client_address, workload_cmd)
       print('$ ' + workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'

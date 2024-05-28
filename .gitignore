@@ -162,5 +162,5 @@ cython_debug/
 #.idea/
 
 # Racos-automation specific ignores
-test.json
-test.txt
+temp.json
+temp.txt
