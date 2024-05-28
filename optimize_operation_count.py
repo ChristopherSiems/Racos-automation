@@ -34,7 +34,6 @@ for alg in ALG_TO_NAME:
         operation_count_value : str = str(operation_count)
         print('testing ' + operation_count_value + ' operations')
         remote_execute_async(client_address, 'echo "' + test_data[1]['workload'].format(variable = variable_value, operation_count = operation_count_value) + '" > /local/go-ycsb/workloads/workload')
-        print(temp)
         curr_error : float = round(abs(30 - float(FLOAT_PATTERN.findall(RUNTIME_PATTERN.findall(remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh'))[-1])[0])), 2)
         print('error amount: ' + str(curr_error))
         if curr_error > best_error:
