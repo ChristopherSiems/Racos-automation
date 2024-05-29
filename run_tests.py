@@ -20,8 +20,8 @@ all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.U
 nodes_addresses, all_tests = configure_tests()
 
 for alg in ALG_TO_NAME:
-  setup_alg(nodes_addresses, alg)
   for test in all_tests:
+    setup_alg(nodes_addresses, alg)
     test_data = test[1]
     for variable, unit_size, operation_count in zip(test_data['variable'], test_data['unit_sizes'], test_data['operation_count']):
       client_address : str = nodes_addresses[-1]
