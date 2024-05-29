@@ -16,14 +16,17 @@ PROFILE_CONFIGS : typing.Dict[str, str]= {
   "paxos 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload"
 }
 
-def setup_alg(nodes_addresses : typing.List[str], alg : str) -> None:
+def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -> None:
   nodes_exclusive : typing.List[str] = nodes_addresses[:-1]
   kill_nodes(nodes_exclusive)
   print('= ' + ALG_TO_NAME[alg] + ' =')
+  run_cmd : str = 'sh /local/run.sh ' + alg
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
-    run_cmd : str = 'sh /local/run.sh ' + alg
-    remote_execute_async(node_address, run_cmd, 60)
+    if str(node_count - 1) in node_address:
+      remote_execute_async(node_address, run_cmd, 60)
+      break
+    remote_execute_async(node_address, run_cmd)
     print('$ ' + run_cmd)
   print('all algorithms initialized')
   client_address : str = nodes_addresses[-1]
