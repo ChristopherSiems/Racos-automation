@@ -24,7 +24,7 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
   for node_address in nodes_exclusive:
     print('== ' + node_address + ' ==')
     if str(node_count - 1) in node_address:
-      remote_execute_async(node_address, run_cmd, 90)
+      remote_execute_async(node_address, run_cmd, 60)
       break
     remote_execute_async(node_address, run_cmd)
     print('$ ' + run_cmd)
