@@ -17,16 +17,16 @@ LINE_PATTERN : re.Pattern = re.compile(r'UPDATE,\d+,\d+')
 
 node_count : int
 nodes_addresses : typing.List[str]
-all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[typing.List[float], typing.List[int], str]]]]]
+all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]]]]]
 nodes_addresses, all_tests, node_count = configure_tests()
 
 for alg in ALG_TO_NAME:
   for test in all_tests:
     test_data = test[1]
-    for variable, unit_size, operation_count in zip(test_data['variable'], test_data['unit_sizes'], test_data['operation_count']):
+    for variable, unit_size in zip(test_data['variable'], test_data['unit_sizes']):
       setup_alg(nodes_addresses, alg, node_count)
       client_address : str = nodes_addresses[-1]
-      workload_cmd : str = 'echo "' + test_data['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload'
+      workload_cmd : str = 'echo "' + test_data['workload'].format(variable = str(variable), operation_count = str(test_data['operation_count'])) + '" > /local/go-ycsb/workloads/workload'
       remote_execute_async(client_address, workload_cmd)
       print('$ ' + workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
