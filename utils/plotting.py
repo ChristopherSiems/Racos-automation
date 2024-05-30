@@ -13,7 +13,6 @@ ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
 
 def data_size_discrete_all_write() -> None:
   data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-all_write.csv')
-  data['variable'] = data['variable'].astype(int)
   pyplot.figure(figsize = (10, 2))
   offset : float = -.3
   x_axis : numpy.ndarray = numpy.arange(8)
@@ -28,6 +27,3 @@ def data_size_discrete_all_write() -> None:
   pyplot.legend(loc = 'upper left')
   pyplot.tight_layout()
   pyplot.savefig('plots/data_size-discrete-all_write-' + str(time()) + '.png')
-
-if __name__ == '__main__':
-  data_size_discrete_all_write()
