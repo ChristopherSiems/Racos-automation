@@ -13,5 +13,6 @@ def kill_nodes(node_addresses : typing.List[str]) -> None:
     print('$ ' + KILL_ETCD)
     clear_db : str = CLEAR_DB.format(node = node_num)
     remote_execute_async(node_address, clear_db)
+    remote_execute_async(node_address, CLEAR_DB.format(node = '1'))
     print('$ ' + clear_db)
   print('all processes killed')
