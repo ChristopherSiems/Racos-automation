@@ -10,11 +10,7 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'raft 2' : 'raft'
 }
 RAFT : str = 'raft 2'
-PROFILE_CONFIGS : typing.Dict[str, str]= {
-  "rabia 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload",
-  "raft 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload",
-  "paxos 2": "#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"10.10.1.1:2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379\" -P /local/go-ycsb/workloads/workload"
-}
+PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload'
 
 def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -> None:
   nodes_exclusive : typing.List[str] = nodes_addresses[:-1]
@@ -38,7 +34,7 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
       if node_status['header']['member_id'] == node_status['leader']:
         raft_leader_endpoint = node_data['Endpoint']
         break
-  profile_string : str = PROFILE_CONFIGS[alg].format(leader_endpoint = raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIGS[alg]
-  setup_cmd : str = 'echo "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh'
-  remote_execute_async(client_address, setup_cmd)
-  print('$ ' + setup_cmd)
+  profile_string : str = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
+  profile_setup_cmd : str = '\'bash -c echo -e "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh\''
+  remote_execute_async(client_address, profile_setup_cmd)
+  print('$ ' + profile_setup_cmd)
