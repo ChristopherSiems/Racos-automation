@@ -22,9 +22,9 @@ nodes_addresses, all_tests, node_count = configure_tests()
 
 for alg in ALG_TO_NAME:
   for test in all_tests:
-    setup_alg(nodes_addresses, alg, node_count)
     test_data = test[1]
     for variable, unit_size, operation_count in zip(test_data['variable'], test_data['unit_sizes'], test_data['operation_count']):
+      setup_alg(nodes_addresses, alg, node_count)
       client_address : str = nodes_addresses[-1]
       workload_cmd : str = 'echo "' + test_data['workload'].format(variable = str(variable), operation_count = str(operation_count)) + '" > /local/go-ycsb/workloads/workload'
       remote_execute_async(client_address, workload_cmd)
