@@ -31,7 +31,7 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
   print('all algorithms initialized')
   client_address : str = nodes_addresses[-1]
   print('= ' + client_address + ' =')
-  raft_leader_endpoint : str = None
+  raft_leader_endpoint : typing.Union[str, None] = None
   if alg == RAFT:
     for node_data in json.loads(remote_execute_sync(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json')):
       node_status : typing.Dict = node_data['Status']
