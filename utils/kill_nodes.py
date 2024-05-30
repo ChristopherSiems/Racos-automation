@@ -3,7 +3,7 @@ import typing
 from utils.remote_execute import remote_execute_async
 
 KILL_ETCD : str = 'killall etcd'
-CLEAR_DB : str = 'rm -r node-{node}.etcd'
+CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node}.etcd'
 
 def kill_nodes(node_addresses : typing.List[str]) -> None:
   print('= killing running ETCD processes =')
