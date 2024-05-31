@@ -43,6 +43,7 @@ kill_nodes(nodes_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write':
     data_size_discrete_all_write()
-local_execute('git add data')
-local_execute('git add plots')
-local_execute('git commit -m "updated data and plots: ' +  str(time()) + '"')
+local_execute('sudo git add data')
+local_execute('sudo git add plots')
+local_execute('sudo git commit -m "updated data and plots: ' +  str(time()) + '"')
+local_execute('sudo git push origin main')
