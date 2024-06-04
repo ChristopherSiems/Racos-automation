@@ -53,7 +53,7 @@ for alg in ALG_TO_NAME:
         'med_latency' : re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[0],
         'p95_latency' : re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[0],
         'p99_latency' : re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[0]
-      }).to_csv('data/' + test[0] + '.csv', mode = 'a', header = False, index = False)
+      }, index = ['row1']).to_csv('data/' + test[0] + '.csv', mode = 'a', header = False, index = False)
 kill_nodes(nodes_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write':
