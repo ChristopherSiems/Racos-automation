@@ -45,7 +45,7 @@ for alg in ALG_TO_NAME:
       output_string : str = re.findall(LINE_PATTERN, remote_execute_sync(client_address, profile_cmd))[-1]
       bash_print(profile_cmd)
       with open('data/' + test[0] + '.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-        data_csv.write(ALG_TO_NAME[alg] + ',' + unit_size + ',' + str(re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]) + ',' + str(re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]) + ',' + str(re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]) + ',' + str(re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]) + '\n')
+        data_csv.write(ALG_TO_NAME[alg] + ',' + str(unit_size) + ',' + str(re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]) + ',' + str(re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]) + ',' + str(re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]) + ',' + str(re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]) + '\n')
 kill_nodes(nodes_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write':
