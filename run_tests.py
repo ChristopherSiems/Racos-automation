@@ -2,8 +2,6 @@ import typing
 import re
 from time import time
 
-import pandas
-
 from utils.configure_tests import configure_tests
 from utils.setup_alg import setup_alg
 from utils.remote_execute import remote_execute_async, remote_execute_sync
@@ -46,14 +44,8 @@ for alg in ALG_TO_NAME:
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
       output_string : str = re.findall(LINE_PATTERN, remote_execute_sync(client_address, profile_cmd))[-1]
       bash_print(profile_cmd)
-      pandas.DataFrame({
-        'alg' : ALG_TO_NAME[alg],
-        'unit_size' : unit_size,
-        'ops' : re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0],
-        'med_latency' : re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1],
-        'p95_latency' : re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1],
-        'p99_latency' : re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]
-      }, index = ['row1']).to_csv('data/' + test[0] + '.csv', mode = 'a', header = False, index = False)
+      with open('data/' + test[0] + '.csv', mode = 'a', encoding = 'utf-8') as data_csv:
+        data_csv.write(ALG_TO_NAME[alg] + ',' + unit_size + ',' + re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0] + ',' + re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1] + ',' + re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1] + ',' + re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1] + '\n')
 kill_nodes(nodes_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write':
