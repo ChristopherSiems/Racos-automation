@@ -5,7 +5,7 @@ from time import time
 from utils.configure_tests import configure_tests
 from utils.setup_alg import setup_alg
 from utils.remote_execute import remote_execute_async, remote_execute_sync
-from utils.custom_prints import bash_print
+from utils.custom_prints import single_equal_print, bash_print
 from utils.kill_nodes import kill_nodes
 from utils.plotting import data_size_discrete_all_write
 from utils.local_execute import local_execute
@@ -33,6 +33,7 @@ all_tests : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.U
 nodes_addresses, all_tests, node_count = configure_tests()
 
 for alg in ALG_TO_NAME:
+  single_equal_print(ALG_TO_NAME[alg])
   for test in all_tests:
     test_data = test[1]
     for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):

@@ -16,7 +16,6 @@ PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etc
 def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -> None:
   nodes_exclusive : typing.List[str] = nodes_addresses[:-1]
   kill_nodes(nodes_exclusive)
-  single_equal_print(ALG_TO_NAME[alg])
   run_cmd : str = 'sh /local/run.sh ' + alg
   for node_address in nodes_exclusive:
     double_equal_print(node_address)
