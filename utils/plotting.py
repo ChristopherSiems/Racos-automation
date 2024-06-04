@@ -16,7 +16,7 @@ def data_size_discrete_all_write() -> None:
   pyplot.figure(figsize = (10, 2))
   offset : float = -.3
   x_axis : numpy.ndarray = numpy.arange(8)
-  for alg, group in data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean():
+  for alg, group in data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].median().reset_index().groupby('alg'):
     pyplot.bar(x_axis + offset, group['med_latency'] / 1000, .3, label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
     pyplot.plot(x_axis + offset, group['p95_latency'] / 1000, 'ro', color = ALG_VANITY[alg][1])
     pyplot.plot(x_axis + offset, group['p99_latency'] / 1000, 'ro', color = ALG_VANITY[alg][1])
@@ -27,3 +27,6 @@ def data_size_discrete_all_write() -> None:
   pyplot.legend(loc = 'upper left')
   pyplot.tight_layout()
   pyplot.savefig('plots/data_size-discrete-all_write-' + str(time()) + '.png')
+
+if __name__ == '__main__':
+  data_size_discrete_all_write()
