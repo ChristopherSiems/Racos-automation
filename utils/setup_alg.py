@@ -11,7 +11,7 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'raft 2' : 'raft'
 }
 RAFT : str = 'raft 2'
-PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload'
+PROFILE_CONFIG : str = '#!/usr/bin/env bash\n#hello\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\"{leader_endpoint}\" -P /local/go-ycsb/workloads/workload'
 
 def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -> None:
   nodes_exclusive : typing.List[str] = nodes_addresses[:-1]

@@ -15,9 +15,9 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'paxos 2' : 'rspaxos',
   'raft 2' : 'raft'
 }
-GIT_ADD_DATA : str = 'sudo git add data'
-GIT_ADD_PLOTS : str = 'sudo git add plots'
-GIT_PUSH : str = 'sudo git push origin main'
+GIT_ADD_DATA : str = 'git add data'
+GIT_ADD_PLOTS : str = 'git add plots'
+GIT_PUSH : str = 'git push origin main'
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
