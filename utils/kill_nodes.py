@@ -15,4 +15,3 @@ def kill_nodes(node_addresses : typing.List[str]) -> None:
     remote_execute_async(node_address, clear_db)
     remote_execute_async(node_address, CLEAR_DB.format(node = '1'))
     bash_print(clear_db)
-  print('all processes killed')

@@ -26,7 +26,7 @@ def data_size_discrete_all_write() -> None:
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-discrete-all_write-' + str(time()) + '.png')
+  pyplot.savefig('./plots/data_size-discrete-all_write-' + str(time()) + '.png')
 
 if __name__ == '__main__':
   data_size_discrete_all_write()

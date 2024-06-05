@@ -24,7 +24,6 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
       break
     remote_execute_async(node_address, run_cmd)
     bash_print(run_cmd)
-  print('all algorithms initialized')
   client_address : str = nodes_addresses[-1]
   equal_print(client_address, 2)
   raft_leader_endpoint : typing.Union[str, None] = None
