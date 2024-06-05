@@ -1,15 +1,15 @@
 import typing
 
-from utils.custom_prints import double_equal_print, triple_equal_print, bash_print
+from utils.custom_prints import equal_print, bash_print
 from utils.remote_execute import remote_execute_async
 
 KILL_ETCD : str = 'killall etcd'
 CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node}.etcd'
 
 def kill_nodes(node_addresses : typing.List[str]) -> None:
-  double_equal_print('killing running ETCD processes')
+  equal_print('killing running ETCD processes', 2)
   for node_address, node_num in zip(node_addresses, range(1, len(node_addresses) + 1)):
-    triple_equal_print(node_address)
+    equal_print(node_address, 3)
     remote_execute_async(node_address, KILL_ETCD)
     bash_print(KILL_ETCD)
     clear_db : str = CLEAR_DB.format(node = node_num)
