@@ -21,6 +21,7 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
     equal_print(node_address, 2)
     if str(node_count - 1) in node_address:
       remote_execute_async(node_address, run_cmd, 60)
+      bash_print(run_cmd)
       break
     remote_execute_async(node_address, run_cmd)
     bash_print(run_cmd)
