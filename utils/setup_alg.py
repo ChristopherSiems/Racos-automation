@@ -38,4 +38,3 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
   profile_setup_cmd : str = 'bash -c \'echo -e "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh\''
   remote_execute_async(client_address, profile_setup_cmd)
   bash_print(profile_setup_cmd)
-  print(remote_execute_sync(client_address, 'cat /local/go-ycsb/workloads/profile.sh'))
