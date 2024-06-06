@@ -9,7 +9,7 @@ from utils.remote_execute import remote_execute_async, remote_execute_sync
 
 node_addresses : typing.List[str]
 num_nodes : int
-node_addresses, _, num_nodes = configure_tests()[0]
+node_addresses, _, num_nodes = configure_tests()
 client_address : str = node_addresses[-1]
 
 setup_alg(node_addresses, 'paxos 2', num_nodes)
