@@ -40,7 +40,7 @@ for alg in ALG_TO_NAME:
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
-      output_string : str = re.findall(LINE_PATTERN, remote_execute_sync(client_address, profile_cmd))[-1]
+      output_string : str = str(re.findall(LINE_PATTERN, remote_execute_sync(client_address, profile_cmd))[-1])
       bash_print(profile_cmd)
       with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{ALG_TO_NAME[alg]},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]}\n')
