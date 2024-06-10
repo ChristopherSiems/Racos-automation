@@ -5,7 +5,7 @@ from time import time
 from utils.configure_tests import configure_tests
 from utils.setup_alg import setup_alg
 from utils.remote_execute import remote_execute_async, remote_execute_sync
-from utils.custom_prints import equal_print, bash_print
+from utils.custom_prints import equal_print, bash_print, four_equal
 from utils.kill_nodes import kill_nodes
 from utils.plotting import data_size_discrete_all_write
 from utils.git_interact import git_add, git_interact
@@ -40,9 +40,11 @@ for alg in ALG_TO_NAME:
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
-      temp = remote_execute_sync(client_address, profile_cmd)
-      print(temp)
-      output_string : str = re.findall(LINE_PATTERN, temp)[-1]
+      profiling_output = remote_execute_sync(client_address, profile_cmd)
+      four_equal()
+      print(profiling_output)
+      four_equal()
+      output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
       bash_print(profile_cmd)
       with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{ALG_TO_NAME[alg]},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]}\n')
