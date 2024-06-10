@@ -40,7 +40,7 @@ for alg in ALG_TO_NAME:
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
-      profiling_output = remote_execute_sync(client_address, profile_cmd)
+      profiling_output : str = remote_execute_sync(client_address, profile_cmd)
       four_equal()
       print(profiling_output)
       four_equal()
