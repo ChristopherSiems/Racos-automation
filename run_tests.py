@@ -5,7 +5,7 @@ from time import time
 
 from utils.configure_tests import configure_tests
 from utils.setup_alg import setup_alg
-from utils.remote_execute import remote_execute_async, debug_execute, remote_execute_sync
+from utils.remote_execute import remote_execute_async, remote_execute_sync
 from utils.custom_prints import equal_print, bash_print, four_equal
 from utils.kill_nodes import kill_nodes
 from utils.plotting import data_size_discrete_all_write
@@ -41,7 +41,7 @@ for alg in ALG_TO_NAME:
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
-      profiling_output : str = debug_execute(client_address, profile_cmd) if len(argv) > 1 and argv[1] == 'debug' else remote_execute_sync(client_address, profile_cmd)
+      profiling_output : str = remote_execute_sync(client_address, profile_cmd)
       four_equal()
       print(profiling_output)
       four_equal()
