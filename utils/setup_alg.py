@@ -16,7 +16,7 @@ PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etc
 def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -> None:
   nodes_exclusive : typing.List[str] = nodes_addresses[:-1]
   kill_nodes(nodes_exclusive)
-  run_cmd : str = 'sh /local/run.sh ' + alg
+  run_cmd : str = f'sh /local/run.sh {alg}'
   for node_address in nodes_exclusive:
     equal_print(node_address, 2)
     if str(node_count - 1) in node_address:
@@ -35,6 +35,6 @@ def setup_alg(nodes_addresses : typing.List[str], alg : str, node_count : int) -
         raft_leader_endpoint = node_data['Endpoint']
         break
   profile_string : str = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
-  profile_setup_cmd : str = 'bash -c \'echo -e "' + profile_string + '" > /local/go-ycsb/workloads/profile.sh\''
+  profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
   remote_execute_async(client_address, profile_setup_cmd)
   bash_print(profile_setup_cmd)

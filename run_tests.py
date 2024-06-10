@@ -8,16 +8,13 @@ from utils.remote_execute import remote_execute_async, remote_execute_sync
 from utils.custom_prints import equal_print, bash_print
 from utils.kill_nodes import kill_nodes
 from utils.plotting import data_size_discrete_all_write
-from utils.local_execute import local_execute
+from utils.git_interact import git_add, git_interact
 
 ALG_TO_NAME : typing.Dict[str, str] = {
   'rabia 2' : 'racos',
   'paxos 2' : 'rspaxos',
   'raft 2' : 'raft'
 }
-GIT_ADD_DATA : str = 'git add data'
-GIT_ADD_PLOTS : str = 'git add plots'
-GIT_PUSH : str = 'git push origin main'
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
@@ -39,24 +36,19 @@ for alg in ALG_TO_NAME:
     for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
       setup_alg(nodes_addresses, alg, node_count)
       client_address : str = nodes_addresses[-1]
-      workload_cmd : str = 'echo "' + test_data['workload'].format(variable = str(variable)) + '" > /local/go-ycsb/workloads/workload'
+      workload_cmd : str = f'echo "{test_data['workload'].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
       output_string : str = re.findall(LINE_PATTERN, remote_execute_sync(client_address, profile_cmd))[-1]
       bash_print(profile_cmd)
-      with open('data/' + test[0] + '.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-        data_csv.write(ALG_TO_NAME[alg] + ',' + str(unit_size) + ',' + str(re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]) + ',' + str(re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]) + ',' + str(re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]) + ',' + str(re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]) + '\n')
+      with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
+        data_csv.write(f'{ALG_TO_NAME[alg]},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]}\n')
 kill_nodes(nodes_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write':
     data_size_discrete_all_write()
-local_execute(GIT_ADD_DATA)
-bash_print(GIT_ADD_DATA)
-local_execute(GIT_ADD_PLOTS)
-bash_print(GIT_ADD_PLOTS)
-git_commit : str = 'sudo git commit -m "updated data and plots: ' +  str(time()) + '"'
-local_execute(git_commit)
-bash_print(git_commit)
-local_execute(GIT_PUSH)
-bash_print(GIT_PUSH)
+git_add('data')
+git_add('plots')
+git_interact(['commit', '-m', f'"data update @ {time()}"'])
+git_interact(['push', 'origin', 'main'])
