@@ -1,6 +1,5 @@
 import typing
 import re
-from sys import argv
 from time import time
 
 from utils.configure_tests import configure_tests
