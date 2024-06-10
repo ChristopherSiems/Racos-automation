@@ -11,8 +11,8 @@ from utils.plotting import data_size_discrete_all_write
 from utils.git_interact import git_add, git_interact
 
 ALG_TO_NAME : typing.Dict[str, str] = {
-  'rabia 2' : 'racos',
   'paxos 2' : 'rspaxos',
+  'rabia 2' : 'racos',
   'raft 2' : 'raft'
 }
 
