@@ -36,7 +36,7 @@ for alg in ALG_TO_NAME:
     for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
       setup_alg(nodes_addresses, alg, node_count)
       client_address : str = nodes_addresses[-1]
-      workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
+      workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = str(test_data[f"{ALG_TO_NAME[alg]}_op_record"]))}" > /local/go-ycsb/workloads/workload'
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
