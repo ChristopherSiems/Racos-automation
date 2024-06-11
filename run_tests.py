@@ -15,7 +15,6 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'rabia' : 'racos',
   'raft' : 'raft'
 }
-RAFT : str = 'raft'
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
 
@@ -51,13 +50,16 @@ for alg in ALG_TO_NAME:
         bash_print(run_cmd)
       equal_print(client_address, 2)
       raft_leader_endpoint : typing.Union[str, None] = None
-      if alg == RAFT:
+      profile_string : str
+      if alg == 'raft':
         for node_data in json.loads(remote_execute_sync(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json')):
           node_status : typing.Dict = node_data['Status']
           if node_status['header']['member_id'] == node_status['leader']:
             raft_leader_endpoint = node_data['Endpoint']
             break
-      profile_string : str = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint) if alg == RAFT else PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
+        profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
+      elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
+      else: profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
       profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
       remote_execute_async(client_address, profile_setup_cmd)
       bash_print(profile_setup_cmd)
