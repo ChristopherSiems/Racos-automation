@@ -1,7 +1,7 @@
 import typing
 
-from utils.custom_prints import equal_print, bash_print
-from utils.remote_execute import remote_execute_async
+from helpers.custom_prints import equal_print, bash_print
+from helpers.remote_execute import remote_execute_async
 
 KILL_ETCD : str = 'killall etcd'
 CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node}.etcd'

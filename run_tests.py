@@ -3,12 +3,12 @@ import re
 import json
 from time import time
 
-from utils.configure_tests import configure_tests
-from utils.remote_execute import remote_execute_async, remote_execute_sync
-from utils.custom_prints import equal_print, bash_print, four_equal
-from utils.kill_nodes import kill_nodes
-from utils.plotting import data_size_discrete_all_write
-from utils.git_interact import git_add, git_interact
+from helpers.configure_tests import configure_tests
+from helpers.remote_execute import remote_execute_async, remote_execute_sync
+from helpers.custom_prints import equal_print, bash_print, four_equal
+from helpers.kill_nodes import kill_nodes
+from helpers.plotting import data_size_discrete_all_write
+from helpers.git_interact import git_add, git_interact
 
 ALG_TO_NAME : typing.Dict[str, str] = {
   'paxos' : 'rspaxos',
