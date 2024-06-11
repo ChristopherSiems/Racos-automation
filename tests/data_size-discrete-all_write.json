@@ -1,6 +1,8 @@
 {
   "unit_size" : [1.3, 6.6, 13.3, 66.7, 133.3, 666.7, 1333.3, 2000.0],
   "variable" : [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 1500000],
+  "failures" : 1,
+  "segments" : 3,
   "racos_op_record" : 1500,
   "rspaxos_op_record" : 1500,
   "raft_op_record" : 500,
