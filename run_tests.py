@@ -5,8 +5,8 @@ from time import time
 
 from helpers.configure_tests import configure_tests
 from helpers.remote_execute import remote_execute_async, remote_execute_sync
-from helpers.custom_prints import equal_print, bash_print, four_equal
-from helpers.kill_nodes import kill_nodes
+from helpers.custom_prints import equal_print, bash_print, four_equal_print
+from helpers.reset_nodes import reset_nodes
 from helpers.plotting import data_size_discrete_all_write
 from helpers.git_interact import git_add, git_interact
 
@@ -40,7 +40,7 @@ for alg in ALG_TO_NAME:
     test_data = test[1]
     run_cmd : str = f'sh /local/run.sh {alg} {test_data["failures"]} {test_data["segments"]}'
     for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
-      kill_nodes(nodes_exclusive)
+      reset_nodes(nodes_exclusive)
       for node_address in nodes_exclusive:
         equal_print(node_address, 2)
         if str(node_count - 1) in node_address:
@@ -65,14 +65,14 @@ for alg in ALG_TO_NAME:
       remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
       profiling_output : str = remote_execute_sync(client_address, profile_cmd)
-      four_equal()
+      four_equal_print()
       print(profiling_output)
-      four_equal()
+      four_equal_print()
       output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
       bash_print(profile_cmd)
       with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{ALG_TO_NAME[alg]},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]}\n')
-kill_nodes(node_addresses[:-1])
+reset_nodes(node_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write': data_size_discrete_all_write()
 git_add('data')
