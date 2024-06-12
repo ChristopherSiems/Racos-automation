@@ -29,7 +29,6 @@ def data_size_discrete_all_write() -> None:
   pyplot.savefig(f'plots/data_size-discrete-all_write/latency/plot-{time()}.png')
   pyplot.figure(figsize = (10, 2))
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-    print(alg, group)
     pyplot.plot(group['unit_size'], (group['ops'] * group['unit_size'] * 8) / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
   pyplot.yticks(range(0, 1001, 250))
   pyplot.xlabel('Data Size (kB)')
