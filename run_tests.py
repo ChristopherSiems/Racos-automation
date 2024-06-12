@@ -15,6 +15,11 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'rabia' : 'racos',
   'raft' : 'raft'
 }
+ALG_TO_COUNT : typing.Dict[str, int] = {
+  'paxos' : 1500,
+  'rabia' : 1500,
+  'raft' : 500
+}
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 profile_cmd : str = 'sh /local/go-ycsb/workloads/profile.sh'
 
@@ -63,7 +68,7 @@ for alg in ALG_TO_NAME:
       profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
       bash_print(profile_setup_cmd)
       remote_execute_async(client_address, profile_setup_cmd)
-      workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = str(test_data[f"{ALG_TO_NAME[alg]}_op_record"]))}" > /local/go-ycsb/workloads/workload'
+      workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = str(ALG_TO_COUNT[alg]))}" > /local/go-ycsb/workloads/workload'
       bash_print(workload_cmd)
       remote_execute_async(client_address, workload_cmd)
       profiling_output : str = remote_execute_sync(client_address, profile_cmd)

@@ -3,8 +3,5 @@
   "variable" : [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 1500000],
   "failures" : 1,
   "segments" : 3,
-  "racos_op_record" : 1500,
-  "rspaxos_op_record" : 1500,
-  "raft_op_record" : 500,
   "workload" : "fieldlength={variable}\nrecordcount={count}\noperationcount={count}\nfieldcount=1\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount=50\nrequestdistribution=zipfian"
 }
