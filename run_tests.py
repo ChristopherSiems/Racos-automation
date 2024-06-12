@@ -43,11 +43,11 @@ for alg in ALG_TO_NAME:
       for node_address in nodes_exclusive:
         equal_print(node_address, 2)
         if str(node_count - 1) in node_address:
-          remote_execute_async(node_address, run_cmd, 60)
           bash_print(run_cmd)
+          remote_execute_async(node_address, run_cmd, 60)
           break
-        remote_execute_async(node_address, run_cmd)
         bash_print(run_cmd)
+        remote_execute_async(node_address, run_cmd)
       equal_print(client_address, 2)
       raft_leader_endpoint : typing.Union[str, None] = None
       profile_string : str
@@ -61,17 +61,17 @@ for alg in ALG_TO_NAME:
       elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
       profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
-      remote_execute_async(client_address, profile_setup_cmd)
       bash_print(profile_setup_cmd)
+      remote_execute_async(client_address, profile_setup_cmd)
       workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = str(test_data[f"{ALG_TO_NAME[alg]}_op_record"]))}" > /local/go-ycsb/workloads/workload'
-      remote_execute_async(client_address, workload_cmd)
       bash_print(workload_cmd)
+      remote_execute_async(client_address, workload_cmd)
       profiling_output : str = remote_execute_sync(client_address, profile_cmd)
+      bash_print(profile_cmd)
       four_equal_print()
       print(profiling_output)
       four_equal_print()
       output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
-      bash_print(profile_cmd)
       with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{ALG_TO_NAME[alg]},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]}\n')
 reset_nodes(node_addresses[:-1])
