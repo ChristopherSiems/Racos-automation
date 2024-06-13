@@ -37,5 +37,13 @@ def data_size_discrete_all_write() -> None:
   pyplot.tight_layout()
   pyplot.savefig(f'plots/data_size-discrete-all_write/throughput/plot-{time()}.png')
 
-if __name__ == '__main__':
-  data_size_discrete_all_write()
+def threads_discrete_half_write_half_read() -> None:
+  pyplot.figure(figsize = (10, 2))
+  for alg, group in pandas.read_csv('data/data_size-discrete-half_write_half_read.csv').groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
+    pyplot.plot((group['ops'] * 1066.4) / 1000, group['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+  pyplot.yticks(range(0, 2001, 500))
+  pyplot.xlabel('Throughput (Mbps)')
+  pyplot.ylabel('P99 latency (ms)')
+  pyplot.legend(loc = 'upper left')
+  pyplot.tight_layout()
+  pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/plot-{time()}.png')

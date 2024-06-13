@@ -1,0 +1,7 @@
+{
+  "unit_size" : [1, 3, 5, 10, 20, 30, 40, 50],
+  "variable" : [1, 3, 5, 10, 20, 30, 40, 50],
+  "failures" : 1,
+  "segments" : 3,
+  "workload" : "fieldlength=1000000\nrecordcount={count}\noperationcount={count}\nfieldcount=1\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount={variable}\nrequestdistribution=zipfian"
+}

@@ -7,7 +7,7 @@ from helpers.configure_tests import configure_tests
 from helpers.remote_execute import remote_execute_async, remote_execute_sync
 from helpers.custom_prints import equal_print, bash_print, four_equal_print
 from helpers.reset_nodes import reset_nodes
-from helpers.plotting import data_size_discrete_all_write
+from helpers.plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
 from helpers.git_interact import git_add, git_interact
 
 ALG_TO_NAME : typing.Dict[str, str] = {
@@ -82,7 +82,9 @@ for alg in ALG_TO_NAME:
 reset_nodes(node_addresses[:-1])
 for test in all_tests:
   if test[0] == 'data_size-discrete-all_write': data_size_discrete_all_write()
+  if test[0] == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
 git_add('data')
 git_add('plots')
 git_interact(['commit', '-m', f'"data update @ {time()}"'])
 git_interact(['push', 'origin', 'main'])
+print('all tests run, all data collected, and all plots generated\ndata has been appended to the associated datasets in the \'data\' directory\nplots can be found in the associated subdirectories in \'plots\'\nall new data has been pushed to the remote repo')
