@@ -10,7 +10,6 @@ CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node}.etcd'
 def reset_nodes(node_addresses : typing.List[str]) -> None:
   '''
   resets the nodes
-
   :param node_addresses: a list of ip addresses for the nodes to be reset
   '''
   for node_address in node_addresses:

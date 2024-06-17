@@ -8,7 +8,6 @@ ENCODING : str = 'utf-8'
 def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]]]]]]]:
   '''
   generates the data needed to run the configured tests
-
   :returns: a tuple containing a list of the ip addresses for each node, the data needed to configure the tests to be run, and the number of nodes
   '''
   with open('auto_config.json', READ, encoding = ENCODING) as auto_config:

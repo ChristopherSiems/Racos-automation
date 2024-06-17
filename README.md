@@ -109,7 +109,7 @@ alg,unit_size,ops,med_latency,p95_latency,p99_latency
 
 ```
 
-3. Create an organized file structure within the `plots` directory. The direct child file of `plots` should have the same name as the test. It should contain sub-directories for each plot generated with the data collected from the test.
+3. Create an organized file structure within the `plots` directory. The direct child file of `plots` should have the same name as the test. It should contain sub-directories for each plot generated with the data collected from the test. In these subdirectories, include files called `dummy` to guarantee the existence of the directories.
 
 4. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. The outputted files should be in the `.png` format and should be named like below:
 
@@ -127,7 +127,5 @@ Upon completion of these steps, your test should be runnable via the usage proto
 
 ## To-do
 
-- distinguish between data collected from tests run on different sized clusters
 - make new test usage more usable
-- make timestamps of plots more readable
 - make only data of merged tests collected
