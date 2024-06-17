@@ -1,3 +1,4 @@
+'''type declaration support for Python's built in objects'''
 import typing
 from time import time
 
@@ -12,6 +13,7 @@ ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
 }
 
 def data_size_discrete_all_write() -> None:
+  '''creates all configured plots from the data found in `data/data_size-discrete-all_write.csv`'''
   data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-all_write.csv')
   pyplot.figure(figsize = (10, 2))
   offset : float = -.3
@@ -38,6 +40,7 @@ def data_size_discrete_all_write() -> None:
   pyplot.savefig(f'plots/data_size-discrete-all_write/throughput/plot-{time()}.png')
 
 def threads_discrete_half_write_half_read() -> None:
+  '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
   pyplot.figure(figsize = (10, 2))
   for alg, group in pandas.read_csv('data/data_size-discrete-half_write_half_read.csv').groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot((group['ops'] * 1066.4) / 1000, group['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
