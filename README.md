@@ -105,7 +105,7 @@ Tests consist of four parts: a configuration file in the `tests` directory, a da
 2. Create a dataset to store the data collected from this test. Within the `data` directory, create a `.csv` file with the same name as the configuration file. Set up the file to contain the initial set up below, take care to include an empty new line.
 
 ```csv
-alg,unit_size,ops,med_latency,p95_latency,p99_latency
+alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency
 
 ```
 
@@ -114,7 +114,7 @@ alg,unit_size,ops,med_latency,p95_latency,p99_latency
 4. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. The outputted files should be in the `.png` format and should be named like below:
 
 ```
-plot-<Unix time of plot generation>.png
+plot-<number of nodes>-<datetime.now timestamp>.png
 ```
 
 5. Add the test to the `run_tests.py` script by importing the plotting function and adding the following line to the plot generation portion of the script:
