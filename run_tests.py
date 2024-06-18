@@ -1,4 +1,7 @@
-'''type declaration support for Python's built in objects'''
+'''
+run this script to execute all configured tests
+'''
+
 import typing
 import re
 import json
@@ -7,11 +10,9 @@ from time import time
 from helpers.configure_tests import configure_tests
 from helpers.remote_execute import remote_execute_async, remote_execute_sync
 from helpers.custom_prints import equal_print, bash_print, four_equal_print
-from helpers.reset_nodes import reset_nodes
+from helpers.reset_nodes import reset_nodes, remove_delay
 from helpers.plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
 from helpers.git_interact import git_add, git_interact
-
-# run this script to perform all configured tests
 
 ALG_TO_NAME : typing.Dict[str, str] = {
   'paxos' : 'rspaxos',
@@ -48,16 +49,17 @@ for alg in ALG_TO_NAME:
     test_data = test[1]
     run_cmd : str = f'sh /local/run.sh {alg} {test_data["failures"]} {test_data["segments"]}'
     for delay_config in test[2]:
+
+      # setup node delay
+      for node_delay, node_address in zip(delay_config, node_addresses):
+        if node_delay == 0: continue
+        equal_print(node_address, 2)
+        delay_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms'
+        bash_print(delay_cmd)
+        remote_execute_async(node_address, delay_cmd)
+
       for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
         reset_nodes(nodes_exclusive)
-
-        # setup node delay
-        for node_delay, node_address in zip(delay_config, node_addresses):
-          if node_delay == 0: continue
-          equal_print(node_address, 2)
-          delay_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms'
-          bash_print(delay_cmd)
-          remote_execute_async(node_address, delay_cmd)
 
         # runs the current algorithm with input parameters on all nodes
         for node_address in nodes_exclusive:
@@ -103,7 +105,8 @@ for alg in ALG_TO_NAME:
         with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
           data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))}\n')
 
-reset_nodes(node_addresses[:-1])
+      remove_delay(node_addresses)
+reset_nodes(node_addresses[:-1], remove_delay = True)
 
 # generates the plots
 for test in test_configs:

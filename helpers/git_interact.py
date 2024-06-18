@@ -1,4 +1,7 @@
-'''type declaration support for Python's built in objects'''
+'''
+this file houses functions for calling git commands within code
+'''
+
 import typing
 import subprocess
 

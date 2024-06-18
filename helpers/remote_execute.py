@@ -1,4 +1,7 @@
-'''type declaration support for Python's built in objects'''
+'''
+this file houses functions for executing terminal commands on remote servers
+'''
+
 import typing
 import subprocess
 from time import sleep

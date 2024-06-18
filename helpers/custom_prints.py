@@ -1,3 +1,7 @@
+'''
+this file houses functions for streamlining printing the outputs given by the `run_tests.py` script
+'''
+
 def bash_print(cmd : str) -> None:
   '''
   prints a the inputted string to look like it was run as a bash command

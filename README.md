@@ -47,7 +47,7 @@ cd /local/Racos-automation
 git pull origin main
 ```
 
-5. Configure the tests you want to run by editing the the `auto_config.json` file using `vim` or `nano` or your editor of choice. The files should be edited such that the `"node_count"` value is set to the number of nodes for the current experiment and that the `"tests"` value is a list of the names of the tests to run. Below is an example configuration. This configuration is for running the `data_size-discrete-all_write` and `threads-discrete-half_write_half_read` tests on a 6 node cluster. Each test will be run once for each variable. In the first test, all nodes will have no delay and for the second test all nodes will have a 5ms delay. Information about tests can be found below.
+5. Configure the tests you want to run by editing the the `auto_config.json` file using `vim` or `nano` or your editor of choice. The files should be edited such that the `"node_count"` value is set to the number of nodes for the current experiment and that the `"tests"` value is a list of the names of the tests to run. `"node_delays"` should be a list such that the top-level sublists are lists of lists, where each bottom-level sublist is a list of network delays (in ms) applied to each node in order. Below is an example configuration.
 
 ```json
 {
@@ -63,6 +63,9 @@ git pull origin main
   ]
 }
 ```
+
+###### This configuration is for running the `data_size-discrete-all_write` and `threads-discrete-half_write_half_read` tests on a 6 node cluster. Each test will be run once for each variable (defined in the test config file). In the first test, all nodes will have no delay and for the second test all nodes will have a 5ms delay. Information about tests can be found in later sections.
+
 6. Run the tests with the command below. Be warned, this may take a while.
 
 ```bash
@@ -122,7 +125,7 @@ alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config
 4. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. The outputted files should be in the `.png` format and should be named like below:
 
 ```
-plot-<number of nodes>-<datetime.now timestamp>.png
+plot-<number of nodes>-<delay setup>-<datetime.now timestamp>.png
 ```
 
 5. Add the test to the `run_tests.py` script by importing the plotting function and adding the following line to the plot generation portion of the script:

@@ -1,4 +1,7 @@
-'''type declaration support for Python's built in objects'''
+'''
+this file houses the configure_tests function, used to process the configuration and setup testing
+'''
+
 import typing
 import json
 

@@ -1,4 +1,7 @@
-'''type declaration support for Python's built in objects'''
+'''
+this file houses functions for generating the plots for each configured test
+'''
+
 import typing
 from datetime import datetime
 
@@ -35,7 +38,6 @@ def data_size_discrete_all_write() -> None:
     pyplot.figure(figsize = (10, 2))
     for alg, group_inner in group_outer.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
       pyplot.plot(group_inner['unit_size'], (group_inner['ops'] * group_inner['unit_size'] * 8) / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
-    pyplot.yticks(range(0, 1001, 250))
     pyplot.xlabel('Data Size (kB)')
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(loc = 'upper right')
@@ -49,7 +51,6 @@ def threads_discrete_half_write_half_read() -> None:
     pyplot.figure(figsize = (10, 2))
     for alg, group_inner in group_outer.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
       pyplot.plot((group_inner['ops'] * 1066.4) / 1000, group_inner['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
-    pyplot.yticks(range(0, 2001, 500))
     pyplot.xlabel('Throughput (Mbps)')
     pyplot.ylabel('P99 latency (ms)')
     pyplot.legend(loc = 'upper left')
