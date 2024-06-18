@@ -1,6 +1,4 @@
-'''
-this file houses functions for resetting nodes to their original states
-'''
+'''this file houses functions for resetting nodes to their original states'''
 
 import typing
 
@@ -34,5 +32,6 @@ def remove_delay(node_addresses : typing.List[str]) -> None:
   :param node_addresses: a list of ip addresses for the nodes
   '''
   for node_address in node_addresses:
+    equal_print(node_address, 2)
     bash_print(REMOVE_DELAY)
     remote_execute_async(node_address, REMOVE_DELAY)

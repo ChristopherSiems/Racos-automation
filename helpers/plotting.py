@@ -1,6 +1,4 @@
-'''
-this file houses functions for generating the plots for each configured test
-'''
+'''this file houses functions for generating the plots for each configured test'''
 
 import typing
 from datetime import datetime
@@ -20,9 +18,9 @@ TIMESTAMP_FORMAT : str = '%Y_%m_%d_%H_%M_%S'
 def data_size_discrete_all_write() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-all_write.csv`'''
   data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-all_write.csv')
-  offset : float = -.3
   x_axis : numpy.ndarray = numpy.arange(8)
   for group_id, group_outer in data.groupby(['num_nodes', 'delay_config']):
+    offset : float = -.3
     pyplot.figure(figsize = (10, 2))
     for alg, group_inner in group_outer.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
       pyplot.bar(x_axis + offset, group_inner['med_latency'] / 1000, .3, label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
@@ -56,3 +54,6 @@ def threads_discrete_half_write_half_read() -> None:
     pyplot.legend(loc = 'upper left')
     pyplot.tight_layout()
     pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/plot-{group_id[0]}-{group_id[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+
+if __name__ == '__main__':
+  data_size_discrete_all_write()

@@ -1,6 +1,4 @@
-'''
-this file houses functions for streamlining printing the outputs given by the `run_tests.py` script
-'''
+'''this file houses functions for streamlining printing the outputs given by the `run_tests.py` script'''
 
 def bash_print(cmd : str) -> None:
   '''

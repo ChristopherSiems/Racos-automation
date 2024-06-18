@@ -84,7 +84,7 @@ Any changes made to the data that has been collected, as in more data collected 
 
 ### System
 
-Any changes made to the system for running the tests or collecting the data, including the creation of more tests, should be done in a Git branch where only the changed files are committed. Upon completion of the change it should be merged via GitHub's pull request system. Users should be logged into the GitHub CLI before using Git to modify this repo.
+Any changes made to the system for running the tests or collecting the data, including the creation of more tests, should be done in a Git branch where only the changed files are committed. Upon completion of the change it should be merged via GitHub's pull request system. This is on the honor system, please abide by this procedure. Users should be logged into the GitHub CLI before using Git to modify this repo.
 
 If finding bugs or requesting features, please use GitHub's issues system. Please be as detailed as possible.
 
@@ -94,12 +94,18 @@ Tests consist of four parts: a configuration file in the `tests` directory, a da
 
 ### Configuration
 
-1. Create a new test configuration `.json` file in the `tests` directory, an example is given below. To set up the configuration file create the following key-value pairs:
+1. Name the test. Test names should start with the independent variable, be followed by the granularity of the variance of the variable (discrete or continuous), and end with the write/read split. All words should be separated by underscores and the different parts should be separated by dashes. an example is given below:
+
+```
+data_size-discrete-all_write
+```
+
+2. Create a new test configuration `.json` file (with the same name as the test) in the `tests` directory, an example is given below. To set up the configuration file create the following key-value pairs:
   - `"unit_size"`: A list of the accurate values of the independent variable being tested in this test.
   - `"variable"`: A list of the inputted values of the independent variable being tested in this test.
   - `"failures"`: The inputted failures parameter.
   - `"segments"`: The inputted segments parameter.
-  - `"workload"`: The entire workload string where lines are delimited by `\n`, the record and operation counts are set to `{count}`, and the independent variable is set to `{variable}`.
+  - `"workload"`: The entire workload string where lines are delimited by `\n` and the independent variable is set to `{variable}`.
 
 ```json
 {
@@ -107,36 +113,31 @@ Tests consist of four parts: a configuration file in the `tests` directory, a da
   "variable" : [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 1500000],
   "failures" : 1,
   "segments" : 3,
-  "workload" : "fieldlength={variable}\nrecordcount={count}\noperationcount={count}\nfieldcount=1\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount=50\nrequestdistribution=zipfian"
+  "workload" : "fieldlength={variable}\nrecordcount=500\noperationcount=500\nfieldcount=1\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount=50\nrequestdistribution=zipfian"
 }
 ```
 
 ###### This configuration runs the given workload on algorithms configured with 1 failure and 3 segments, varying the data size of the workload. Importantly the data size inputted does not necessarily match the actual data size, this is the reason for the variance between `"unit_size"` and `"variable"`.
 
-2. Create a dataset to store the data collected from this test. Within the `data` directory, create a `.csv` file with the same name as the configuration file. Set up the file to contain the initial set up below, take care to include an empty new line.
+3. Create a dataset to store the data collected from this test. Within the `data` directory, create a `.csv` file with the same name as the test. Set up the file to contain the initial set up below, take care to include an empty new line.
 
 ```csv
 alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config
 
 ```
 
-3. Create an organized file structure within the `plots` directory. The direct child file of `plots` should have the same name as the test. It should contain sub-directories for each plot generated with the data collected from the test. In these subdirectories, include files called `dummy` to guarantee the existence of the directories.
+4. Create an organized file structure within the `plots` directory. The direct child file of `plots` should have the same name as the test. It should contain sub-directories for each plot generated with the data collected from the test. In these subdirectories, include files called `dummy` to guarantee the existence of the directories.
 
-4. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. The outputted files should be in the `.png` format and should be named like below:
+5. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. This function should have the same name as the test, but with dashes replaced with underscores. The outputted files should be in the `.png` format and should be named like below:
 
 ```
 plot-<number of nodes>-<delay setup>-<datetime.now timestamp>.png
 ```
 
-5. Add the test to the `run_tests.py` script by importing the plotting function and adding the following line to the plot generation portion of the script:
+6. Add the test to the `run_tests.py` script by importing the plotting function and adding the following line to the plot generation portion of the script:
 
 ```python
 if test[0] == '<name of your test>': <plotting function>
 ```
 
 Upon completion of these steps, your test should be runnable via the usage protocol explained above.
-
-## To-do
-
-- make new test usage more usable
-- make only data of merged tests collected

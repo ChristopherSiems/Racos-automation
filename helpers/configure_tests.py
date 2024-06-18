@@ -1,6 +1,4 @@
-'''
-this file houses the configure_tests function, used to process the configuration and setup testing
-'''
+'''this file houses the configure_tests function, used to process the configuration and setup testing'''
 
 import typing
 import json

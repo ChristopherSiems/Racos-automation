@@ -1,28 +1,20 @@
-'''
-run this script to execute all configured tests
-'''
+'''run this script to execute all configured tests'''
 
 import typing
 import re
 import json
 from time import time
+import subprocess
 
 from helpers.configure_tests import configure_tests
 from helpers.remote_execute import remote_execute_async, remote_execute_sync
 from helpers.custom_prints import equal_print, bash_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
-from helpers.plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
-from helpers.git_interact import git_add, git_interact
 
 ALG_TO_NAME : typing.Dict[str, str] = {
   'paxos' : 'rspaxos',
   'rabia' : 'racos',
   'raft' : 'raft'
-}
-ALG_TO_COUNT : typing.Dict[str, int] = {
-  'paxos' : 1500,
-  'rabia' : 1500,
-  'raft' : 500
 }
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
@@ -71,7 +63,7 @@ for alg in ALG_TO_NAME:
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
 
-        # configures `profile.sh` for the current algorithm
+        # configures `profile.sh` and `workload` for the current algorithm
         equal_print(client_address, 2)
         raft_leader_endpoint : typing.Union[str, None] = None
         profile_string : str
@@ -85,18 +77,15 @@ for alg in ALG_TO_NAME:
         elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
         else: profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
         profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
+        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
         bash_print(profile_setup_cmd)
-        remote_execute_async(client_address, profile_setup_cmd)
-
-        # configures `workload` for the current test
-        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = str(ALG_TO_COUNT[alg]))}" > /local/go-ycsb/workloads/workload'
         bash_print(workload_cmd)
-        remote_execute_async(client_address, workload_cmd)
+        remote_execute_async(client_address, f'{profile_setup_cmd} && {workload_cmd}')
 
         # run the current test
-        profiling_output : str = remote_execute_sync(client_address, PROFILE_CMD)
         bash_print(PROFILE_CMD)
         four_equal_print()
+        profiling_output : str = remote_execute_sync(client_address, PROFILE_CMD)
         print(profiling_output)
         four_equal_print()
 
@@ -110,14 +99,10 @@ reset_nodes(node_addresses[:-1], remove_delay = True)
 
 # generates the plots
 for test in test_configs:
-  if test[0] == 'data_size-discrete-all_write': data_size_discrete_all_write()
-  if test[0] == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
+  subprocess.run(['sudo', 'python', '-c', f'"import helpers/plotting; {test[0].replace('-', '_')}()"'], stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
 
 # saves all new data to the github repo
-git_add('data')
-git_add('plots')
-git_interact(['commit', '-m', f'"data update @ {time()}"'])
-git_interact(['push', 'origin', 'main'])
+subprocess.run(['git', 'add', 'data', 'plots', '&&', 'git', 'commit', '-m', f'"data update @ {time()}"', '&&', 'git', 'push', 'origin', 'main'], stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
 
 four_equal_print()
 print('all tests run, all data collected, and all plots generated\ndata has been appended to the associated datasets in the \'data\' directory\nplots can be found in the associated subdirectories in \'plots\'\nall new data has been pushed to the remote repo')
