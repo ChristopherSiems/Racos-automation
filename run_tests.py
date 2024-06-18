@@ -52,6 +52,7 @@ for alg in ALG_TO_NAME:
     for delay_config in test[2]:
       for node_delay, node_address in zip(delay_config, node_addresses):
         if node_delay == 0: continue
+        equal_print(node_address, 2)
         delay_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms'
         bash_print(delay_cmd)
         remote_execute_async(node_address, delay_cmd)
