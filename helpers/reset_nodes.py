@@ -6,6 +6,7 @@ from helpers.remote_execute import remote_execute_async
 
 KILL_ETCD : str = 'killall etcd'
 REMOVE_DELAY : str = 'tc qdisc del dev enp4s0f1 root'
+CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node_num}.etcd'
 
 def reset_nodes(node_addresses : typing.List[str]) -> None:
   '''
@@ -18,7 +19,6 @@ def reset_nodes(node_addresses : typing.List[str]) -> None:
     remote_execute_async(node_address, KILL_ETCD)
     bash_print(REMOVE_DELAY)
     remote_execute_async(node_address, REMOVE_DELAY)
+    bash_print(CLEAR_DB.format(node_num = node_address[-1]))
     for node_num in range(1, len(node_addresses) + 1):
-      clear_db : str = f'rm -r /local/etcd/ETCD/node-{node_num}.etcd'
-      bash_print(clear_db)
-      remote_execute_async(node_address, clear_db)
+      remote_execute_async(node_address, CLEAR_DB.format(node_num = node_num))
