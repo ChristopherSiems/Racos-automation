@@ -92,7 +92,7 @@ reset_nodes(node_addresses[:-1], remove_delay_packet_loss = True)
 
 # generates the plots
 for test in test_configs:
-  local_execute(['sudo', 'python', '-c', f'"import helpers/plotting; {test[0].replace('-', '_')}()"'])
+  local_execute(['sudo', 'python', '-c', f'"import helpers/plotting; {test[0].replace("-", "_")}()"'])
 
 # saves all new data to the github repo
 local_execute(['git', 'add', 'data', 'plots', '&&', 'git', 'commit', '-m', f'"data update @ {time()}"', '&&', 'git', 'push', 'origin', 'main'])
