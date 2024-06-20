@@ -164,3 +164,5 @@ cython_debug/
 # Racos-automation specific ignores
 temp.json
 temp.txt
+temp.csv
+temp.py

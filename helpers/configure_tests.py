@@ -6,7 +6,7 @@ import json
 READ : str = 'r'
 ENCODING : str = 'utf-8'
 
-def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]], typing.List[typing.List[int]]]]]]]:
+def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing.List[typing.Tuple[typing.Union[str, typing.List[typing.List[int]], typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[float]]]]]]]]:
   '''
   generates the data needed to run the configured tests
   :returns: a tuple containing the number of nodes, a list of the ip addresses for each node, and the data needed to configure the tests to be run
@@ -18,8 +18,8 @@ def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing
     for i in range(1, node_count + 1):
       node_addresses.append(f'root@10.10.1.{i}')
     test_configs : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str,typing.Union[int, typing.List[float], typing.List[int], str]]]]] = []
-    for curr_test, delay_configs in zip(auto_config_data['tests'], auto_config_data['node_delays']):
+    for curr_test, delay_configs, packet_drop_configs in zip(auto_config_data['tests'], auto_config_data['node_delays'], auto_config_data['node_packet_drop_percent']):
       with open(f'tests/{curr_test}.json', READ, encoding = ENCODING) as test_config:
         test_config_data : typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]] = json.load(test_config)
-        test_configs.append((curr_test, test_config_data, delay_configs))
+        test_configs.append((curr_test, test_config_data, delay_configs, packet_drop_configs))
     return node_count, node_addresses, test_configs

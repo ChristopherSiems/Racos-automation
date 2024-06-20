@@ -4,10 +4,9 @@ import typing
 import re
 import json
 from time import time
-import subprocess
 
 from helpers.configure_tests import configure_tests
-from helpers.remote_execute import remote_execute_async, remote_execute_sync
+from helpers.execute import remote_execute_async, remote_execute_sync, local_execute
 from helpers.custom_prints import equal_print, bash_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
 
@@ -30,7 +29,7 @@ N_PATTERN : re.Pattern = re.compile(r'\d+')
 # test configurations
 node_count : int
 node_addresses : typing.List[str]
-test_configs : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]]]]]
+test_configs : typing.List[typing.Tuple[typing.Union[str, typing.List[typing.List[int]], typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[float]]]]]]
 node_count, node_addresses, test_configs = configure_tests()
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 client_address : str = node_addresses[-1]
@@ -39,29 +38,25 @@ for alg in ALG_TO_NAME:
   equal_print(ALG_TO_NAME[alg], 1)
   for test in test_configs:
     test_data = test[1]
-    run_cmd : str = f'sh /local/run.sh {alg} {test_data["failures"]} {test_data["segments"]}'
-    for delay_config in test[2]:
-
-      # setup node delay
-      for node_delay, node_address in zip(delay_config, node_addresses):
-        if node_delay == 0: continue
-        equal_print(node_address, 2)
-        delay_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms'
-        bash_print(delay_cmd)
-        remote_execute_async(node_address, delay_cmd)
-
+    run_params : str = f'{alg} {test_data["failures"]} {test_data["segments"]}'
+    for delay_config, packet_drop_config in zip(test[2], test[3]):
       for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
         reset_nodes(nodes_exclusive)
 
-        # runs the current algorithm with input parameters on all nodes
-        for node_address in nodes_exclusive:
+        # runs the current algorithm with input parameters, configured delays, and packet drop rates on all nodes
+        for node_address, node_delay, packet_drop_percent in zip(nodes_exclusive, delay_config[:-1], packet_drop_config[:-1]):
           equal_print(node_address, 2)
+          run_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms && sudo tc qdisc add dev enp4s0f1 root netem loss {packet_drop_percent}% && sudo sh /local/run.sh {run_params}'
           if str(node_count - 1) in node_address:
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
             break
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
+        equal_print(client_address, 2)
+        run_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {delay_config[-1]}ms && sudo tc qdisc add dev enp4s0f1 root netem loss {packet_drop_config[-1]}%'
+        bash_print(run_cmd)
+        remote_execute_async(client_address, run_cmd)
 
         # configures `profile.sh` and `workload` for the current algorithm
         equal_print(client_address, 2)
@@ -76,11 +71,9 @@ for alg in ALG_TO_NAME:
           profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
         elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
         else: profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
-        profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
-        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
-        bash_print(profile_setup_cmd)
-        bash_print(workload_cmd)
-        remote_execute_async(client_address, f'{profile_setup_cmd} && {workload_cmd}')
+        workload_profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\' && sudo echo "{test_data["workload"].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
+        bash_print(workload_profile_setup_cmd)
+        remote_execute_async(client_address, workload_profile_setup_cmd)
 
         # run the current test
         bash_print(PROFILE_CMD)
@@ -92,17 +85,17 @@ for alg in ALG_TO_NAME:
         # records the data from the test
         output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
         with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-          data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))}\n')
+          data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))},{"_".join(list(map(str, packet_drop_config)))}\n')
 
       remove_delay(node_addresses)
-reset_nodes(node_addresses[:-1], remove_delay = True)
+reset_nodes(node_addresses[:-1], remove_delay_packet_loss = True)
 
 # generates the plots
 for test in test_configs:
-  subprocess.run(['sudo', 'python', '-c', f'"import helpers/plotting; {test[0].replace('-', '_')}()"'], stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
+  local_execute(['sudo', 'python', '-c', f'"import helpers/plotting; {test[0].replace('-', '_')}()"'])
 
 # saves all new data to the github repo
-subprocess.run(['git', 'add', 'data', 'plots', '&&', 'git', 'commit', '-m', f'"data update @ {time()}"', '&&', 'git', 'push', 'origin', 'main'], stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
+local_execute(['git', 'add', 'data', 'plots', '&&', 'git', 'commit', '-m', f'"data update @ {time()}"', '&&', 'git', 'push', 'origin', 'main'])
 
 four_equal_print()
 print('all tests run, all data collected, and all plots generated\ndata has been appended to the associated datasets in the \'data\' directory\nplots can be found in the associated subdirectories in \'plots\'\nall new data has been pushed to the remote repo')

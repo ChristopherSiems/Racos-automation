@@ -5,7 +5,7 @@ def bash_print(cmd : str) -> None:
   prints a the inputted string to look like it was run as a bash command
   :param cmd: the string to be printed
   '''
-  print(f'$ {cmd}')
+  print(f'$ sudo {cmd}')
 
 def equal_print(flag : str, num_equal : int) -> None:
   '''

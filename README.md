@@ -131,7 +131,7 @@ alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config
 5. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. This function should have the same name as the test, but with dashes replaced with underscores. The outputted files should be in the `.png` format and should be named like below:
 
 ```
-plot-<number of nodes>-<delay setup>-<datetime.now timestamp>.png
+plot-<number of nodes>-<delay setup>-<packet loss setup>-<optional distinguishing info>-<datetime.now timestamp>.png
 ```
 
 6. Add the test to the `run_tests.py` script by importing the plotting function and adding the following line to the plot generation portion of the script:

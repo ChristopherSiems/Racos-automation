@@ -4,56 +4,108 @@ import typing
 from datetime import datetime
 
 import pandas
+from pandas.core.groupby.generic import DataFrameGroupBy
 from matplotlib import pyplot
 import numpy
 
+OFFSET_BASE : float = -.3
 ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
   'racos' : ('Racos', 'C1'),
   'rspaxos' : ('RS-Paxos', 'C2'),
   'raft' : ('Raft', 'C3')
 }
+PLOT_DIMENSIONS : typing.Tuple[int] = (10, 2)
+DATA_SIZE_LABEL : str = 'Data Size (kB)'
+THROUGHPUT_LABEL : str = 'Throughput (Mbps)'
 TIMESTAMP : typing.Callable[[], str] = datetime.now
 TIMESTAMP_FORMAT : str = '%Y_%m_%d_%H_%M_%S'
+SMALL_UNIT_SIZES : typing.List[float] = [1.3, 6.6, 13.3]
+DELAY_SIZES : typing.List[str] = ['1', '5', '10']
+DELAY_LABEL : str = 'Per node network delay (ms)'
 
 def data_size_discrete_all_write() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-all_write.csv`'''
-  data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-all_write.csv')
-  x_axis : numpy.ndarray = numpy.arange(8)
-  for group_id, group_outer in data.groupby(['num_nodes', 'delay_config']):
-    offset : float = -.3
-    pyplot.figure(figsize = (10, 2))
-    for alg, group_inner in group_outer.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
-      pyplot.bar(x_axis + offset, group_inner['med_latency'] / 1000, .3, label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
-      pyplot.plot(x_axis + offset, group_inner['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][1])
-      pyplot.plot(x_axis + offset, group_inner['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][1])
-      offset += .3
-    pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
-    pyplot.xlabel('Data Size (kB)')
-    pyplot.ylabel('Latency (ms)')
-    pyplot.legend(loc = 'upper left')
-    pyplot.tight_layout()
-    pyplot.savefig(f'plots/data_size-discrete-all_write/latency/plot-{group_id[0]}-{group_id[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
-    pyplot.figure(figsize = (10, 2))
-    for alg, group_inner in group_outer.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-      pyplot.plot(group_inner['unit_size'], (group_inner['ops'] * group_inner['unit_size'] * 8) / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
-    pyplot.xlabel('Data Size (kB)')
-    pyplot.ylabel('Throughput (Mbps)')
-    pyplot.legend(loc = 'upper right')
-    pyplot.tight_layout()
-    pyplot.savefig(f'plots/data_size-discrete-all_write/throughput/plot-{group_id[0]}-{group_id[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+  data : pandas.DataFrame = pandas.read_csv('temp.csv')
+  for num_nodes, group_outer in data.groupby('num_nodes'):
+    for config, group_med in group_outer.groupby('delay_config', 'packet_loss_config'):
+      x_axis_all : numpy.ndarray = numpy.arange(8)
 
-def threads_discrete_half_write_half_read() -> None:
-  '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
-  data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-half_write_half_read.csv')
-  for group_id, group_outer in data.groupby(['num_nodes', 'delay_config']):
-    pyplot.figure(figsize = (10, 2))
-    for alg, group_inner in group_outer.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
-      pyplot.plot((group_inner['ops'] * 1066.4) / 1000, group_inner['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
-    pyplot.xlabel('Throughput (Mbps)')
-    pyplot.ylabel('P99 latency (ms)')
-    pyplot.legend(loc = 'upper left')
-    pyplot.tight_layout()
-    pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/plot-{group_id[0]}-{group_id[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      # plotting data size against latency for all workload sizes
+      offset : float = OFFSET_BASE
+      pyplot.figure(figsize = PLOT_DIMENSIONS)
+      for alg, group_inner in group_med.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
+        pyplot.bar(x_axis_all + offset, group_inner['med_latency'] / 1000, .3, label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+        pyplot.plot(x_axis_all + offset, group_inner['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][1])
+        pyplot.plot(x_axis_all + offset, group_inner['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][1])
+        offset += .3
+      pyplot.xticks(x_axis_all, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+      pyplot.xlabel(DATA_SIZE_LABEL)
+      pyplot.ylabel('Latency (ms)')
+      pyplot.legend()
+      pyplot.title('All write workload. Median latency (bar) and tail latencies (p95/p99).')
+      pyplot.tight_layout()
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-{config[0]}-{config[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
-if __name__ == '__main__':
-  data_size_discrete_all_write()
+      # plotting data size against throughput for all workload sizes
+      pyplot.figure(figsize = PLOT_DIMENSIONS)
+      for alg, group_inner in group_med.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
+        pyplot.plot(group_inner['unit_size'], (group_inner['ops'] * group_inner['unit_size'] * 8) / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+      pyplot.xlabel(DATA_SIZE_LABEL)
+      pyplot.ylabel(THROUGHPUT_LABEL)
+      pyplot.legend()
+      pyplot.title('All-write workload. Throughput across different data sizes, ranging from 1.3 KBs to 2 MBs.')
+      pyplot.tight_layout()
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-{config[0]}-{config[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+
+    x_axis_part : numpy.ndarray = numpy.arange(len(data['delay_config'].unique()))
+
+    # plotting delay against p99 latency for the smallest workload sizes
+    pyplot.figure(figsize = PLOT_DIMENSIONS)
+    for subdata, unit_size, count in zip([data.loc[(int(data.loc['packet_loss_config']) == 0) & (data['unit_size'] == unit_size)] for unit_size in SMALL_UNIT_SIZES], SMALL_UNIT_SIZES, range(1, len(SMALL_UNIT_SIZES) + 1)):
+      offset : float = OFFSET_BASE
+      pyplot.subplot(1, 3, count)
+      for alg, group in subdata.groupby(['alg', 'delay_config'])['p99_latency'].mean().reset_index().groupby('alg'):
+        pyplot.bar(x_axis_part + offset, group['p99_latency'] / 1000, .3, label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+        offset += .3
+      pyplot.xticks(x_axis_part, DELAY_SIZES)
+      pyplot.xlabel(DELAY_LABEL)
+      pyplot.ylabel('P99 latency (ms)')
+      pyplot.title(f'{str(unit_size)}kB')
+    handles, labels = pyplot.gca().get_legend_handles_labels()
+    pyplot.figlegend(handles, labels, loc = 'upper right')
+    pyplot.suptitle('All write workload. p99 tail latencies at different data sizes.')
+    pyplot.tight_layout()
+    pyplot.savefig(f'plots/data_size-discrete-all_write/delay/latency/plot-{num_nodes}-variable-0s-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+
+    # plotting delay against throughput for the smallest workload sizes
+    pyplot.figure(figsize = PLOT_DIMENSIONS)
+    for subdata, unit_size, count in zip([data.loc[(int(data.loc['packet_loss_config']) == 0) & (data['unit_size'] == unit_size)] for unit_size in SMALL_UNIT_SIZES], SMALL_UNIT_SIZES, range(1, len(SMALL_UNIT_SIZES) + 1)):
+      offset : float = OFFSET_BASE
+      pyplot.subplot(1, 3, count)
+      for alg, group in subdata.groupby(['alg', 'delay_config'])['ops'].mean().reset_index().groupby('alg'):
+        pyplot.bar(x_axis_part + offset, (group['ops'] * unit_size * 8) / 1000, .3, label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+        offset += .3
+      pyplot.xticks(x_axis_part, DELAY_SIZES)
+      pyplot.xlabel(DELAY_LABEL)
+      pyplot.ylabel(THROUGHPUT_LABEL)
+      pyplot.title(f'{str(unit_size)}kB')
+    handles, labels = pyplot.gca().get_legend_handles_labels()
+    pyplot.figlegend(handles, labels, loc = 'upper right')
+    pyplot.suptitle('All write workload. Throughputs at different data sizes.')
+    pyplot.tight_layout()
+    pyplot.savefig(f'plots/data_size-discrete-all_write/delay/throughput/plot-{num_nodes}-variable-0s-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+
+
+# def threads_discrete_half_write_half_read() -> None:
+#   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
+#   data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-half_write_half_read.csv')
+#   for delay_config, group_med in data.groupby(['num_nodes', 'delay_config']):
+#     pyplot.figure(figsize = (10, 2))
+#     for alg, group_inner i, group_med
+# .groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
+#       pyplot.plot((group_inner['ops'] * 1066.4) / 1000, group_inner['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+#     pyplot.xlabel('Throughput (Mbps)')
+#     pyplot.ylabel('P99 latency (ms)')
+#     pyplot.legend(loc = 'upper left')
+#     pyplot.tight_layout()
+#     pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/plot-{delay_config[0]}-{delay_config[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
