@@ -1,6 +1,11 @@
 '''run this script to manually reset all nodes'''
 
-from helpers.reset_nodes import reset_nodes
+import typing
+
+from helpers.reset_nodes import reset_nodes, remove_delay
 from helpers.configure_tests import configure_tests
 
-reset_nodes(configure_tests()[1][:-1], remove_delay_packet_loss = True)
+node_addresses : typing.List[str] = configure_tests()[1]
+
+reset_nodes(node_addresses[:-1])
+remove_delay(node_addresses)
