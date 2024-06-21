@@ -11,8 +11,8 @@ from helpers.custom_prints import equal_print, bash_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
 
 ALG_TO_NAME : typing.Dict[str, str] = {
-  'paxos' : 'rspaxos',
   'rabia' : 'racos',
+  'paxos' : 'rspaxos',
   'raft' : 'raft'
 }
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
