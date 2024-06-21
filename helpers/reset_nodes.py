@@ -6,8 +6,8 @@ from helpers.custom_prints import equal_print, bash_print
 from helpers.execute import remote_execute_async
 
 KILL_ETCD : str = 'killall etcd'
-REMOVE_DELAY_PACKET_LOSS : str = 'sudo tc qdisc del dev enp4s0f1 root'
 CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node_num}.etcd'
+REMOVE_DELAY_PACKET_LOSS : str = 'sudo tc qdisc del dev enp4s0f1 root'
 
 def reset_nodes(node_addresses : typing.List[str]) -> None:
   '''

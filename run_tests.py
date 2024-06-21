@@ -41,8 +41,8 @@ for alg in ALG_TO_NAME:
     run_params : str = f'{alg} {test_data["failures"]} {test_data["segments"]}'
     for delay_config, packet_drop_config in zip(test[2], test[3]):
       for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
-        remove_delay(node_addresses)
         reset_nodes(nodes_exclusive)
+        remove_delay(node_addresses)
 
         # runs the current algorithm with input parameters, configured delays, and packet drop rates on all nodes
         for node_address, node_delay, packet_drop_percent in zip(nodes_exclusive, delay_config[:-1], packet_drop_config[:-1]):
@@ -88,8 +88,8 @@ for alg in ALG_TO_NAME:
         # with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         #   data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))},{"_".join(list(map(str, packet_drop_config)))}\n')
 
-remove_delay(node_addresses)
 reset_nodes(nodes_exclusive)
+remove_delay(node_addresses)
 
 # generates the plots
 for test in test_configs:
