@@ -11,9 +11,9 @@ from helpers.custom_prints import equal_print, bash_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
 
 ALG_TO_NAME : typing.Dict[str, str] = {
-  'raft' : 'raft',
   'paxos' : 'rspaxos',
-  'rabia' : 'racos'
+  'rabia' : 'racos',
+  'raft' : 'raft'
 }
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
@@ -84,9 +84,9 @@ for alg in ALG_TO_NAME:
         four_equal_print()
 
         # records the data from the test
-        # output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
-        # with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-        #   data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))},{"_".join(list(map(str, packet_drop_config)))}\n')
+        output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
+        with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
+          data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))},{"_".join(list(map(str, packet_drop_config)))}\n')
 
 remove_delay(node_addresses)
 reset_nodes(nodes_exclusive)
