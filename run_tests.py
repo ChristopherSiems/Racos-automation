@@ -47,7 +47,7 @@ for alg in ALG_TO_NAME:
         # runs the current algorithm with input parameters, configured delays, and packet drop rates on all nodes
         for node_address, node_delay, packet_drop_percent in zip(nodes_exclusive, delay_config[:-1], packet_drop_config[:-1]):
           equal_print(node_address, 2)
-          run_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms && sudo tc qdisc add dev enp4s0f1 root netem loss {packet_drop_percent}% && sudo sh /local/run.sh {run_params}'
+          run_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms loss {packet_drop_percent}% && sudo sh /local/run.sh {run_params}'
           if str(node_count - 1) in node_address:
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
@@ -55,7 +55,7 @@ for alg in ALG_TO_NAME:
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
         equal_print(client_address, 2)
-        run_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {delay_config[-1]}ms && sudo tc qdisc add dev enp4s0f1 root netem loss {packet_drop_config[-1]}%'
+        run_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {delay_config[-1]}ms loss {packet_drop_config[-1]}%'
         bash_print(run_cmd)
         remote_execute_async(client_address, run_cmd)
 
