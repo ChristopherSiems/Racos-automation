@@ -21,3 +21,12 @@ def four_equal_print() -> None:
   prints four equal signs
   '''
   print('====')
+
+def output_print(output : str) -> None:
+  '''
+  prints the inputted string surrounded by four equal signs on the top and bottom
+  :param output: the string to be printed
+  '''
+  four_equal_print()
+  print(output)
+  four_equal_print()

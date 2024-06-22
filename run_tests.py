@@ -7,12 +7,12 @@ from time import time
 
 from helpers.configure_tests import configure_tests
 from helpers.execute import remote_execute_async, remote_execute_sync, local_execute
-from helpers.custom_prints import equal_print, bash_print, four_equal_print
+from helpers.custom_prints import equal_print, bash_print, output_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
 
 ALG_TO_NAME : typing.Dict[str, str] = {
-  'raft' : 'raft',
   'rabia' : 'racos',
+  'raft' : 'raft',
   'paxos' : 'rspaxos'
 }
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
@@ -70,9 +70,7 @@ for alg in ALG_TO_NAME:
           raft_leader_determiner : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
           bash_print(raft_leader_determiner)
           raft_data : str = remote_execute_sync(client_address, raft_leader_determiner)
-          four_equal_print()
-          print(raft_data)
-          four_equal_print()
+          output_print(raft_data)
           for node_data in json.loads(raft_data):
             node_status : typing.Dict = node_data['Status']
             if node_status['header']['member_id'] == node_status['leader']:
@@ -90,10 +88,8 @@ for alg in ALG_TO_NAME:
 
         # run the current test
         bash_print(PROFILE_CMD)
-        four_equal_print()
         profiling_output : str = remote_execute_sync(client_address, PROFILE_CMD)
-        print(profiling_output)
-        four_equal_print()
+        output_print(profiling_output)
 
         # records the data from the test
         output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
