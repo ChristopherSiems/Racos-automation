@@ -102,7 +102,8 @@ remove_delay(node_addresses)
 
 # generates the plots
 for test in test_configs:
-  local_execute(['sudo', 'python', '-c', f'"import helpers/plotting; {test[0].replace("-", "_")}()"'])
+  test_plotter : str = test[0].replace("-", "_")
+  local_execute(['sudo', 'python', '-c', f'"from helpers.plotting import {test_plotter}; {test_plotter}()"'])
 
 # saves all new data to the github repo
 local_execute(['git', 'add', 'data', 'plots', '&&', 'git', 'commit', '-m', f'"data update @ {time()}"', '&&', 'git', 'push', 'origin', 'main'])
