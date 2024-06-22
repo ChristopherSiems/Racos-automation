@@ -24,7 +24,7 @@ def remote_execute_sync(remote_address : str, remote_cmd : str) -> str:
   :param remote_cmd: the command to be performed
   :returns: the stdout and stderr of the command in the from of a string
   '''
-  return subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr =  subprocess.STDOUT, universal_newlines = True, check = True).stdout
+  return subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr =  subprocess.PIPE, universal_newlines = True, check = True).stdout
 
 def local_execute(cmd : typing.List[str]) -> None:
   '''
