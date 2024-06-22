@@ -67,7 +67,13 @@ for alg in ALG_TO_NAME:
         raft_leader_endpoint : typing.Union[str, None] = None
         profile_string : str
         if alg == 'raft':
-          for node_data in json.loads(remote_execute_sync(client_address, '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json')):
+          raft_leader_determiner : str = '/local/etcd/ETCD/bin/etcdctl --endpoints=10.10.1.1:2379,10.10.1.2:2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379 endpoint status --write-out=json'
+          bash_print(raft_leader_determiner)
+          raft_data : str = remote_execute_sync(client_address, raft_leader_determiner)
+          four_equal_print()
+          print(raft_data)
+          four_equal_print()
+          for node_data in json.loads(raft_data):
             node_status : typing.Dict = node_data['Status']
             if node_status['header']['member_id'] == node_status['leader']:
               raft_leader_endpoint = node_data['Endpoint']
