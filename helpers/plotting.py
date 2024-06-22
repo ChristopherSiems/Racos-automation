@@ -7,24 +7,26 @@ import pandas
 from matplotlib import pyplot
 import numpy
 
+PLOT_DIMENSIONS : typing.Tuple[int] = 10, 2
 OFFSET_BASE : float = -.3
 ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
   'racos' : ('Racos', 'C1'),
   'rspaxos' : ('RS-Paxos', 'C2'),
   'raft' : ('Raft', 'C3')
 }
-PLOT_DIMENSIONS : typing.Tuple[int] = (10, 2)
-DATA_SIZE_LABEL : str = 'Data Size (kB)'
-THROUGHPUT_LABEL : str = 'Throughput (Mbps)'
-TIMESTAMP : typing.Callable[[], str] = datetime.now
-TIMESTAMP_FORMAT : str = '%Y_%m_%d_%H_%M_%S'
 SMALL_UNIT_SIZES : typing.List[float] = [1.3, 6.6, 13.3]
 DELAY_SIZES : typing.List[str] = ['1', '5', '10']
+
+DATA_SIZE_LABEL : str = 'Data Size (kB)'
+THROUGHPUT_LABEL : str = 'Throughput (Mbps)'
 DELAY_LABEL : str = 'Per node network delay (ms)'
+
+TIMESTAMP : typing.Callable[[], str] = datetime.now
+TIMESTAMP_FORMAT : str = '%Y_%m_%d_%H_%M_%S'
 
 def data_size_discrete_all_write() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-all_write.csv`'''
-  data : pandas.DataFrame = pandas.read_csv('temp.csv')
+  data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-all_write.csv')
   for num_nodes, group_outer in data.groupby('num_nodes'):
     for config, group_med in group_outer.groupby('delay_config', 'packet_loss_config'):
       x_axis_all : numpy.ndarray = numpy.arange(8)

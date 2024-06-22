@@ -15,6 +15,7 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'raft' : 'raft',
   'paxos' : 'rspaxos'
 }
+
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
 
