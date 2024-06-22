@@ -54,8 +54,8 @@ for alg in ALG_TO_NAME:
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
             break
-          bash_print(config_cmd)
-          remote_execute_async(node_address, config_cmd)
+          # bash_print(config_cmd)
+          # remote_execute_async(node_address, config_cmd)
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
         equal_print(client_address, 2)
