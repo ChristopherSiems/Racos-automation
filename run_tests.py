@@ -82,7 +82,7 @@ for alg in ALG_TO_NAME:
         workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
         bash_print(workload_cmd)
         remote_execute_async(client_address, workload_cmd)
-        profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\'' 
+        profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
         bash_print(profile_setup_cmd)
         remote_execute_async(client_address, profile_setup_cmd)
 

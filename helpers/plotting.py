@@ -4,7 +4,6 @@ import typing
 from datetime import datetime
 
 import pandas
-from pandas.core.groupby.generic import DataFrameGroupBy
 from matplotlib import pyplot
 import numpy
 
