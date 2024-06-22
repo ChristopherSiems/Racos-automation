@@ -42,26 +42,26 @@ for alg in ALG_TO_NAME:
     for delay_config, packet_drop_config in zip(test[2], test[3]):
       for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
         reset_nodes(nodes_exclusive)
-        # remove_delay(node_addresses)
+        remove_delay(node_addresses)
 
         # runs the current algorithm with input parameters, configured delays, and packet drop rates on all nodes
         for node_address, node_delay, packet_drop_percent in zip(nodes_exclusive, delay_config[:-1], packet_drop_config[:-1]):
           equal_print(node_address, 2)
           config_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms loss {packet_drop_percent}%'
           if str(node_count - 1) in node_address:
-            # bash_print(config_cmd)
-            # remote_execute_async(node_address, config_cmd)
+            bash_print(config_cmd)
+            remote_execute_async(node_address, config_cmd)
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
             break
-          # bash_print(config_cmd)
-          # remote_execute_async(node_address, config_cmd)
+          bash_print(config_cmd)
+          remote_execute_async(node_address, config_cmd)
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
         equal_print(client_address, 2)
         config_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {delay_config[-1]}ms loss {packet_drop_config[-1]}%'
-        # bash_print(config_cmd)
-        # remote_execute_async(client_address, config_cmd)
+        bash_print(config_cmd)
+        remote_execute_async(client_address, config_cmd)
 
         # configures `profile.sh` and `workload` for the current algorithm
         raft_leader_endpoint : typing.Union[str, None] = None
@@ -101,7 +101,7 @@ for alg in ALG_TO_NAME:
           data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{"_".join(list(map(str, delay_config)))},{"_".join(list(map(str, packet_drop_config)))}\n')
 
 reset_nodes(nodes_exclusive)
-# remove_delay(node_addresses)
+remove_delay(node_addresses)
 
 # generates the plots
 for test in test_configs:
