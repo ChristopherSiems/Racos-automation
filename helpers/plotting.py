@@ -117,6 +117,3 @@ def data_size_discrete_all_write() -> None:
 #     pyplot.legend(loc = 'upper left')
 #     pyplot.tight_layout()
 #     pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/plot-{delay_config[0]}-{delay_config[1]}-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
-
-if __name__ == '__main__':
-  data_size_discrete_all_write()
