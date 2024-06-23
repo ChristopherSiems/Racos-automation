@@ -31,4 +31,4 @@ def local_execute(cmd : typing.List[str]) -> None:
   performs the inputted command locally
   :param cmd: the command to be performed
   '''
-  subprocess.run(cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
+  subprocess.run(cmd, check = True)
