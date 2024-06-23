@@ -32,3 +32,10 @@ def local_execute(cmd : typing.List[str]) -> None:
   :param cmd: the command to be performed
   '''
   subprocess.run(cmd, check = True)
+
+def git_interact(cmd : typing.List[str]) -> None:
+  '''
+  performs the inputted git command locally
+  :param cmd: the git command to be performed
+  '''
+  local_execute(['git'] + cmd)

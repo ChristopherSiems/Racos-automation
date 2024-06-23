@@ -6,7 +6,7 @@ import json
 from time import time
 
 from helpers.configure_tests import configure_tests
-from helpers.execute import remote_execute_async, remote_execute_sync, local_execute
+from helpers.execute import remote_execute_async, remote_execute_sync, local_execute, git_interact
 from helpers.custom_prints import equal_print, bash_print, output_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
 
@@ -106,7 +106,9 @@ for test in test_configs:
   local_execute(['sudo', 'python', '-c', f'"from helpers.plotting import {test_plotter}; {test_plotter}()"'])
 
 # saves all new data to the github repo
-local_execute(['git', 'add', 'data', 'plots', '&&', 'git', 'commit', '-m', f'"data update @ {time()}"', '&&', 'git', 'push', 'origin', 'main'])
+git_interact(['add', 'data', 'plots'])
+git_interact(['commit', '-m', f'"data update @ {time()}"'])
+git_interact(['push', 'origin', 'main'])
 
 four_equal_print()
 print('all tests run, all data collected, and all plots generated\ndata has been appended to the associated datasets in the \'data\' directory\nplots can be found in the associated subdirectories in \'plots\'\nall new data has been pushed to the remote repo')
