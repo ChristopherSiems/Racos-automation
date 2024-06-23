@@ -26,16 +26,9 @@ def remote_execute_sync(remote_address : str, remote_cmd : str) -> str:
   '''
   return subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr =  subprocess.PIPE, universal_newlines = True, check = True).stdout
 
-def local_execute(cmd : typing.List[str]) -> None:
-  '''
-  performs the inputted command locally
-  :param cmd: the command to be performed
-  '''
-  subprocess.run(cmd, stdout = subprocess.PIPE, stderr =  subprocess.PIPE, check = True)
-
 def git_interact(cmd : typing.List[str]) -> None:
   '''
   performs the inputted git command locally
   :param cmd: the git command to be performed
   '''
-  local_execute(['git'] + cmd)
+  subprocess.run(['git'] + cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)

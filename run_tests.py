@@ -6,9 +6,10 @@ import json
 from time import time
 
 from helpers.configure_tests import configure_tests
-from helpers.execute import remote_execute_async, remote_execute_sync, local_execute, git_interact
+from helpers.execute import remote_execute_async, remote_execute_sync, git_interact
 from helpers.custom_prints import equal_print, bash_print, output_print, four_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay
+from helpers.plotting import data_size_discrete_all_write
 
 ALG_TO_NAME : typing.Dict[str, str] = {
   'rabia' : 'racos',
@@ -102,8 +103,7 @@ remove_delay(node_addresses)
 
 # generates the plots
 for test in test_configs:
-  test_plotter : str = test[0].replace("-", "_")
-  local_execute(['sudo', 'python', '-c', f'"from helpers.plotting import {test_plotter}; {test_plotter}()"'])
+  if test[0] == 'data_size-discrete-all_write': data_size_discrete_all_write()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots'])
