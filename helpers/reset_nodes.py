@@ -15,7 +15,7 @@ def reset_nodes(node_addresses : typing.List[str]) -> None:
   :param node_addresses: a list of ip addresses for the nodes to be reset
   '''
   for node_address in node_addresses:
-    equal_print(node_address, 2)
+    equal_print(node_address, 4)
     bash_print(KILL_ETCD)
     remote_execute_async(node_address, KILL_ETCD)
     bash_print(CLEAR_DB.format(node_num = node_address[-1]))
@@ -28,6 +28,6 @@ def remove_delay_packet_drop(node_addresses : typing.List[str]) -> None:
   :param node_addresses: a list of ip addresses for the nodes
   '''
   for node_address in node_addresses:
-    equal_print(node_address, 2)
+    equal_print(node_address, 4)
     bash_print(REMOVE_DELAY_PACKET_DROP)
     remote_execute_async(node_address, REMOVE_DELAY_PACKET_DROP)
