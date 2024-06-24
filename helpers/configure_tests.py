@@ -6,7 +6,7 @@ import json
 READ : str = 'r'
 ENCODING : str = 'utf-8'
 
-def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing.List[typing.Tuple[typing.Union[str, typing.List[typing.List[int]], typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[float]]]]]]]]:
+def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[typing.List[float]]]]]]]]]:
   '''
   generates the data needed to run the configured tests
   :returns: a tuple containing the number of nodes, a list of the ip addresses for each node, and the data needed to configure the tests to be run

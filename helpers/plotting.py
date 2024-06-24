@@ -15,7 +15,7 @@ ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
   'rspaxos' : ('RS-Paxos', 'C2'),
   'raft' : ('Raft', 'C3')
 }
-SMALL_UNIT_SIZES : typing.List[float] = [1.3, 6.6, 13.3]
+SMALL_UNIT_SIZES : typing.List[float] = [1.3, 6.7, 13.3]
 ZERO_CONFIG_PATTERN : re.Pattern = re.compile(r'^0(_0)*$')
 DATA_SIZE_LABEL : str = 'Data Size (kB)'
 THROUGHPUT_LABEL : str = 'Throughput (Mbps)'

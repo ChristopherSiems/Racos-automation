@@ -16,17 +16,17 @@ def equal_print(flag : str, num_equal : int) -> None:
   equals : str = '=' * num_equal
   print(f'{equals} {flag} {equals}')
 
-def four_equal_print() -> None:
+def five_equal_print() -> None:
   '''
-  prints four equal signs
+  prints five equal signs
   '''
-  print('====')
+  print('=====')
 
 def output_print(output : str) -> None:
   '''
-  prints the inputted string surrounded by four equal signs on the top and bottom
+  prints the inputted string surrounded by five equal signs on the top and bottom
   :param output: the string to be printed
   '''
-  four_equal_print()
+  five_equal_print()
   print(output)
-  four_equal_print()
+  five_equal_print()
