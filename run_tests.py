@@ -17,6 +17,11 @@ ALG_TO_NAME : typing.Dict[str, str] = {
   'raft' : 'raft',
   'paxos' : 'rspaxos'
 }
+ALG_COUNTS : typing.Dict[str, str] = {
+  'rabia' : '5794',
+  'raft' : '964',
+  'paxos' : '1919'
+}
 
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
@@ -87,7 +92,7 @@ for test in test_configs:
           profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
         elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
         else: profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
-        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable))}" > /local/go-ycsb/workloads/workload'
+        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = ALG_COUNTS[alg])}" > /local/go-ycsb/workloads/workload'
         bash_print(workload_cmd)
         remote_execute_async(client_address, workload_cmd)
         profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
