@@ -47,7 +47,7 @@ cd /local/Racos-automation
 git pull origin main
 ```
 
-5. Configure the tests you want to run by editing the the `auto_config.json` file using `vim` or `nano` or your editor of choice. The files should be edited such that the `"node_count"` value is set to the number of nodes for the current experiment and that the `"tests"` value is a list of the names of the tests to run. `"node_delays"` should be a list such that the top-level sublists are lists of lists, where each bottom-level sublist is a list of network delays (in ms) applied to each node in order. Below is an example configuration.
+5. Configure the tests you want to run by editing the the `auto_config.json` file using `vim` or `nano` or your editor of choice. The files should be edited such that the `"node_count"` value is set to the number of nodes for the current experiment and that the `"tests"` value is a list of the names of the tests to run. `"node_delays"` and `"node_packet_drop_percents"` should a lists such that the top-level sublists are lists of lists, where each bottom-level sublist is a list of network delays (in ms) or percentage packet drop rates applied to each node in order. Below is an example configuration.
 
 ```json
 {
@@ -60,11 +60,19 @@ git pull origin main
     [
       [5, 5, 5, 5, 5, 5]
     ]
+  ],
+  "node_packet_drop_percents" : [
+    [
+      [1, 1, 1, 1, 1, 1]
+    ],
+    [
+      [0, 0, 0, 0, 0, 0]
+    ]
   ]
 }
 ```
 
-###### This configuration is for running the `data_size-discrete-all_write` and `threads-discrete-half_write_half_read` tests on a 6 node cluster. Each test will be run once for each variable (defined in the test config file). In the first test, all nodes will have no delay and for the second test all nodes will have a 5ms delay. Information about tests can be found in later sections.
+###### This configuration is for running the `data_size-discrete-all_write` and `threads-discrete-half_write_half_read` tests on a 6 node cluster. Each test will be run once for each variable (defined in the test config file). In the first test, all nodes will have no delay and for the second test all nodes will have a 5ms delay. For the first test, all nodes will drop about 1% of packets and, 0% of packets in the second test. Information about tests can be found in later sections.
 
 6. Run the tests with the command below. Be warned, this may take a while.
 
@@ -105,7 +113,7 @@ data_size-discrete-all_write
   - `"variable"`: A list of the inputted values of the independent variable being tested in this test.
   - `"failures"`: The inputted failures parameter.
   - `"segments"`: The inputted segments parameter.
-  - `"workload"`: The entire workload string where lines are delimited by `\n` and the independent variable is set to `{variable}`.
+  - `"workload"`: The entire workload string where lines are delimited by `\n`, record and operation counts are set to `{counts}`, and the independent variable is set to `{variable}`.
 
 ```json
 {
@@ -113,7 +121,7 @@ data_size-discrete-all_write
   "variable" : [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 1500000],
   "failures" : 1,
   "segments" : 3,
-  "workload" : "fieldlength={variable}\nrecordcount=500\noperationcount=500\nfieldcount=1\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount=50\nrequestdistribution=zipfian"
+  "workload" : "fieldlength={variable}\nrecordcount={counts}\noperationcount={counts}\nfieldcount=1\nreadproportion=0.0\nupdateproportion=1.0\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount=50\nrequestdistribution=zipfian"
 }
 ```
 
@@ -122,7 +130,7 @@ data_size-discrete-all_write
 3. Create a dataset to store the data collected from this test. Within the `data` directory, create a `.csv` file with the same name as the test. Set up the file to contain the initial set up below, take care to include an empty new line.
 
 ```csv
-alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config
+alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config
 
 ```
 
