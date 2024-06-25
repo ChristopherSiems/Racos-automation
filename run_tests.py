@@ -92,7 +92,7 @@ for test in test_configs:
           profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
         elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
         else: profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379,10.10.1.2.2379,10.10.1.2.2379,10.10.1.3:2379,10.10.1.4:2379,10.10.1.5:2379')
-        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), count = ALG_COUNTS[alg])}" > /local/go-ycsb/workloads/workload'
+        workload_cmd : str = f'echo "{test_data["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg])}" > /local/go-ycsb/workloads/workload'
         bash_print(workload_cmd)
         remote_execute_async(client_address, workload_cmd)
         profile_setup_cmd : str = f'bash -c \'echo -e "{profile_string}" > /local/go-ycsb/workloads/profile.sh\''
