@@ -8,7 +8,7 @@ import pandas
 from matplotlib import pyplot
 import numpy
 
-from encoding import config_to_hatch, config_matches, config_to_line_style, config_to_marker
+from helpers.encoding import config_to_hatch, config_matches, config_to_line_style, config_to_marker
 
 DIMENSIONS : typing.Tuple[int] = 9, 3
 ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
