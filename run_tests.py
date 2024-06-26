@@ -9,7 +9,7 @@ from helpers.configure_tests import configure_tests
 from helpers.execute import remote_execute_async, remote_execute_sync, git_interact
 from helpers.custom_prints import equal_print, bash_print, output_print, five_equal_print
 from helpers.reset_nodes import reset_nodes, remove_delay_packet_drop
-from helpers.stringify import config_to_str
+from helpers.encoding import config_to_str
 from helpers.plotting import data_size_discrete_all_write
 
 ALG_TO_NAME : typing.Dict[str, str] = {
