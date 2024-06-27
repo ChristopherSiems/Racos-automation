@@ -141,11 +141,11 @@ data_size-discrete-all_write
 3. Create a dataset to store the data collected from this test. Within the `data` directory, create a `.csv` file with the same name as the test. Set up the file to contain the initial set up below, take care to include an empty new line.
 
 ```csv
-alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config
+alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config,disable_cpus_config
 
 ```
 
-4. Create an organized file structure within the `plots` directory. The direct child file of `plots` should have the same name as the test. It should contain sub-directories for each plot generated with the data collected from the test. In these subdirectories, include files called `dummy` to guarantee the existence of the directories.
+4. Create an organized file structure within the `plots` directory. The direct child file of `plots` should have the same name as the test. In this subdirectory create subdirectories with the name of the parameter on the x-axis of the plots that will come to be contained within. Within those subdirectories create subdirectories with the name of the parameter on the y-axis of the plots that will come to be contained within. In this bottom level subdirectory create a file called `dummy`.
 
 5. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. This function should have the same name as the test, but with dashes replaced with underscores. The outputted files should be in the `.png` format and should be named like below:
 
