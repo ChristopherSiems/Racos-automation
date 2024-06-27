@@ -34,4 +34,4 @@ def reset_delay_packets_cpus(node_addresses : typing.List[str]) -> None:
     for cpu_num in range(32):
       disable_cmd : str = f'bash -c "echo 1 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
       bash_print(disable_cmd)
-      remote_execute_async(node_address, disable_cmd)
+      remote_execute_async(node_address, disable_cmd, disconnect_timeout = 0)
