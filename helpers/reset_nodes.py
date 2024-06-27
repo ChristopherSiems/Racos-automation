@@ -22,7 +22,7 @@ def reset_nodes(node_addresses : typing.List[str]) -> None:
     for node_num in range(1, len(node_addresses) + 1):
       remote_execute_async(node_address, CLEAR_DB.format(node_num = str(node_num)))
 
-def remove_delay_packet_drop(node_addresses : typing.List[str]) -> None:
+def reset_delay_packets_cpus(node_addresses : typing.List[str]) -> None:
   '''
   removes any network delay and packet drop percentage on the inputted nodes
   :param node_addresses: a list of ip addresses for the nodes
@@ -31,3 +31,7 @@ def remove_delay_packet_drop(node_addresses : typing.List[str]) -> None:
     equal_print(node_address, 4)
     bash_print(REMOVE_DELAY_PACKET_DROP)
     remote_execute_async(node_address, REMOVE_DELAY_PACKET_DROP)
+    for cpu_num in range(32):
+      disable_cmd : str = f'bash -c "echo 1 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
+      bash_print(disable_cmd)
+      remote_execute_async(node_address, disable_cmd)
