@@ -1,1 +1,1 @@
-alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config,disable_cpus_config,cpu_limit_config
+alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config,disable_cpus_config,cpu_limit_config,cpu_freq_config

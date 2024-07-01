@@ -38,3 +38,6 @@ def reset_delay_packets_cpus(node_addresses : typing.List[str]) -> None:
       disable_cmd : str = f'bash -c "echo 1 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
       bash_print(disable_cmd)
       remote_execute_async(node_address, disable_cmd, disconnect_timeout = 0)
+      cpu_freq_cmd : str = f'bash -c "echo 3200000 > /sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq"'
+      bash_print(cpu_freq_cmd)
+      remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = 0)

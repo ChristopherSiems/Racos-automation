@@ -43,16 +43,17 @@ client_address : str = node_addresses[-1]
 for test in test_configs:
   equal_print(test[0], 1)
   test_data = test[1]
-  for delay_config, packet_drop_config, disable_cpus_config, limit_cpus_config in zip(test[2], test[3], test[4], test[5]):
+  for delay_config, packet_drop_config, disable_cpus_config, limit_cpus_config, cpu_freq_config in zip(test[2], test[3], test[4], test[5], test[6]):
     delay_config_encoded : str = config_to_str(delay_config)
     packet_drop_config_encoded : str = config_to_str(packet_drop_config)
     disable_cpus_config_encoded : str = config_to_str(disable_cpus_config)
     limit_cpus_config_encoded : str = config_to_str(limit_cpus_config)
-    equal_print(f'{delay_config_encoded} {packet_drop_config_encoded} {disable_cpus_config_encoded} {limit_cpus_config_encoded}', 2)
+    cpu_freq_config_encoded : str = config_to_str(cpu_freq_config)
+    equal_print(f'{delay_config_encoded} {packet_drop_config_encoded} {disable_cpus_config_encoded} {limit_cpus_config_encoded} {cpu_freq_config_encoded}', 2)
     reset_delay_packets_cpus(node_addresses)
 
     # adds network delay and packet loss to the nodes
-    for node_address, node_delay, packet_drop_percent, disable_cpus in zip(node_addresses, delay_config, packet_drop_config, disable_cpus_config):
+    for node_address, node_delay, packet_drop_percent, disable_cpus, cpu_freq in zip(node_addresses, delay_config, packet_drop_config, disable_cpus_config, cpu_freq_config):
       equal_print(node_address, 3)
       config_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms loss {packet_drop_percent}%'
       bash_print(config_cmd)
@@ -63,6 +64,12 @@ for test in test_configs:
         disable_cmd : str = f'bash -c "echo 0 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
         bash_print(disable_cmd)
         remote_execute_async(node_address, disable_cmd)
+
+      # sets the upper limit for cpu frequency
+      for cpu_num in range(0, 32):
+        cpu_freq_cmd : str = f'bash -c "echo {cpu_freq * 1000000} > /sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq"'
+        bash_print(cpu_freq_cmd)
+        remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = 0)
 
     for alg in ALG_COUNTS:
       equal_print(alg, 3)
@@ -84,7 +91,7 @@ for test in test_configs:
           remote_execute_async(node_address, run_cmd)
           bash_print(limit_cmd)
           remote_execute_async(node_address, limit_cmd)
-        
+
         equal_print(client_address, 4)
 
         # configures `profile.sh` and `workload` for the current algorithm
@@ -118,7 +125,7 @@ for test in test_configs:
         # records the data from the test
         output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
         with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-          data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{delay_config_encoded},{packet_drop_config_encoded},{disable_cpus_config_encoded},{limit_cpus_config_encoded}\n')
+          data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{delay_config_encoded},{packet_drop_config_encoded},{disable_cpus_config_encoded},{limit_cpus_config_encoded},{cpu_freq_config_encoded}\n')
 
 reset_nodes(nodes_exclusive)
 reset_delay_packets_cpus(node_addresses)
