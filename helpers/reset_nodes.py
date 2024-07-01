@@ -6,6 +6,7 @@ from helpers.custom_prints import bash_print, equal_print
 from helpers.execute import remote_execute_async
 
 CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node_num}.etcd'
+KILL_CPULIMIT : str = 'killall cpulimit'
 KILL_ETCD : str = 'killall etcd'
 REMOVE_DELAY_PACKET_DROP : str = 'tc qdisc del dev enp4s0f1 root'
 
@@ -16,6 +17,8 @@ def reset_nodes(node_addresses : typing.List[str]) -> None:
   '''
   for node_address in node_addresses:
     equal_print(node_address, 4)
+    bash_print(KILL_CPULIMIT)
+    remote_execute_async(node_address, KILL_CPULIMIT)
     bash_print(KILL_ETCD)
     remote_execute_async(node_address, KILL_ETCD)
     bash_print(CLEAR_DB.format(node_num = node_address[-1]))

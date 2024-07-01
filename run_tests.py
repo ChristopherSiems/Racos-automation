@@ -14,10 +14,10 @@ from helpers.plotting import data_size_discrete_all_write
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
+  'paxos' : '1900',
   'racos' : '5700',
   'rabia' : '1900',
   'raft' : '900',
-  'paxos' : '1900'
 }
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
@@ -71,7 +71,7 @@ for test in test_configs:
         reset_nodes(nodes_exclusive)
 
         # runs the current algorithm with input parameters and limits cpu usage
-        for node_address, cpu_limit in zip(nodes_exclusive, limit_cpus_config[:-1]):
+        for node_address, cpu_limit in zip(nodes_exclusive, limit_cpus_config):
           equal_print(node_address, 4)
           limit_cmd : str = LIMIT_CMD.format(cpu_limit = cpu_limit)
           if str(node_count - 1) in node_address:
@@ -84,10 +84,8 @@ for test in test_configs:
           remote_execute_async(node_address, run_cmd)
           bash_print(limit_cmd)
           remote_execute_async(node_address, limit_cmd)
+        
         equal_print(client_address, 4)
-        limit_cmd : str = LIMIT_CMD.format(cpu_limit = limit_cpus_config[-1])
-        bash_print(limit_cmd)
-        remote_execute_async(client_address, limit_cmd)
 
         # configures `profile.sh` and `workload` for the current algorithm
         raft_leader_endpoint : typing.Union[str, None] = None

@@ -51,7 +51,7 @@ git pull origin main
   - `"node_delays"`: values contained in the bottom level lists of this value should be integers representing the number of milliseconds of network delay to add to each node in order.
   - `"node_packet_drop_percents"`: values contained in the bottom level lists of this value should be floats representing the percent of packets to drop.
   - `"node_disable_cpus"`: values contained in the bottom level lists of this value should be integers representing the number of CPU cores to disable, out of a possible 31. 
-  - `"node_cpu_limit"`: values contained in the bottom level lists of this value should be integers representing the maximum percent of cpu utilization the process can use. 
+  - `"node_cpu_limit"`: values contained in the bottom level lists of this value should be integers representing the maximum percent of cpu utilization the process can use. This list should be only as long as the number of working nodes.
 
 ```json
 {
@@ -83,10 +83,10 @@ git pull origin main
   ],
   "node_cpu_limit" : [
     [
-      [100, 100, 100, 100, 100, 100]
+      [100, 100, 100, 100, 100]
     ],
     [
-      [50, 50, 50, 50, 50, 100]
+      [50, 50, 50, 50, 50]
     ]
   ]
 }
