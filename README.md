@@ -47,10 +47,11 @@ cd /local/Racos-automation
 git pull origin main
 ```
 
-5. Configure the tests you want to run by editing the the `auto_config.json` file using `vim` or `nano` or your editor of choice. The files should be edited such that the `"node_count"` value is set to the number of nodes for the current experiment and that the `"tests"` value is a list of the names of the tests to run. `"node_delays"`, `"node_packet_drop_percents"`, and `"node_disable_cpus"` should be lists such that the top-level sublists are lists of lists, where each bottom-level sublist is a list of network delays (in ms) or percentage packet drop rates applied to each node in order. Below is an example configuration.
+5. Configure the tests you want to run by editing the the `auto_config.json` file using `vim` or `nano` or your editor of choice. The files should be edited such that the `"node_count"` value is set to the number of nodes for the current experiment and that the `"tests"` value is a list of the names of the tests to run. `"node_delays"`, `"node_packet_drop_percents"`, `"node_disable_cpus"`, and `"node_cpu_limit"` should be lists such that the top-level sublists are lists of lists, where each bottom-level sublist is a list of network delays (in ms) or percentage packet drop rates applied to each node in order. Below is an example configuration.
   - `"node_delays"`: values contained in the bottom level lists of this value should be integers representing the number of milliseconds of network delay to add to each node in order.
   - `"node_packet_drop_percents"`: values contained in the bottom level lists of this value should be floats representing the percent of packets to drop.
   - `"node_disable_cpus"`: values contained in the bottom level lists of this value should be integers representing the number of CPU cores to disable, out of a possible 31. 
+  - `"node_cpu_limit"`: values contained in the bottom level lists of this value should be integers representing the maximum percent of cpu utilization the process can use. 
 
 ```json
 {
@@ -79,11 +80,19 @@ git pull origin main
     [
       [3, 3, 5, 3, 3, 0]
     ]
+  ],
+  "node_cpu_limit" : [
+    [
+      [100, 100, 100, 100, 100, 100]
+    ],
+    [
+      [50, 50, 50, 50, 50, 100]
+    ]
   ]
 }
 ```
 
-###### This configuration is for running the `data_size-discrete-all_write` and `threads-discrete-half_write_half_read` tests on a 6 node cluster. Each test will be run once for each variable (defined in the test config file). In the first test, all nodes will have no delay, drop 1% of packets, and will have all CPU cores online. For the second test all nodes will have a 5ms delay, will drop no packets, and each node has a different number of disabled CPU cores. Information about tests can be found in later sections.
+###### This configuration is for running the `data_size-discrete-all_write` and `threads-discrete-half_write_half_read` tests on a 6 node cluster. Each test will be run once for each variable (defined in the test config file). In the first test, all nodes will have no delay, drop 1% of packets, and will have all CPU cores online at full utilization. For the second test all nodes will have a 5ms delay, will drop no packets, each node has a different number of disabled CPU cores, with the working nodes limited to half utilization. Information about tests can be found in later sections.
 
 6. Run the tests with the command below. Be warned, this may take a while.
 
@@ -141,7 +150,7 @@ data_size-discrete-all_write
 3. Create a dataset to store the data collected from this test. Within the `data` directory, create a `.csv` file with the same name as the test. Set up the file to contain the initial set up below, take care to include an empty new line.
 
 ```csv
-alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config,disable_cpus_config
+alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,packet_loss_config,disable_cpus_config,cpu_limit_config
 
 ```
 
@@ -150,7 +159,7 @@ alg,num_nodes,unit_size,ops,med_latency,p95_latency,p99_latency,delay_config,pac
 5. Define how the plots generated from this data should be constructed, using Matplotlib, within a function in the `helpers/plotting.py` file. This function should have the same name as the test, but with dashes replaced with underscores. The outputted files should be in the `.png` format and should be named like below:
 
 ```
-plot-<number of nodes>-<delay setup>-<packet loss setup>-<disabled CPU setup>-<variable range>-<datetime.now timestamp>.png
+plot-<number of nodes>-<delay setup>-<packet loss setup>-<disabled CPU setup>-<CPU limit setup>-<variable range>-<datetime.now timestamp>.png
 ```
 
 6. Add the test to the `run_tests.py` script by importing the plotting function and adding the following line to the plot generation portion of the script:

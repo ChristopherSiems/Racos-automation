@@ -1,31 +1,24 @@
 '''run this script to execute all configured tests'''
 
-import typing
-import re
 import json
 import os
+import re
+import typing
 from time import time
 
 from helpers.configure_tests import configure_tests
-from helpers.execute import remote_execute_async, remote_execute_sync, git_interact
-from helpers.custom_prints import equal_print, bash_print, output_print, five_equal_print
-from helpers.reset_nodes import reset_nodes, reset_delay_packets_cpus
+from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str
+from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.plotting import data_size_discrete_all_write
+from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-ALG_TO_NAME : typing.Dict[str, str] = {
-  'rabia' : 'racos',
-  'raft' : 'raft',
-  'paxos' : 'rspaxos'
-}
 ALG_COUNTS : typing.Dict[str, str] = {
-  'rabia' : '5794',
-  'raft' : '964',
-  'paxos' : '1919'
+  'racos' : '5700',
+  'rabia' : '1900',
+  'raft' : '900',
+  'paxos' : '1900'
 }
-
-PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
-PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
@@ -34,6 +27,10 @@ P95_PATTERN : re.Pattern = re.compile(r'95th\(us\): \d+')
 P99_PATTERN : re.Pattern = re.compile(r'99th\(us\): \d+')
 R_PATTERN : re.Pattern = re.compile(r'\d+.\d+')
 N_PATTERN : re.Pattern = re.compile(r'\d+')
+
+LIMIT_CMD : str = 'cpulimit -e etcd -l {cpu_limit}'
+PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
+PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 
 # test configurations
 node_count : int
@@ -46,11 +43,12 @@ client_address : str = node_addresses[-1]
 for test in test_configs:
   equal_print(test[0], 1)
   test_data = test[1]
-  for delay_config, packet_drop_config, disable_cpus_config in zip(test[2], test[3], test[4]):
+  for delay_config, packet_drop_config, disable_cpus_config, limit_cpus_config in zip(test[2], test[3], test[4], test[5]):
     delay_config_encoded : str = config_to_str(delay_config)
     packet_drop_config_encoded : str = config_to_str(packet_drop_config)
     disable_cpus_config_encoded : str = config_to_str(disable_cpus_config)
-    equal_print(f'{delay_config_encoded} {packet_drop_config_encoded} {disable_cpus_config_encoded}', 2)
+    limit_cpus_config_encoded : str = config_to_str(limit_cpus_config)
+    equal_print(f'{delay_config_encoded} {packet_drop_config_encoded} {disable_cpus_config_encoded} {limit_cpus_config_encoded}', 2)
     reset_delay_packets_cpus(node_addresses)
 
     # adds network delay and packet loss to the nodes
@@ -60,29 +58,36 @@ for test in test_configs:
       bash_print(config_cmd)
       remote_execute_async(node_address, config_cmd)
 
-      # disables the number of nodes inputted
+      # disables the number of cpu cores inputted
       for cpu_num in range(31, 31 - disable_cpus, -1):
         disable_cmd : str = f'bash -c "echo 0 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
         bash_print(disable_cmd)
         remote_execute_async(node_address, disable_cmd)
 
-    for alg in ALG_TO_NAME:
-      equal_print(ALG_TO_NAME[alg], 3)
+    for alg in ALG_COUNTS:
+      equal_print(alg, 3)
       run_cmd : str = f'sh /local/run.sh {alg} {test_data["failures"]} {test_data["segments"]}'
       for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
         reset_nodes(nodes_exclusive)
 
-        # runs the current algorithm with input parameters
-        for node_address, node_delay, packet_drop_percent in zip(nodes_exclusive, delay_config[:-1], packet_drop_config[:-1]):
+        # runs the current algorithm with input parameters and limits cpu usage
+        for node_address, cpu_limit in zip(nodes_exclusive, limit_cpus_config[:-1]):
           equal_print(node_address, 4)
+          limit_cmd : str = LIMIT_CMD.format(cpu_limit = cpu_limit)
           if str(node_count - 1) in node_address:
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
+            bash_print(limit_cmd)
+            remote_execute_async(node_address, limit_cmd)
             break
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
-
+          bash_print(limit_cmd)
+          remote_execute_async(node_address, limit_cmd)
         equal_print(client_address, 4)
+        limit_cmd : str = LIMIT_CMD.format(cpu_limit = limit_cpus_config[-1])
+        bash_print(limit_cmd)
+        remote_execute_async(client_address, limit_cmd)
 
         # configures `profile.sh` and `workload` for the current algorithm
         raft_leader_endpoint : typing.Union[str, None] = None
@@ -115,7 +120,7 @@ for test in test_configs:
         # records the data from the test
         output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
         with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-          data_csv.write(f'{ALG_TO_NAME[alg]},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{delay_config_encoded},{packet_drop_config_encoded},{disable_cpus_config_encoded}\n')
+          data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{delay_config_encoded},{packet_drop_config_encoded},{disable_cpus_config_encoded},{limit_cpus_config_encoded}\n')
 
 reset_nodes(nodes_exclusive)
 reset_delay_packets_cpus(node_addresses)

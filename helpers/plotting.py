@@ -1,26 +1,27 @@
 '''this file houses functions for generating the plots for each configured test'''
 
+import re
 import typing
 from datetime import datetime
-import re
 
 import pandas
-from matplotlib import pyplot
 import numpy
+from matplotlib import pyplot
 
-from helpers.encoding import config_to_hatch, config_matches, config_to_line_style, config_to_marker
+from helpers.encoding import config_matches, config_to_hatch, config_to_line_style, config_to_marker
 
 DIMENSIONS : typing.Tuple[int] = 9, 3
 ALG_VANITY : typing.Dict[str, typing.Tuple[str]] = {
   'racos' : ('Racos', 'C1'),
-  'rspaxos' : ('RS-Paxos', 'C3'),
-  'raft' : ('Raft', 'C2')
+  'rabia' : ('Rabia', 'C2'),
+  'raft' : ('Raft', 'C3'),
+  'paxos' : ('RS-Paxos', 'C4')
 }
 OFFSET_BASE : float = -.3
-CONFIGS : typing.List[str] = ['delay_config', 'packet_loss_config', 'disable_cpus_config']
+CONFIGS : typing.List[str] = ['delay_config', 'packet_loss_config', 'disable_cpus_config', 'cpu_limit_config']
 SMALL_UNIT_SIZES : typing.List[float] = [1.3, 6.7, 13.3]
 
-HARDCODE_LEGEND : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos')]
+HARDCODE_LEGEND : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'RS-Paxos')]
 HATCH_LEGEND : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, hatch = '..', facecolor = 'white', edgecolor = 'black', label = '.1% packet loss'), pyplot.Rectangle((0,0), 1, 1, hatch = '++', facecolor = 'white', edgecolor = 'black', label = '.5% packet loss'), pyplot.Rectangle((0,0), 1, 1, hatch = 'xx', facecolor = 'white', edgecolor = 'black', label = '1% packet loss')]
 
 DATA_SIZE_LABEL : str = 'Data Size (kB)'
@@ -36,6 +37,7 @@ POINT_FIVE_CONFIG_PATTERN : re.Pattern = re.compile(r'^0\.5(_0\.5)*$')
 ONE_CONFIG_PATTERN : re.Pattern = re.compile(r'^1(_1)*$')
 FIVE_CONFIG_PATTERN : re.Pattern = re.compile(r'^5(_5)*$')
 TEN_CONFIG_PATTERN : re.Pattern = re.compile(r'^10(_10)*$')
+HUNDRED_CONFIG_PATTERN : re.Pattern = re.compile(r'^100(_100)*$')
 
 def data_size_discrete_all_write() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-all_write.csv`'''
@@ -58,7 +60,7 @@ def data_size_discrete_all_write() -> None:
       pyplot.legend()
       pyplot.title('All write workload. Median latency (bar) and tail latencies (p95/p99).')
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-{config[0]}-{config[1]}-{config[2]}-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-{config[0]}-{config[1]}-{config[2]}-{config[3]}-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
       # plotting data size against throughput for all workload sizes
       pyplot.figure(figsize = DIMENSIONS)
@@ -69,9 +71,9 @@ def data_size_discrete_all_write() -> None:
       pyplot.legend()
       pyplot.title('All-write workload. Throughput across different data sizes, ranging from 1.3 KBs to 2 MBs.')
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-{config[0]}-{config[1]}-{config[2]}-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-{config[0]}-{config[1]}-{config[2]}-{config[3]}-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
-    delay_data : pandas.DataFrame = data.loc[(data['packet_loss_config'].apply(lambda packet_loss_config : config_matches(ZERO_CONFIG_PATTERN, packet_loss_config))) & (data['disable_cpus_config'].apply(lambda packet_loss_config : config_matches(ZERO_CONFIG_PATTERN, packet_loss_config))) & ((data['delay_config'].apply(lambda delay_config : config_matches(ONE_CONFIG_PATTERN, delay_config))) | (data['delay_config'].apply(lambda delay_config : config_matches(FIVE_CONFIG_PATTERN, delay_config))) | data['delay_config'].apply(lambda delay_config : config_matches(TEN_CONFIG_PATTERN, delay_config)))]
+    delay_data : pandas.DataFrame = data.loc[(data['packet_loss_config'].apply(lambda packet_loss_config : config_matches(ZERO_CONFIG_PATTERN, packet_loss_config))) & (data['disable_cpus_config'].apply(lambda disable_cpus_config : config_matches(ZERO_CONFIG_PATTERN, disable_cpus_config))) & (data['cpu_limit_config'].apply(lambda cpu_limit_config : config_matches(ZERO_CONFIG_PATTERN, cpu_limit_config))) & ((data['delay_config'].apply(lambda delay_config : config_matches(ONE_CONFIG_PATTERN, delay_config))) | (data['delay_config'].apply(lambda delay_config : config_matches(FIVE_CONFIG_PATTERN, delay_config))) | data['delay_config'].apply(lambda delay_config : config_matches(TEN_CONFIG_PATTERN, delay_config)))]
     if len(delay_data) > 0:
       x_axis_part : numpy.ndarray = numpy.arange(3)
 
@@ -90,7 +92,7 @@ def data_size_discrete_all_write() -> None:
       pyplot.figlegend(handles = HARDCODE_LEGEND, loc = 'upper right')
       pyplot.suptitle('All write workload. p99 tail latencies at different data sizes.')
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/delay/latency/plot-{num_nodes}-0s-variable-0s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/delay/latency/plot-{num_nodes}-0s-variable-0s-0s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
       # plotting delay against throughput for the smallest workload sizes
       pyplot.figure(figsize = DIMENSIONS)
@@ -107,9 +109,9 @@ def data_size_discrete_all_write() -> None:
       pyplot.figlegend(handles = HARDCODE_LEGEND, loc = 'upper right')
       pyplot.suptitle('All write workload. Throughputs at different data sizes.')
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/delay/throughput/plot-{num_nodes}-0s-variable-0s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/delay/throughput/plot-{num_nodes}-0s-variable-0s-0s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
-    packet_drop_data : pandas.DataFrame = data.loc[(data['delay_config'].apply(lambda delay_config : config_matches(ZERO_CONFIG_PATTERN, delay_config))) & (data['disable_cpus_config'].apply(lambda packet_loss_config : config_matches(ZERO_CONFIG_PATTERN, packet_loss_config))) & ((data['packet_loss_config'].apply(lambda delay_config : config_matches(POINT_ONE_CONFIG_PATTERN, delay_config))) | (data['packet_loss_config'].apply(lambda delay_config : config_matches(POINT_FIVE_CONFIG_PATTERN, delay_config))) | data['packet_loss_config'].apply(lambda delay_config : config_matches(ONE_CONFIG_PATTERN, delay_config)))]
+    packet_drop_data : pandas.DataFrame = data.loc[(data['delay_config'].apply(lambda delay_config : config_matches(ZERO_CONFIG_PATTERN, delay_config))) & (data['disable_cpus_config'].apply(lambda packet_loss_config : config_matches(ZERO_CONFIG_PATTERN, packet_loss_config))) & (data['cpu_limit_config'].apply(lambda cpu_limit_config : config_matches(ZERO_CONFIG_PATTERN, cpu_limit_config))) & ((data['packet_loss_config'].apply(lambda delay_config : config_matches(POINT_ONE_CONFIG_PATTERN, delay_config))) | (data['packet_loss_config'].apply(lambda delay_config : config_matches(POINT_FIVE_CONFIG_PATTERN, delay_config))) | data['packet_loss_config'].apply(lambda delay_config : config_matches(ONE_CONFIG_PATTERN, delay_config)))]
     if len(packet_drop_data) > 0:
 
       # plotting latency with different packet drop rates against each other, lower rates
@@ -127,7 +129,7 @@ def data_size_discrete_all_write() -> None:
       pyplot.title('All write workload. Median latency (bar) and tail latencies (p95/p99).')
       pyplot.legend(handles = HARDCODE_LEGEND + HATCH_LEGEND)
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-0s-0s-variable-1.3_133.3-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-0s-0s-variable-0s-1.3_133.3-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
       # plotting latency with different packet drop rates against each other, higher rates
       pyplot.figure(figsize = DIMENSIONS)
@@ -144,7 +146,7 @@ def data_size_discrete_all_write() -> None:
       pyplot.title('All write workload. Median latency (bar) and tail latencies (p95/p99).')
       pyplot.legend(handles = HARDCODE_LEGEND + HATCH_LEGEND)
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-0s-0s-variable-666.7_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-0s-0s-variable-0s-666.7_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
       # plotting throughput with different packet drop rates against each other
       pyplot.figure(figsize = DIMENSIONS)
@@ -153,9 +155,9 @@ def data_size_discrete_all_write() -> None:
       pyplot.xlabel(DATA_SIZE_LABEL)
       pyplot.ylabel(THROUGHPUT_LABEL)
       pyplot.title('All-write workload. Throughput across different data sizes, ranging from 1.3 KBs to 2 MBs.')
-      pyplot.legend(handles = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = '', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C2', linestyle = '-', label = 'Raft'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '-', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'black', linestyle = ':', marker = 'o', label = '.1% packet loss'), pyplot.Line2D([0], [0], color = 'black', linestyle = '--', marker = '^', label = '.5% packet loss'), pyplot.Line2D([0], [0], color = 'black', linestyle = '-.', marker = 's', label = '1% packet loss')])
+      pyplot.legend(handles = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = '', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C2', linestyle = '-', label = 'Rabia'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '-', label = 'Raft'), pyplot.Line2D([0], [0], color = 'C4', linestyle = '-', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'black', linestyle = ':', marker = 'o', label = '.1% packet loss'), pyplot.Line2D([0], [0], color = 'black', linestyle = '--', marker = '^', label = '.5% packet loss'), pyplot.Line2D([0], [0], color = 'black', linestyle = '-.', marker = 's', label = '1% packet loss')])
       pyplot.tight_layout()
-      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-0s-0s-variable-1.3_133.3-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+      pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-0s-0s-variable-0s-1.3_133.3-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
 # def threads_discrete_half_write_half_read() -> None:
 #   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''

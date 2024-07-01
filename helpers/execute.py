@@ -1,7 +1,7 @@
 '''this file houses functions for executing terminal commands on remote servers'''
 
-import typing
 import subprocess
+import typing
 from time import sleep
 
 SSH_ARGS : typing.List[str] = ['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no']

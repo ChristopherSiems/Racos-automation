@@ -2,8 +2,8 @@
 
 import typing
 
-from helpers.reset_nodes import reset_nodes, reset_delay_packets_cpus
 from helpers.configure_tests import configure_tests
+from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 node_addresses : typing.List[str] = configure_tests()[1]
 

@@ -1,7 +1,7 @@
 '''this file houses functions for encoding things into string representation'''
 
-import typing
 import re
+import typing
 
 POINT_ONE_CONFIG_PATTERN : re.Pattern = re.compile(r'^0\.1(_0\.1)*$')
 POINT_FIVE_CONFIG_PATTERN : re.Pattern = re.compile(r'^0\.5(_0\.5)*$')
