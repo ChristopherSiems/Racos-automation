@@ -6,11 +6,11 @@ import re
 import typing
 from time import time
 
+from plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
 from helpers.configure_tests import configure_tests
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
-from helpers.plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
