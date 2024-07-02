@@ -69,7 +69,7 @@ for test in test_configs:
       for cpu_num in range(0, 32):
         cpu_freq_cmd : str = f'bash -c "echo {cpu_freq * 1000000} > /sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq"'
         bash_print(cpu_freq_cmd)
-        remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = 0)
+        remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = .01)
 
     for alg in ALG_COUNTS:
       equal_print(alg, 3)
