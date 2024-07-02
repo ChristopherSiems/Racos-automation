@@ -10,7 +10,7 @@ from helpers.configure_tests import configure_tests
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
-from helpers.plotting import data_size_discrete_all_write
+from helpers.plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
@@ -27,6 +27,7 @@ P95_PATTERN : re.Pattern = re.compile(r'95th\(us\): \d+')
 P99_PATTERN : re.Pattern = re.compile(r'99th\(us\): \d+')
 R_PATTERN : re.Pattern = re.compile(r'\d+.\d+')
 N_PATTERN : re.Pattern = re.compile(r'\d+')
+ZERO_CONFIG_PATTERN : re.Pattern = re.compile(r'^0(_0)*$')
 
 LIMIT_CMD : str = 'cpulimit -e etcd -l {cpu_limit}'
 PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
@@ -52,24 +53,28 @@ for test in test_configs:
     equal_print(f'{delay_config_encoded} {packet_drop_config_encoded} {disable_cpus_config_encoded} {limit_cpus_config_encoded} {cpu_freq_config_encoded}', 2)
     reset_delay_packets_cpus(node_addresses)
 
-    # adds network delay and packet loss to the nodes
     for node_address, node_delay, packet_drop_percent, disable_cpus, cpu_freq in zip(node_addresses, delay_config, packet_drop_config, disable_cpus_config, cpu_freq_config):
       equal_print(node_address, 3)
-      config_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms loss {packet_drop_percent}%'
-      bash_print(config_cmd)
-      remote_execute_async(node_address, config_cmd)
+
+      # adds network delay and packet loss to the nodes
+      if node_delay or packet_drop_percent:
+        config_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {node_delay}ms loss {packet_drop_percent}%'
+        bash_print(config_cmd)
+        remote_execute_async(node_address, config_cmd)
 
       # disables the number of cpu cores inputted
-      for cpu_num in range(31, 31 - disable_cpus, -1):
-        disable_cmd : str = f'bash -c "echo 0 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
-        bash_print(disable_cmd)
-        remote_execute_async(node_address, disable_cmd)
+      if disable_cpus:
+        for cpu_num in range(31, 31 - disable_cpus, -1):
+          disable_cmd : str = f'bash -c "echo 0 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
+          bash_print(disable_cmd)
+          remote_execute_async(node_address, disable_cmd)
 
       # sets the upper limit for cpu frequency
-      for cpu_num in range(0, 32):
-        cpu_freq_cmd : str = f'bash -c "echo {cpu_freq * 1000000} > /sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq"'
-        bash_print(cpu_freq_cmd)
-        remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = .01)
+      if cpu_freq != 3.2:
+        for cpu_num in range(0, 32):
+          cpu_freq_cmd : str = f'bash -c "echo {cpu_freq * 1000000} > /sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq"'
+          bash_print(cpu_freq_cmd)
+          remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = .01)
 
     for alg in ALG_COUNTS:
       equal_print(alg, 3)
@@ -84,13 +89,15 @@ for test in test_configs:
           if str(node_count - 1) in node_address:
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
-            bash_print(limit_cmd)
-            remote_execute_async(node_address, limit_cmd)
+            if cpu_limit != 100:
+              bash_print(limit_cmd)
+              remote_execute_async(node_address, limit_cmd)
             break
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd)
-          bash_print(limit_cmd)
-          remote_execute_async(node_address, limit_cmd)
+          if cpu_limit != 100:
+            bash_print(limit_cmd)
+            remote_execute_async(node_address, limit_cmd)
 
         equal_print(client_address, 4)
 
@@ -140,6 +147,7 @@ for test in test_configs:
 
   # generates the plots
   if curr_test == 'data_size-discrete-all_write': data_size_discrete_all_write()
+  if curr_test == 'threads-discrete-half_write_half_read' : threads_discrete_half_write_half_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots'])
