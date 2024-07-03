@@ -130,9 +130,9 @@ for test in test_configs:
         output_print(profiling_output)
 
         # records the data from the test
-        output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
-        with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-          data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{delay_config_encoded},{packet_drop_config_encoded},{disable_cpus_config_encoded},{limit_cpus_config_encoded},{cpu_freq_config_encoded}\n')
+        # output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
+        # with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
+        #   data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{delay_config_encoded},{packet_drop_config_encoded},{disable_cpus_config_encoded},{limit_cpus_config_encoded},{cpu_freq_config_encoded}\n')
 
 reset_nodes(nodes_exclusive)
 reset_delay_packets_cpus(node_addresses)
