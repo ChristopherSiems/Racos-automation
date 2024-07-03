@@ -17,14 +17,14 @@ def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_time
   sleep(disconnect_timeout)
   ssh_process.stdout.close()
 
-def remote_execute_sync(remote_address : str, remote_cmd : str) -> None:
+def remote_execute_sync(remote_address : str, remote_cmd : str) -> str:
   '''
   performs the inputted command on the node associated with the inputted ip address
   :param remote_address: the ip address of the node to perform the command on
   :param remote_cmd: the command to be performed
   :returns: the stdout and stderr of the command in the from of a string
   '''
-  subprocess.run(SSH_ARGS + [remote_address, remote_cmd], universal_newlines = True, check = True)
+  return subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr =  subprocess.PIPE, universal_newlines = True, check = True).stdout
 
 def git_interact(cmd : typing.List[str]) -> None:
   '''
