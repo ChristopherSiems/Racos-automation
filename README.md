@@ -10,6 +10,7 @@ _all dependencies come preinstalled on the CloudLab profile_
   - __Pandas 2.2.2__: install with `pip install pandas==2.2.2`
   - __Matplotlib 3.9.0__: install with `pip install matplotlib==3.9.0`
 - __GitHub CLI 2.4.0+dfsg1-2__: install with `sudo apt install gh=2.4.0+dfsg1-2`$^1$
+- __CPUlimit__: install with `sudo apt install cpulimit`$^1$
 
 $^1$ for Debian based Linux distros\
 $^2$ configuring Python 3.10 to be run with `python` is recommended and will be how this version of Python is called within this document, this comes preconfigured on the CloudLab profile
