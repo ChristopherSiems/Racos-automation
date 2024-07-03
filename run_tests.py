@@ -36,7 +36,7 @@ PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etc
 # test configurations
 node_count : int
 node_addresses : typing.List[str]
-test_configs : typing.List[typing.Tuple[typing.Union[str, typing.Dict[int, str, typing.Union[int, str, typing.List[int], typing.List[typing.List[float]]]]]]]
+test_configs : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[typing.List[float]]]]]]]
 node_count, node_addresses, test_configs = configure_tests()
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 client_address : str = node_addresses[-1]
