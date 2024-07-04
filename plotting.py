@@ -161,19 +161,20 @@ def data_size_discrete_all_write() -> None:
 
 def threads_discrete_half_write_half_read() -> None:
   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
-  data : pandas.DataFrame = pandas.read_csv('data/data_size-discrete-half_write_half_read.csv')
+  data : pandas.DataFrame = pandas.read_csv('data/threads-discrete-half_write_half_read.csv')
   for num_nodes, group_outer in data.groupby('num_nodes'):
     for config, group_med in group_outer.groupby(CONFIGS):
 
       # plotting throughput against p99 latency
       pyplot.figure(figsize = DIMENSIONS)
       for alg, group_inner in group_med.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
-        pyplot.plot((group_inner['ops'] * 10666.4), group_inner['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+        pyplot.plot(group_inner['ops'] * 10.666792, group_inner['p99_latency'] / 1000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
       pyplot.xlabel(THROUGHPUT_LABEL)
       pyplot.ylabel('P99 latency (ms)')
       pyplot.title('Half write and half read workload. P99 latencies at different throughputs.')
+      pyplot.legend()
       pyplot.tight_layout()
       pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/latency/plot-{num_nodes}-{config[0]}-{config[1]}-{config[2]}-{config[3]}-{config[4]}-1_50-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
 if __name__ == '__main__':
-  data_size_discrete_all_write()
+  threads_discrete_half_write_half_read()
