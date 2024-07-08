@@ -7,9 +7,8 @@ import typing
 from time import time
 
 from plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
-from helpers.configure_tests import configure_tests
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
-from helpers.encoding import config_to_str
+from helpers.encoding import configure_tests, config_to_str
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
@@ -29,8 +28,6 @@ R_PATTERN : re.Pattern = re.compile(r'\d+.\d+')
 N_PATTERN : re.Pattern = re.compile(r'\d+')
 ZERO_CONFIG_PATTERN : re.Pattern = re.compile(r'^0(_0)*$')
 
-LIMIT_CMD : str = 'cpulimit -e etcd -l {cpu_limit}'
-PROFILE_CMD : str = 'sh /local/go-ycsb/workloads/profile.sh'
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 
 # test configurations
@@ -85,7 +82,7 @@ for test in test_configs:
         # runs the current algorithm with input parameters and limits cpu usage
         for node_address, cpu_limit in zip(nodes_exclusive, limit_cpus_config):
           equal_print(node_address, 4)
-          limit_cmd : str = LIMIT_CMD.format(cpu_limit = cpu_limit)
+          limit_cmd : str = f'cpulimit -e etcd -l {cpu_limit}'
           if str(node_count - 1) in node_address:
             bash_print(run_cmd)
             remote_execute_async(node_address, run_cmd, 60)
@@ -125,8 +122,8 @@ for test in test_configs:
         remote_execute_async(client_address, profile_setup_cmd)
 
         # run the current test
-        bash_print(PROFILE_CMD)
-        profiling_output : str = remote_execute_sync(client_address, PROFILE_CMD)
+        bash_print('sh /local/go-ycsb/workloads/profile.sh')
+        profiling_output : str = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
         output_print(profiling_output)
 
         # records the data from the test

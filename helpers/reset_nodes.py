@@ -6,9 +6,6 @@ from helpers.custom_prints import bash_print, equal_print
 from helpers.execute import remote_execute_async
 
 CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node_num}.etcd'
-KILL_CPULIMIT : str = 'killall cpulimit'
-KILL_ETCD : str = 'killall etcd'
-REMOVE_DELAY_PACKET_DROP : str = 'tc qdisc del dev enp4s0f1 root'
 
 def reset_nodes(node_addresses : typing.List[str]) -> None:
   '''
@@ -17,10 +14,10 @@ def reset_nodes(node_addresses : typing.List[str]) -> None:
   '''
   for node_address in node_addresses:
     equal_print(node_address, 4)
-    bash_print(KILL_CPULIMIT)
-    remote_execute_async(node_address, KILL_CPULIMIT)
-    bash_print(KILL_ETCD)
-    remote_execute_async(node_address, KILL_ETCD)
+    bash_print('killall cpulimit')
+    remote_execute_async(node_address, 'killall cpulimit')
+    bash_print('killall etcd')
+    remote_execute_async(node_address, 'killall etcd')
     bash_print(CLEAR_DB.format(node_num = node_address[-1]))
     for node_num in range(1, len(node_addresses) + 1):
       remote_execute_async(node_address, CLEAR_DB.format(node_num = str(node_num)))
@@ -32,8 +29,8 @@ def reset_delay_packets_cpus(node_addresses : typing.List[str]) -> None:
   '''
   for node_address in node_addresses:
     equal_print(node_address, 4)
-    bash_print(REMOVE_DELAY_PACKET_DROP)
-    remote_execute_async(node_address, REMOVE_DELAY_PACKET_DROP)
+    bash_print('tc qdisc del dev enp4s0f1 root')
+    remote_execute_async(node_address, 'tc qdisc del dev enp4s0f1 root')
     for cpu_num in range(32):
       disable_cmd : str = f'bash -c "echo 1 > /sys/devices/system/cpu/cpu{cpu_num}/online"'
       bash_print(disable_cmd)
