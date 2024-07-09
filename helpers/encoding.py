@@ -14,6 +14,7 @@ DEFAULT_PATTERNS : typing.Dict[str, re.Pattern] = {
   'cpu_freq_config' : r'^3\.2(_3\.2)*$'
 }
 
+ZERO_CONFIG_PATTERN : re.Pattern = re.compile(r'^0(_0)*$')
 POINT_ONE_CONFIG_PATTERN : re.Pattern = re.compile(r'^0\.1(_0\.1)*$')
 POINT_FIVE_CONFIG_PATTERN : re.Pattern = re.compile(r'^0\.5(_0\.5)*$')
 ONE_CONFIG_PATTERN : re.Pattern = re.compile(r'^1(_1)*$')
@@ -55,6 +56,7 @@ def config_to_hatch(config : str, style : str) -> str:
   :returns: the hatch pattern for the inputted config
   '''
   if style == 'delay':
+    if re.match(ZERO_CONFIG_PATTERN, config): return ''
     if re.match(ONE_CONFIG_PATTERN, config): return '..'
     if re.match(FIVE_CONFIG_PATTERN, config): return '++'
     if re.match(TEN_CONFIG_PATTERN, config): return 'xx'
@@ -63,37 +65,25 @@ def config_to_hatch(config : str, style : str) -> str:
     if re.match(POINT_FIVE_CONFIG_PATTERN, config): return '++'
     if re.match(ONE_CONFIG_PATTERN, config): return 'xx'
 
-def config_to_line_style(config : str, style : str) -> str:
+def config_to_line_style(config : str) -> str:
   '''
   returns the line style pattern for the inputted config
   :param config: the config string of values making up the config
-  :param style: selects the mapping of configs to line styles
   :returns: the line style pattern for the inputted config
   '''
-  if style == 'delay':
-    if re.match(ONE_CONFIG_PATTERN, config): return ':'
-    if re.match(FIVE_CONFIG_PATTERN, config): return '--'
-    if re.match(TEN_CONFIG_PATTERN, config): return '-.'
-  if style == 'packet_loss':
-    if re.match(POINT_ONE_CONFIG_PATTERN, config): return ':'
-    if re.match(POINT_FIVE_CONFIG_PATTERN, config): return '--'
-    if re.match(ONE_CONFIG_PATTERN, config): return '-.'
+  if re.match(POINT_ONE_CONFIG_PATTERN, config): return ':'
+  if re.match(POINT_FIVE_CONFIG_PATTERN, config): return '--'
+  if re.match(ONE_CONFIG_PATTERN, config): return '-.'
 
-def config_to_marker(config : str, style : str) -> str:
+def config_to_marker(config : str) -> str:
   '''
   returns the marker pattern for the inputted config
   :param config: the config string of values making up the config
-  :param style: selects the mapping of configs to markers
   :returns: the marker pattern for the inputted config
   '''
-  if style == 'delay':
-    if re.match(ONE_CONFIG_PATTERN, config): return 'o'
-    if re.match(FIVE_CONFIG_PATTERN, config): return '^'
-    if re.match(TEN_CONFIG_PATTERN, config): return 's'
-  if style == 'packet_loss':
-    if re.match(POINT_ONE_CONFIG_PATTERN, config): return 'o'
-    if re.match(POINT_FIVE_CONFIG_PATTERN, config): return '^'
-    if re.match(ONE_CONFIG_PATTERN, config): return 's'
+  if re.match(POINT_ONE_CONFIG_PATTERN, config): return 'o'
+  if re.match(POINT_FIVE_CONFIG_PATTERN, config): return '^'
+  if re.match(ONE_CONFIG_PATTERN, config): return 's'
 
 def config_to_offset(config : str, style : str) -> float:
   '''
@@ -103,13 +93,14 @@ def config_to_offset(config : str, style : str) -> float:
   :returns: the offset value for the inputted config
   '''
   if style == 'delay':
-    if re.match(ONE_CONFIG_PATTERN, config): return -.32
-    if re.match(FIVE_CONFIG_PATTERN, config): return 0
-    if re.match(TEN_CONFIG_PATTERN, config): return .32
+    if re.match(ZERO_CONFIG_PATTERN, config): return -.36
+    if re.match(ONE_CONFIG_PATTERN, config): return -.12
+    if re.match(FIVE_CONFIG_PATTERN, config): return .12
+    if re.match(TEN_CONFIG_PATTERN, config): return .36
   if style == 'packet_loss':
-    if re.match(POINT_ONE_CONFIG_PATTERN, config): return -.45
+    if re.match(POINT_ONE_CONFIG_PATTERN, config): return -.32
     if re.match(POINT_FIVE_CONFIG_PATTERN, config): return 0
-    if re.match(ONE_CONFIG_PATTERN, config): return .45
+    if re.match(ONE_CONFIG_PATTERN, config): return .32
 
 def config_to_str(config : typing.List[float]) -> str:
   '''

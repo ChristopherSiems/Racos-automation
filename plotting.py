@@ -12,10 +12,10 @@ from helpers.encoding import config_to_hatch, config_to_line_style, config_to_ma
 CONFIGS : typing.List[str] = ['delay_config', 'packet_loss_config', 'disable_cpus_config', 'cpu_limit_config', 'cpu_freq_config']
 DIMENSIONS : typing.Tuple[int] = 9, 3
 ALG_VANITY : typing.Dict[str, typing.Tuple[typing.Union[str, float]]] = {
-  'racos' : ('Racos', 'C1', -.3, -.12),
-  'rabia' : ('Rabia', 'C2', -.1, -.04),
-  'raft' : ('Raft', 'C3', .1, .04),
-  'paxos' : ('RS-Paxos', 'C4', .3, .12)
+  'racos' : ('Racos', 'C1', -.3, -.09),
+  'rabia' : ('Rabia', 'C2', -.1, -.03),
+  'raft' : ('Raft', 'C3', .1, .03),
+  'paxos' : ('RS-Paxos', 'C4', .3, .09)
 }
 BAR_LEGEND : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'RS-Paxos')]
 LINE_LEGEND : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = '', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C2', linestyle = '-', label = 'Rabia'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '-', label = 'Raft'), pyplot.Line2D([0], [0], color = 'C4', linestyle = '-', label = 'RS-Paxos')]
@@ -47,7 +47,7 @@ def data_size_discrete_all_write() -> None:
       # plotting data size against throughput for all workload sizes
       pyplot.figure(figsize = DIMENSIONS)
       for alg, group_inner in group_med.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-        pyplot.plot(group_inner['unit_size'], group_inner['ops'] * group_inner['unit_size'] / 125000, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+        pyplot.plot(group_inner['unit_size'], group_inner['ops'] * group_inner['unit_size'] / 125, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
       pyplot.xlabel('Data size (kB)')
       pyplot.ylabel('Throughput (Mbps)')
       pyplot.legend(handles = LINE_LEGEND, loc = 'upper left')
@@ -93,7 +93,7 @@ def data_size_discrete_all_write() -> None:
       # plotting throughput with different packet drop rates against each other
       pyplot.figure(figsize = DIMENSIONS)
       for config, group in packet_drop_data.groupby(configs):
-        pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125000, marker = config_to_marker(config[0], 'packet_loss'), linestyle = config_to_line_style(config[0], 'packet_loss'), color = ALG_VANITY[config[1]][1])
+        pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = config_to_marker(config[0]), linestyle = config_to_line_style(config[0]), color = ALG_VANITY[config[1]][1])
       pyplot.xlabel('Data size (kB)')
       pyplot.ylabel('Throughput (Mbps)')
       pyplot.title('All-write workload. Throughput across different data sizes, ranging from 1.3 KBs to 2 MBs.')
@@ -101,21 +101,22 @@ def data_size_discrete_all_write() -> None:
       pyplot.tight_layout()
       pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-0s-variable-0s-100s-3.2s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
-    delay_data : pandas.DataFrame = prune_dataframe(data, 'delay_config', [r'^1(_1)*$', r'^5(_5)*$', r'^10(_10)*$'])
+    delay_data : pandas.DataFrame = prune_dataframe(data, 'delay_config', [r'^0(_0)*$', r'^1(_1)*$', r'^5(_5)*$', r'^10(_10)*$'])
     if len(delay_data) > 0:
       configs : typing.List[str] = ['delay_config', 'alg']
+      delay_legend : typing.List[pyplot.Rectangle] = BAR_LEGEND + [pyplot.Rectangle((0,0), 1, 1, hatch = '', facecolor = 'white', edgecolor = 'black', label = '0ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = '..', facecolor = 'white', edgecolor = 'black', label = '1ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = '++', facecolor = 'white', edgecolor = 'black', label = '5ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = 'xx', facecolor = 'white', edgecolor = 'black', label = '10ms of delay')]
       x_axis_part : numpy.ndarray = numpy.arange(3)
 
       # plotting delay against p99 latency for the smallest workload sizes
       pyplot.figure(figsize = DIMENSIONS)
       x_axis_part : numpy.ndarray = numpy.arange(3)
       for config, group in delay_data.loc[delay_data['unit_size'].isin([1.3, 6.7, 13.3])].groupby(configs):
-        pyplot.bar(x_axis_part + config_to_offset(config[0], 'delay') + ALG_VANITY[config[1]][3], group['p99_latency'] / 1000, .08, hatch = config_to_hatch(config[0], 'delay'), color = ALG_VANITY[config[1]][1])
+        pyplot.bar(x_axis_part + config_to_offset(config[0], 'delay') + ALG_VANITY[config[1]][3], group['p99_latency'] / 1000, .06, hatch = config_to_hatch(config[0], 'delay'), color = ALG_VANITY[config[1]][1])
       pyplot.xticks(x_axis_part, ['1.3', '6.7', '13.3'])
       pyplot.xlabel('Data size (kB)')
-      pyplot.ylabel('Latency (ms)')
+      pyplot.ylabel('P99 latency (ms)')
       pyplot.title('All write workload. P99 latencies at different data sizes.')
-      pyplot.legend(handles = BAR_LEGEND + [pyplot.Rectangle((0,0), 1, 1, hatch = '..', facecolor = 'white', edgecolor = 'black', label = '1ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = '++', facecolor = 'white', edgecolor = 'black', label = '5ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = 'xx', facecolor = 'white', edgecolor = 'black', label = '10ms of delay')], loc = 'upper left')
+      pyplot.legend(handles = delay_legend, loc = 'upper left')
       pyplot.tight_layout()
       pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/latency/plot-{num_nodes}-variable-0s-0s-100s-3.2s-1.3_13.3-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
@@ -123,12 +124,12 @@ def data_size_discrete_all_write() -> None:
       pyplot.figure(figsize = DIMENSIONS)
       x_axis_part : numpy.ndarray = numpy.arange(3)
       for config, group in delay_data.loc[delay_data['unit_size'].isin([1.3, 6.7, 13.3])].groupby(configs):
-        pyplot.bar(x_axis_part + config_to_offset(config[0], 'delay') + ALG_VANITY[config[1]][3], group['ops'] * group['unit_size'] / 125000, .08, hatch = config_to_hatch(config[0], 'delay'), color = ALG_VANITY[config[1]][1])
+        pyplot.bar(x_axis_part + config_to_offset(config[0], 'delay') + ALG_VANITY[config[1]][3], group['ops'] * group['unit_size'] / 125, .06, hatch = config_to_hatch(config[0], 'delay'), color = ALG_VANITY[config[1]][1])
       pyplot.xticks(x_axis_part, ['1.3', '6.7', '13.3'])
       pyplot.xlabel('Data size (kB)')
       pyplot.ylabel('Throughput (Mbps)')
       pyplot.title('All write workload. Throughputs at different data sizes.')
-      pyplot.legend(handles = BAR_LEGEND + [pyplot.Rectangle((0,0), 1, 1, hatch = '..', facecolor = 'white', edgecolor = 'black', label = '1ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = '++', facecolor = 'white', edgecolor = 'black', label = '5ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = 'xx', facecolor = 'white', edgecolor = 'black', label = '10ms of delay')], loc = 'upper left')
+      pyplot.legend(handles = delay_legend, loc = 'upper left')
       pyplot.tight_layout()
       pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-variable-0s-0s-100s-3.2s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
