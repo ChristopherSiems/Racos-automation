@@ -63,7 +63,7 @@ def data_size_discrete_all_write() -> None:
       # plotting latency with different packet drop rates against each other, lower rates
       pyplot.figure(figsize = DIMENSIONS)
       x_axis_five : numpy.ndarray = numpy.arange(5)
-      for config, group in packet_drop_data.loc[packet_drop_data['unit_size'].isin([1.3, 6.7, 13.3, 66.7, 133.3])].groupby(configs):
+      for config, group in packet_drop_data.loc[packet_drop_data['unit_size'].isin([1.3, 6.7, 13.3, 66.7, 133.3])].groupby(configs)[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby(configs):
         pyplot.bar(x_axis_five + config_to_offset(config[0], 'packet loss') + ALG_VANITY[config[1]][3], group['med_latency'] / 1000, .08, hatch = config_to_hatch(config[0], 'packet_loss'), color = ALG_VANITY[config[1]][1])
         pyplot.plot(x_axis_five + config_to_offset(config[0], 'packet loss') + ALG_VANITY[config[1]][3], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[config[1]][1])
         pyplot.plot(x_axis_five + config_to_offset(config[0], 'packet loss') + ALG_VANITY[config[1]][3], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[config[1]][1])
@@ -78,7 +78,7 @@ def data_size_discrete_all_write() -> None:
       # plotting latency with different packet drop rates against each other, higher rates
       pyplot.figure(figsize = DIMENSIONS)
       x_axis_three = numpy.arange(3)
-      for config, group in packet_drop_data.loc[packet_drop_data['unit_size'].isin([666.7, 1333.3, 2000.0])].groupby(configs):
+      for config, group in packet_drop_data.loc[packet_drop_data['unit_size'].isin([666.7, 1333.3, 2000.0])].groupby(configs)[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby(configs):
         pyplot.bar(x_axis_three + config_to_offset(config[0], 'packet loss') + ALG_VANITY[config[1]][3], group['med_latency'] / 1000, .08, hatch = config_to_hatch(config[1], 'packet_loss'), color = ALG_VANITY[config[2]][1])
         pyplot.plot(x_axis_three + config_to_offset(config[0], 'packet loss') + ALG_VANITY[config[1]][3], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[config[2]][1])
         pyplot.plot(x_axis_three + config_to_offset(config[0], 'packet loss') + ALG_VANITY[config[1]][3], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[config[2]][1])
@@ -92,7 +92,7 @@ def data_size_discrete_all_write() -> None:
 
       # plotting throughput with different packet drop rates against each other
       pyplot.figure(figsize = DIMENSIONS)
-      for config, group in packet_drop_data.groupby(configs):
+      for config, group in packet_drop_data.groupby(configs + ['unit_size'])['ops'].mean().reset_index().groupby(configs):
         pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = config_to_marker(config[0]), linestyle = config_to_line_style(config[0]), color = ALG_VANITY[config[1]][1])
       pyplot.xlabel('Data size (kB)')
       pyplot.ylabel('Throughput (Mbps)')
@@ -104,13 +104,14 @@ def data_size_discrete_all_write() -> None:
     delay_data : pandas.DataFrame = prune_dataframe(data, 'delay_config', [r'^0(_0)*$', r'^1(_1)*$', r'^5(_5)*$', r'^10(_10)*$'])
     if len(delay_data) > 0:
       configs : typing.List[str] = ['delay_config', 'alg']
+      configs_data_size : typing.List[str] = configs + ['unit_size']
       delay_legend : typing.List[pyplot.Rectangle] = BAR_LEGEND + [pyplot.Rectangle((0,0), 1, 1, hatch = '', facecolor = 'white', edgecolor = 'black', label = '0ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = '..', facecolor = 'white', edgecolor = 'black', label = '1ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = '++', facecolor = 'white', edgecolor = 'black', label = '5ms of delay'), pyplot.Rectangle((0,0), 1, 1, hatch = 'xx', facecolor = 'white', edgecolor = 'black', label = '10ms of delay')]
       x_axis_part : numpy.ndarray = numpy.arange(3)
 
       # plotting delay against p99 latency for the smallest workload sizes
       pyplot.figure(figsize = DIMENSIONS)
       x_axis_part : numpy.ndarray = numpy.arange(3)
-      for config, group in delay_data.loc[delay_data['unit_size'].isin([1.3, 6.7, 13.3])].groupby(configs):
+      for config, group in delay_data.loc[delay_data['unit_size'].isin([1.3, 6.7, 13.3])].groupby(configs_data_size)['p99_latency'].mean().reset_index().groupby(configs):
         pyplot.bar(x_axis_part + config_to_offset(config[0], 'delay') + ALG_VANITY[config[1]][3], group['p99_latency'] / 1000, .06, hatch = config_to_hatch(config[0], 'delay'), color = ALG_VANITY[config[1]][1])
       pyplot.xticks(x_axis_part, ['1.3', '6.7', '13.3'])
       pyplot.xlabel('Data size (kB)')
@@ -123,7 +124,7 @@ def data_size_discrete_all_write() -> None:
       # plotting delay against throughput for the smallest workload sizes
       pyplot.figure(figsize = DIMENSIONS)
       x_axis_part : numpy.ndarray = numpy.arange(3)
-      for config, group in delay_data.loc[delay_data['unit_size'].isin([1.3, 6.7, 13.3])].groupby(configs):
+      for config, group in delay_data.loc[delay_data['unit_size'].isin([1.3, 6.7, 13.3])].groupby(configs_data_size)['ops'].mean().reset_index().groupby(configs):
         pyplot.bar(x_axis_part + config_to_offset(config[0], 'delay') + ALG_VANITY[config[1]][3], group['ops'] * group['unit_size'] / 125, .06, hatch = config_to_hatch(config[0], 'delay'), color = ALG_VANITY[config[1]][1])
       pyplot.xticks(x_axis_part, ['1.3', '6.7', '13.3'])
       pyplot.xlabel('Data size (kB)')
