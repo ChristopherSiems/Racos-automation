@@ -70,7 +70,7 @@ CPU freq: {cpu_freqs}''')
 
     # set up the run.sh script
     if node_ip != node_ips_list[-1]:
-      run_setup_cmd : str = SCRIPT_LOADER.format(script = f'algorithm=\$1\nfailures=\$2\nsegments=\$3\ntrans_read=\$4\ncd /local/etcd-deployment/output || exit 1java -jar deployment.jar --directory=/local/etcd --algorithm=\\"\$algorithm\\" --ips=\\"{node_ips_str}\\" --failures=\\"\$failures\\" --segments=\\"\$segments\\" --trans_read=\\"\$trans_read\\"', path = '/local/run.sh')
+      run_setup_cmd : str = SCRIPT_LOADER.format(script = f'algorithm=\$1\nfailures=\$2\nsegments=\$3\ntrans_read=\$4\ncd /local/etcd-deployment/output || exit 1\njava -jar deployment.jar --directory=/local/etcd --algorithm=\\"\$algorithm\\" --ips=\\"{node_ips_str}\\" --failures=\\"\$failures\\" --segments=\\"\$segments\\" --trans_read=\\"\$trans_read\\"', path = '/local/run.sh')
       bash_print(run_setup_cmd)
       remote_execute_async(node_ip, run_setup_cmd)
 
