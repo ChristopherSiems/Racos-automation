@@ -1,6 +1,7 @@
 {
   "node_count" : 0,
   "tests" : [""],
+  "algs" : ["racos", "rabia", "raft", "paxos"],
   "node_delays" : [
     [
       [0, 0, 0, 0, 0, 0]

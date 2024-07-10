@@ -14,9 +14,9 @@ from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
   'racos' : '2700',
-  'paxos' : '1900',
   'rabia' : '1900',
   'raft' : '900',
+  'paxos' : '1900'
 }
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
@@ -34,7 +34,8 @@ PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etc
 node_count : int
 node_addresses : typing.List[str]
 test_configs : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[typing.List[float]]]]]]]
-node_count, node_addresses, test_configs = configure_tests()
+alg_list : typing.List[str]
+node_count, node_addresses, test_configs, alg_list = configure_tests()
 nodes_exclusive : typing.List[str] = node_addresses[:-1]
 client_address : str = node_addresses[-1]
 
@@ -71,11 +72,11 @@ for test in test_configs:
         for cpu_num in range(0, 32):
           cpu_freq_cmd : str = f'bash -c "echo {cpu_freq * 1000000} > /sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq"'
           bash_print(cpu_freq_cmd)
-          remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = .01)
+          remote_execute_async(node_address, cpu_freq_cmd)
 
-    for alg in ALG_COUNTS:
+    for alg in alg_list:
       equal_print(alg, 3)
-      run_cmd : str = f'sh /local/run.sh {alg} {test_data["failures"]} {test_data["segments"]} {test_data["transaction_read"]}'
+      run_cmd : str = f'sh /local/run.sh {alg} {test_data["failures"]} {test_data["segments"]} false'
       for variable, unit_size in zip(test_data['variable'], test_data['unit_size']):
         reset_nodes(nodes_exclusive)
 
