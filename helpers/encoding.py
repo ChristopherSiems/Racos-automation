@@ -37,7 +37,7 @@ def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing
       with open(f'tests/{curr_test}.json', 'r', encoding = 'utf-8') as test_config:
         test_config_data : typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]] = json.load(test_config)
         test_configs.append((curr_test, test_config_data, delay_configs, packet_drop_configs, disable_cpus_config, limit_cpus_config, cpu_freq))
-    return node_count, node_addresses, test_configs, auto_config_data['alg_list']
+    return node_count, node_addresses, test_configs, auto_config_data['algs']
 
 def config_matches(pattern : re.Pattern, config : str) -> bool:
   '''
