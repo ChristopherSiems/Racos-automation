@@ -22,7 +22,7 @@ def reset_nodes(num_nodes : int) -> None:
     remote_execute_async(node_address, kill_cpulimit)
     kill_etcd : str = KILL_PROCESS.format(process = 'etcd')
     bash_print(kill_etcd)
-    remote_execute_async(kill_etcd)
+    remote_execute_async(node_address, kill_etcd)
     bash_print(CLEAR_DB.format(node_num = node_address[-1]))
     for node_num in range(1, len(node_addresses) + 1):
       remote_execute_async(node_address, CLEAR_DB.format(node_num = str(node_num)))
