@@ -1,5 +1,8 @@
 [
   {
+    "total_nodes" : 0
+  },
+  {
     "node_count" : 0,
     "test" : "",
     "algs" : ["racos", "tracos", "rabia", "raft", "paxos"],

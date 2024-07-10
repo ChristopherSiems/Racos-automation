@@ -3,7 +3,6 @@
 import json
 import os
 import re
-from sys import argv
 import typing
 from time import time
 
@@ -34,12 +33,13 @@ ECHO_EXECUTE : str = BASH_EXECUTE.format(cmd = 'echo {string} > {path}')
 SCRIPT_LOADER : str = ECHO_EXECUTE.format(string = '-e "{script}"', path = '{path}')
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 
-total_nodes : int =  argv[1]
-
 # getting the test setup
+total_nodes : int
 test_configs : typing.List[typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[float], typing.List[str]]]] = []
 with open('auto_config.json', 'r', encoding = 'utf-8') as auto_config:
-  test_configs = json.load(auto_config)
+  auto_config_contents = json.load(auto_config)
+  total_nodes = auto_config_contents[0]['total_nodes']
+  test_configs = auto_config_contents[1:]
 
 for curr_test in test_configs:
 
@@ -56,13 +56,13 @@ for curr_test in test_configs:
   node_ips_str : str = ','.join(worker_ips)
 
   output_print(f'''test: {test}
-  nodes : {node_count}
-  algs: {algs}
-  delay: {delays}
-  packet loss: {packet_loss_percents}
-  disabled CPUs: {disable_cpus}
-  CPU limit: {cpu_limits}
-  CPU freq: {cpu_freqs}''')
+nodes : {node_count}
+algs: {algs}
+delay: {delays}
+packet loss: {packet_loss_percents}
+disabled CPUs: {disable_cpus}
+CPU limit: {cpu_limits}
+CPU freq: {cpu_freqs}''')
 
   for node_ip, cpu_freq, disable_cpu, delay, packet_loss_percent in zip(node_ips_list, cpu_freqs, disable_cpus,delays, packet_loss_percents):
     reset_delay_packets_cpus(total_nodes)

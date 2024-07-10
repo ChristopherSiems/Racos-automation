@@ -98,7 +98,7 @@ def ip_lister(node_count : int) -> typing.List[str]:
   :param node_count: the number of nodes
   :returns: a list of ips of the nodes
   '''
-  return [f'10.10.1.{str(node_num)}' for node_num in range(1, node_count + 1)]
+  return [f'10.10.1.{node_num}' for node_num in range(1, node_count + 1)]
 
 def matches_default(col : str, config: str) -> bool:
   '''
