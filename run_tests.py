@@ -14,6 +14,7 @@ from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
   'racos' : '2700',
+  'tracos' : '2700',
   'rabia' : '1900',
   'raft' : '900',
   'paxos' : '1900'
@@ -142,7 +143,7 @@ CPU freq: {cpu_freqs}''')
         profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
       elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list]))
-      workload_cmd : str = ECHO_EXECUTE.format(string = test_config["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg]), path = '/local/go-ycsb/workloads/workload')
+      workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg]), path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
       remote_execute_async(client_ip, workload_cmd)
       profile_setup_cmd : str = SCRIPT_LOADER.format(script = profile_string, path = '/local/go-ycsb/workloads/profile.sh')
