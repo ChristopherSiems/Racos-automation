@@ -9,7 +9,7 @@ from time import time
 
 from plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
-from helpers.encoding import config_to_str
+from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
@@ -51,7 +51,7 @@ for curr_test in test_configs:
   disable_cpus : typing.List[int] = curr_test['disable_cpus']
   cpu_limits : typing.List[float] = curr_test['cpu_limits']
   cpu_freqs : typing.List[float] = curr_test['cpu_freq_maxes']
-  node_ips_list : typing.List[str] = [f'10.10.1.{node_num}' for node_num in range(1, node_count + 1)]
+  node_ips_list : typing.List[str] = ip_lister(node_count)
   worker_ips : typing.List[str] = node_ips_list[:-1]
   node_ips_str : str = ','.join(worker_ips)
 
@@ -96,7 +96,7 @@ for curr_test in test_configs:
 
   for alg in algs:
     equal_print(alg, 1)
-    run_cmd : str = f'sh /local/run.sh {alg if alg != tracos else 'racos'} 1 3 {'false' if alg != 'tracos' else 'true'}'
+    run_cmd : str = f'sh /local/run.sh {alg if alg != tracos else "racos"} 1 3 {"false" if alg != "tracos" else "true"}'
 
     # fetch the test configuration
     test_config : typing.Dict[str, typing.Union[float, str]] = {}
@@ -130,7 +130,7 @@ for curr_test in test_configs:
       raft_leader_endpoint : typing.Union[None, str] = None
       profile_string : str
       if alg == 'raft':
-        raft_leader_determiner : str = f'/local/etcd/ETCD/bin/etcdctl --endpoints={','.join([f'{node_ip}:2379' for node_ip in node_ips_list])} endpoint status --write-out=json'
+        raft_leader_determiner : str = f'/local/etcd/ETCD/bin/etcdctl --endpoints={",".join([f'{node_ip}:2379' for node_ip in node_ips_list])} endpoint status --write-out=json'
         bash_print(raft_leader_determiner)
         raft_data : str = remote_execute_sync(client_ip, raft_leader_determiner)
         output_print(raft_data)
@@ -141,7 +141,7 @@ for curr_test in test_configs:
             break
         profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
       elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
-      else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f'{node_ip}:2379' if node_ip != '10.10.1.2' else f'{node_ip}:2379,{node_ip}:2379' for node_ip in node_ips_list]))
+      else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list]))
       workload_cmd : str = ECHO_EXECUTE.format(string = {test_config["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg])}, path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
       remote_execute_async(client_ip, workload_cmd)
