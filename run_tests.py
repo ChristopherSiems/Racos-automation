@@ -96,7 +96,7 @@ CPU freq: {cpu_freqs}''')
 
   for alg in algs:
     equal_print(alg, 1)
-    run_cmd : str = f'sh /local/run.sh {alg if alg != tracos else "racos"} 1 3 {"false" if alg != "tracos" else "true"}'
+    run_cmd : str = f'sh /local/run.sh {alg if alg != "tracos" else "racos"} 1 3 {"false" if alg != "tracos" else "true"}'
 
     # fetch the test configuration
     test_config : typing.Dict[str, typing.Union[float, str]] = {}
