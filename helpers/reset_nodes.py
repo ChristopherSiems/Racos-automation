@@ -24,7 +24,7 @@ def reset_nodes(num_nodes : int) -> None:
     bash_print(kill_etcd)
     remote_execute_async(node_address, kill_etcd)
     bash_print(CLEAR_DB.format(node_num = node_address[-1]))
-    for node_num in range(1, len(node_addresses) + 1):
+    for node_num in range(1, num_nodes + 1):
       remote_execute_async(node_address, CLEAR_DB.format(node_num = str(node_num)))
 
 def reset_delay_packets_cpus(num_nodes : int) -> None:
