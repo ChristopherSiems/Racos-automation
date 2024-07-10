@@ -31,7 +31,7 @@ ZERO_CONFIG_PATTERN : re.Pattern = re.compile(r'^0(_0)*$')
 
 BASH_EXECUTE : str = 'bash -c \'{cmd}\''
 ECHO_EXECUTE : str = BASH_EXECUTE.format(cmd = 'echo {string} > {path}')
-SCRIPT_LOADER : str = ECHO_EXECUTE.format(string = '-e "{script}"')
+SCRIPT_LOADER : str = ECHO_EXECUTE.format(string = '-e "{script}"', path = '{path}')
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 
 total_nodes : int =  argv[1]
