@@ -3,6 +3,7 @@
 import json
 import os
 import re
+from sys import argv
 import typing
 from time import time
 
@@ -33,6 +34,8 @@ ECHO_EXECUTE : str = BASH_EXECUTE.format(cmd = 'echo {string} > {path}')
 SCRIPT_LOADER : str = ECHO_EXECUTE.format(string = '-e "{script}"')
 PROFILE_CONFIG : str = '#!/usr/bin/env bash\n/local/go-ycsb/bin/go-ycsb load etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload\n/local/go-ycsb/bin/go-ycsb run etcd -p etcd.endpoints=\\"{leader_endpoint}\\" -P /local/go-ycsb/workloads/workload'
 
+total_nodes : int =  argv[1]
+
 # getting the test setup
 test_configs : typing.List[typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[float], typing.List[str]]]] = []
 with open('auto_config.json', 'r', encoding = 'utf-8') as auto_config:
@@ -62,7 +65,7 @@ for curr_test in test_configs:
   CPU freq: {cpu_freqs}''')
 
   for node_ip, cpu_freq, disable_cpu, delay, packet_loss_percent in zip(node_ips_list, cpu_freqs, disable_cpus,delays, packet_loss_percents):
-    reset_delay_packets_cpus(node_addresses)
+    reset_delay_packets_cpus(total_nodes)
     equal_print(node_ip, 1)
 
     # set up the run.sh script
@@ -101,7 +104,7 @@ for curr_test in test_configs:
       test_config = json.load(test_file)
 
     for variable, unit_size in zip(test_config['variable'], test_config['unit_size']):
-      reset_nodes(nodes_exclusive)
+      reset_nodes(total_nodes)
 
       # runs the current algorithm with input parameters and limits cpu usage
       for node_ip, cpu_limit in zip(worker_ips, cpu_limits):
@@ -156,10 +159,10 @@ for curr_test in test_configs:
       with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
 
-reset_nodes(nodes_exclusive)
-reset_delay_packets_cpus(node_addresses)
-for test in test_configs:
-  curr_test : str = test[0]
+reset_nodes(total_nodes)
+reset_delay_packets_cpus(total_nodes)
+for curr_test in test_configs:
+  test : str = curr_test['test']
 
   # removes old plots to save space
   for root_dir, dirs, files in os.walk(f'plots/{curr_test}'):
@@ -168,8 +171,8 @@ for test in test_configs:
         os.remove(os.path.join(root_dir, curr_filename))
 
   # generates the plots
-  if curr_test == 'data_size-discrete-all_write': data_size_discrete_all_write()
-  if curr_test == 'threads-discrete-half_write_half_read' : threads_discrete_half_write_half_read()
+  if test == 'data_size-discrete-all_write': data_size_discrete_all_write()
+  if test == 'threads-discrete-half_write_half_read' : threads_discrete_half_write_half_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots'])
