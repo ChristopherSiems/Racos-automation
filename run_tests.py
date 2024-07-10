@@ -65,8 +65,8 @@ disabled CPUs: {disable_cpus}
 CPU limit: {cpu_limits}
 CPU freq: {cpu_freqs}''')
 
+  reset_delay_packets_cpus(total_nodes)
   for node_ip, cpu_freq, disable_cpu, delay, packet_loss_percent in zip(node_ips_list, cpu_freqs, disable_cpus,delays, packet_loss_percents):
-    reset_delay_packets_cpus(total_nodes)
     equal_print(node_ip, 1)
 
     # set up the run.sh script
@@ -159,6 +159,7 @@ CPU freq: {cpu_freqs}''')
       output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
       with open(f'data/{test[0]}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
+    reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
 reset_delay_packets_cpus(total_nodes)
