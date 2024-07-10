@@ -21,24 +21,6 @@ ONE_CONFIG_PATTERN : re.Pattern = re.compile(r'^1(_1)*$')
 FIVE_CONFIG_PATTERN : re.Pattern = re.compile(r'^5(_5)*$')
 TEN_CONFIG_PATTERN : re.Pattern = re.compile(r'^10(_10)*$')
 
-def configure_tests() -> typing.Tuple[typing.Union[int, typing.List[str], typing.List[typing.Tuple[typing.Union[str, typing.Dict[str, typing.Union[int, str, typing.List[int], typing.List[typing.List[float]]]]]]]]]:
-  '''
-  generates the data needed to run the configured tests
-  :returns: a tuple containing the number of nodes, a list of the ip addresses for each node, and the data needed to configure the tests to be run
-  '''
-  with open('auto_config.json', 'r', encoding = 'utf-8') as auto_config:
-    auto_config_data : typing.Dict[str, typing.Union[int, typing.List[str]]] = json.load(auto_config)
-    node_addresses : typing.List[str] = []
-    node_count : int = auto_config_data['node_count']
-    for i in range(1, node_count + 1):
-      node_addresses.append(f'root@10.10.1.{i}')
-    test_configs : typing.List[typing.Tuple[typing.Union[str, typing.Dict[str,typing.Union[int, typing.List[float], typing.List[int], str]]]]] = []
-    for curr_test, delay_configs, packet_drop_configs, disable_cpus_config, limit_cpus_config, cpu_freq in zip(auto_config_data['tests'], auto_config_data['node_delays'], auto_config_data['node_packet_drop_percents'], auto_config_data['node_disable_cpus'], auto_config_data['node_cpu_limit'], auto_config_data['node_cpu_freq']):
-      with open(f'tests/{curr_test}.json', 'r', encoding = 'utf-8') as test_config:
-        test_config_data : typing.Dict[str, typing.Union[int, typing.List[float], typing.List[int], str]] = json.load(test_config)
-        test_configs.append((curr_test, test_config_data, delay_configs, packet_drop_configs, disable_cpus_config, limit_cpus_config, cpu_freq))
-    return node_count, node_addresses, test_configs, auto_config_data['algs']
-
 def config_matches(pattern : re.Pattern, config : str) -> bool:
   '''
   determines if a given string matches a given pattern
@@ -110,6 +92,23 @@ def config_to_str(config : typing.List[float]) -> str:
   '''
   return "_".join(list(map(str, config)))
 
+def ip_lister(node_count : int) -> typing.List[str]:
+  '''
+  builds a list of ips from a number of nodes
+  :param node_count: the number of nodes
+  :returns: a list of ips of the nodes
+  '''
+  return [f'10.10.1.{node_num}' for node_num in range(1, node_count + 1)]
+
+def matches_default(col : str, config: str) -> bool:
+  '''
+  checks if the inputted config matches the default for its column
+  :param col: the column in question
+  :param config: the config to test
+  :returns: the truth of the match
+  '''
+  return config_matches(DEFAULT_PATTERNS[col], config)
+
 def prune_dataframe(data : pandas.DataFrame, col : str, val_range : typing.List[re.Pattern]) -> pandas.DataFrame:
   '''
   prunes the inputted DataFrame such that the desired column contains only the specified values from rows where other configs are default
@@ -121,5 +120,5 @@ def prune_dataframe(data : pandas.DataFrame, col : str, val_range : typing.List[
   pruned_data : pandas.DataFrame = data.loc[(data[col].apply(lambda config : any([config_matches(val, config) for val in val_range])))]
   for column in data.columns:
     if not column.endswith('_config') or column == col: continue
-    pruned_data = pruned_data.loc[pruned_data[column].apply(lambda config : config_matches(DEFAULT_PATTERNS[column], config))]
+    pruned_data = pruned_data.loc[pruned_data[column].apply(lambda config : matches_default(column, config))]
   return pruned_data

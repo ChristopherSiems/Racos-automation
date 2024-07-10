@@ -7,7 +7,7 @@ import pandas
 import numpy
 from matplotlib import pyplot
 
-from helpers.encoding import config_to_hatch, config_to_line_style, config_to_marker, config_to_offset, prune_dataframe
+from helpers.encoding import config_to_hatch, config_to_line_style, config_to_marker, config_to_offset, matches_default, prune_dataframe
 
 CONFIGS : typing.List[str] = ['delay_config', 'packet_loss_config', 'disable_cpus_config', 'cpu_limit_config', 'cpu_freq_config']
 DIMENSIONS : typing.Tuple[int] = 9, 3
@@ -133,6 +133,25 @@ def data_size_discrete_all_write() -> None:
       pyplot.legend(handles = delay_legend, loc = 'upper left')
       pyplot.tight_layout()
       pyplot.savefig(f'plots/data_size-discrete-all_write/data_size/throughput/plot-{num_nodes}-variable-0s-0s-100s-3.2s-1.3_2000.0-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+
+    plot_1_data : pandas.DataFrame = data
+    for col in plot_1_data.columns:
+      if not col.endswith('_config'):
+        continue
+      plot_1_data = plot_1_data.loc[plot_1_data[col].apply(lambda config : matches_default(col, config))]
+    plot_1_data = plot_1_data.loc[((plot_1_data['alg'] == 'racos' | plot_1_data['alg'] == 'paxos') & plot_1_data['num_nodes'] == 6) | ((plot_1_data['alg'] == 'rabia' | plot_1_data['alg'] == 'raft') & plot_1_data['num_nodes'] == 4)]
+    if len(plot_1_data['alg'].unique()) == 4:
+
+      # generating plot 1
+      pyplot.figure(figsize = DIMENSIONS)
+      for alg, group in plot_1_data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
+        pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = 'o', label = ALG_VANITY[alg][0], color = ALG_VANITY[alg][1])
+      pyplot.xlabel('Data size (kB)')
+      pyplot.ylabel('Throughput (Mbps)')
+      pyplot.legend(handles = LINE_LEGEND, loc = 'upper left')
+      pyplot.title('All-write workload. Throughput across different data sizes.')
+      pyplot.tight_layout()
+      pyplot.savefig(f'plots/plot-5.3.1-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
 
 def threads_discrete_half_write_half_read() -> None:
   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
