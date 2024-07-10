@@ -89,7 +89,7 @@ CPU freq: {cpu_freqs}''')
         remote_execute_async(node_address, disable_cmd)
     
     # adds network delay and packet loss to the nodes
-    if delay or packet_drop_percent:
+    if delay or packet_loss_percent:
       net_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {delay}ms loss {packet_loss_percent}%'
       bash_print(net_cmd)
       remote_execute_async(node_address, net_cmd)
