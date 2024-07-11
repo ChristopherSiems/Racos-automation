@@ -11,17 +11,17 @@ from helpers.plotting_helpers import prune_dataframe, setup_dataframe
 
 DIMENSIONS : typing.Tuple[int] = 9, 4
 ALG_VANITY : typing.Dict[str, typing.Tuple[typing.Union[str, float]]] = {
-  'racos' : ('C1', -.3, -.38),
-  'tracos' : ('C2', None, -.19),
-  'paxos' : ('C3', -.1, 0),
-  'rabia' : ('C4', .1, .19),
-  'raft' : ('C5', .3, .38),
+  'racos' : ('C1', -.3, -.38, 'o', '-'),
+  'tracos' : ('C2', None, -.19, '^', '-'),
+  'paxos' : ('C3', -.1, 0, 's', '--'),
+  'rabia' : ('C4', .1, .19, 'p', ':'),
+  'raft' : ('C5', .3, .38, '*', '-.'),
 }
 
 BAR_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia (3)'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft (5)')]
 BAR_LEGEND_READ : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia (3)'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft (3)')]
-LINE_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = '', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '-', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = '-', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-', label = 'Raft (3)')]
-LINE_LEGEND_READ : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = '', label = 'Racos w/ Quorum Read'), pyplot.Line2D([0], [0], color = 'C2', linestyle = '-', marker = '', label = 'Racos w/o Quorum Read'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '-', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = '-', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-', label = 'Raft (3)')]
+LINE_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = 'o', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '--', marker = 's', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = ':', marker = 'p', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-.', marker = '*', label = 'Raft (3)')]
+LINE_LEGEND_READ : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = 'o', label = 'Racos w/ Quorum Read'), pyplot.Line2D([0], [0], color = 'C2', linestyle = '-', marker = '^', label = 'Racos w/o Quorum Read'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '--', marker = 's', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = ':', marker = 'p', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-.', marker = '*', label = 'Raft (3)')]
 
 def data_size_discrete_all_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-all_read.csv`'''
@@ -31,7 +31,7 @@ def data_size_discrete_all_read() -> None:
     # generating plot 5.3.3
     pyplot.figure(figsize = DIMENSIONS)
     for alg, group in plot_data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = 'o', color = ALG_VANITY[alg][0])
+      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][4], marker = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
     pyplot.xlabel('Data size (kB)')
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -62,7 +62,7 @@ def data_size_discrete_all_write() -> None:
     # generating plot 5.3.1
     pyplot.figure(figsize = DIMENSIONS)
     for alg, group in plot_data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = 'o', color = ALG_VANITY[alg][0])
+      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][4], marker = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
     pyplot.xlabel('Data size (kB)')
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_WRITE, loc = 'upper left')
@@ -91,7 +91,7 @@ def data_size_discrete_half_write_half_read() -> None:
     # generating plot 5.3.2
     pyplot.figure(figsize = DIMENSIONS)
     for alg, group in plot_data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = 'o', color = ALG_VANITY[alg][0])
+      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][4], marker = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
     pyplot.xlabel('Data size (kB)')
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -120,7 +120,7 @@ def data_size_discrete_5_write_95_read() -> None:
     # generating plot 5.3.4
     pyplot.figure(figsize = DIMENSIONS)
     for alg, group in plot_data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, marker = 'o', color = ALG_VANITY[alg][0])
+      pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][4], marker = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
     pyplot.xlabel('Data size (kB)')
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -161,3 +161,4 @@ def data_size_discrete_5_write_95_read() -> None:
 if __name__ == '__main__':
   data_size_discrete_all_read()
   data_size_discrete_all_write()
+  data_size_discrete_half_write_half_read()
