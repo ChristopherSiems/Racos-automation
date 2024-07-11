@@ -6,7 +6,7 @@ from time import sleep
 
 SSH_ARGS : typing.List[str] = ['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no']
 
-def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_timeout : int = .03) -> None:
+def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_timeout : int = .1) -> None:
   '''
   performs the inputted command on the node associated with the inputted ip address,without waiting for the command's return
   :param remote_address: the ip address of the node to perform the command on
