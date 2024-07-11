@@ -12,8 +12,8 @@ from helpers.execute import git_interact, remote_execute_async, remote_execute_s
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
-  'racos' : '2000',
-  'tracos' : '2000',
+  'racos' : '1000',
+  'tracos' : '1000',
   'rabia' : '1900',
   'raft' : '900',
   'paxos' : '1900'
