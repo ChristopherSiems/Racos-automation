@@ -162,7 +162,6 @@ CPU freq: {cpu_freqs}''')
     reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
-reset_delay_packets_cpus(total_nodes)
 for curr_test in test_configs:
   test : str = curr_test['test']
 
