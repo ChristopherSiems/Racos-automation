@@ -12,8 +12,8 @@ from helpers.execute import git_interact, remote_execute_async, remote_execute_s
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
-  'racos' : '2200',
-  'tracos' : '2200',
+  'racos' : '2100',
+  'tracos' : '2100',
   'rabia' : '1900',
   'raft' : '900',
   'paxos' : '1900'
@@ -141,12 +141,12 @@ CPU freq: {cpu_freqs}''')
       # run the current test
       bash_print('sh /local/go-ycsb/workloads/profile.sh')
       profiling_output : str = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
-      output_print(profiling_output)
+      # output_print(profiling_output)
 
-      # records the data from the test
-      output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
-      with open(f'data/{test}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-        data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
+      # # records the data from the test
+      # output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
+      # with open(f'data/{test}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
+      #   data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
     reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
