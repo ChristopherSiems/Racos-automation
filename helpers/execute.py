@@ -24,7 +24,14 @@ def remote_execute_sync(remote_address : str, remote_cmd : str) -> str:
   :param remote_cmd: the command to be performed
   :returns: the stdout and stderr of the command in the from of a string
   '''
-  subprocess.run(SSH_ARGS + [remote_address, remote_cmd], universal_newlines = True, check = True)
+  temp = None
+  try:
+    temp = subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT, universal_newlines = True, check = True).stdout
+  except Exception:
+    print('issue')
+  finally:
+    print(temp)
+    return temp
 
 def git_interact(cmd : typing.List[str]) -> None:
   '''

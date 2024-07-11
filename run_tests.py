@@ -155,7 +155,7 @@ CPU freq: {cpu_freqs}''')
       # run the current test
       bash_print('sh /local/go-ycsb/workloads/profile.sh')
       profiling_output : str = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
-      # output_print(profiling_output)
+      output_print(profiling_output)
 
       # # records the data from the test
       # output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
