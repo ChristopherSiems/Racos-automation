@@ -129,20 +129,7 @@ CPU freq: {cpu_freqs}''')
       equal_print(client_address, 2)
 
       # configures `profile.sh` and `workload` for the current algorithm
-      raft_leader_endpoint : typing.Union[None, str] = None
-      profile_string : str
-      if alg == 'raft':
-        raft_leader_determiner : str = f'/local/etcd/ETCD/bin/etcdctl --endpoints={",".join([f"{node_ip}:2379" for node_ip in node_ips_list[:-1]])} endpoint status --write-out=json'
-        bash_print(raft_leader_determiner)
-        raft_data : str = remote_execute_sync(client_address, raft_leader_determiner)
-        output_print(raft_data)
-        for node_data in json.loads(raft_data):
-          node_status : typing.Dict = node_data['Status']
-          if node_status['header']['member_id'] == node_status['leader']:
-            raft_leader_endpoint = node_data['Endpoint']
-            break
-        profile_string = PROFILE_CONFIG.format(leader_endpoint = raft_leader_endpoint)
-      elif alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
+      if alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list]))
       workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg]), path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
