@@ -6,7 +6,7 @@ from time import sleep
 
 SSH_ARGS : typing.List[str] = ['sudo', 'ssh', '-o', 'StrictHostKeyChecking=no']
 
-def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_timeout : int = .01) -> None:
+def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_timeout : int = .03) -> None:
   '''
   performs the inputted command on the node associated with the inputted ip address,without waiting for the command's return
   :param remote_address: the ip address of the node to perform the command on
@@ -24,14 +24,7 @@ def remote_execute_sync(remote_address : str, remote_cmd : str) -> str:
   :param remote_cmd: the command to be performed
   :returns: the stdout and stderr of the command in the from of a string
   '''
-  temp = None
-  try:
-    temp = subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT, universal_newlines = True, check = True).stdout
-  except Exception:
-    print('issue')
-  finally:
-    print(temp)
-    return temp
+  return subprocess.run(SSH_ARGS + [remote_address, remote_cmd], stdout = subprocess.PIPE, stderr = subprocess.STDOUT, universal_newlines = True, check = True).stdout
 
 def git_interact(cmd : typing.List[str]) -> None:
   '''
