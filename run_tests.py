@@ -131,7 +131,7 @@ CPU freq: {cpu_freqs}''')
       raft_leader_endpoint : typing.Union[None, str] = None
       profile_string : str
       if alg == 'raft':
-        raft_leader_determiner : str = f'/local/etcd/ETCD/bin/etcdctl --endpoints={",".join([f"{node_ip}:2379" for node_ip in node_ips_list])} endpoint status --write-out=json'
+        raft_leader_determiner : str = f'/local/etcd/ETCD/bin/etcdctl --endpoints={",".join([f"{node_ip}:2379" for node_ip in node_ips_list[:-1]])} endpoint status --write-out=json'
         bash_print(raft_leader_determiner)
         raft_data : str = remote_execute_sync(client_ip, raft_leader_determiner)
         output_print(raft_data)
