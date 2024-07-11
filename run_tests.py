@@ -54,6 +54,8 @@ for curr_test in test_configs:
   cpu_freqs : typing.List[float] = curr_test['cpu_freq_maxes']
   node_ips_list : typing.List[str] = ip_lister(node_count)
   worker_ips : typing.List[str] = node_ips_list[:-1]
+  node_addresses : typing.List[str] = [f'root@{node_ip}' for node_ip in node_ips_list]
+  worker_addresses : typing.List[str] = node_addresses[:-1]
   node_ips_str : str = ','.join(worker_ips)
 
   output_print(f'''test: {test}
@@ -66,21 +68,21 @@ CPU limit: {cpu_limits}
 CPU freq: {cpu_freqs}''')
 
   reset_delay_packets_cpus(total_nodes)
-  for node_ip, cpu_freq, disable_cpu, delay, packet_loss_percent in zip(node_ips_list, cpu_freqs, disable_cpus,delays, packet_loss_percents):
-    equal_print(node_ip, 1)
+  for node_address, cpu_freq, disable_cpu, delay, packet_loss_percent in zip(node_addresses, cpu_freqs, disable_cpus,delays, packet_loss_percents):
+    equal_print(node_address, 1)
 
     # set up the run.sh script
-    if node_ip != node_ips_list[-1]:
+    if node_address != node_addresses[-1]:
       run_setup_cmd : str = SCRIPT_LOADER.format(script = f'algorithm=\$1\nfailures=\$2\nsegments=\$3\ntrans_read=\$4\ncd /local/etcd-deployment/output || exit 1\njava -jar deployment.jar --directory=/local/etcd --algorithm=\\"\$algorithm\\" --ips=\\"{node_ips_str}\\" --failures=\\"\$failures\\" --segments=\\"\$segments\\" --trans_read=\\"\$trans_read\\"', path = '/local/run.sh')
       bash_print(run_setup_cmd)
-      remote_execute_async(node_ip, run_setup_cmd)
+      remote_execute_async(node_address, run_setup_cmd)
 
     # sets the upper limit for cpu frequency
     if cpu_freq != 3.2:
       for cpu_num in range(0, 32):
         cpu_freq_cmd : str = ECHO_EXECUTE.format(string = str(cpu_freq * 1000000), path = f'/sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq')
         bash_print(cpu_freq_cmd)
-        remote_execute_async(node_ip, cpu_freq_cmd)
+        remote_execute_async(node_address, cpu_freq_cmd)
     
     # disables the number of cpu cores inputted
     if disable_cpu:
@@ -108,24 +110,24 @@ CPU freq: {cpu_freqs}''')
       reset_nodes(total_nodes)
 
       # runs the current algorithm with input parameters and limits cpu usage
-      for node_ip, cpu_limit in zip(worker_ips, cpu_limits):
-        equal_print(node_ip, 2)
+      for node_address, cpu_limit in zip(worker_addresses, cpu_limits):
+        equal_print(node_address, 2)
         limit_cmd : str = f'cpulimit -e etcd -l {cpu_limit}'
-        if node_ip == worker_ips[-1]: 
+        if node_address == worker_addresses[-1]: 
           bash_print(run_cmd)
-          remote_execute_async(node_ip, run_cmd, 60)
+          remote_execute_async(node_address, run_cmd, 60)
           if cpu_limit != 100:
             bash_print(limit_cmd)
-            remote_execute_async(node_ip, limit_cmd)
+            remote_execute_async(node_address, limit_cmd)
           break
         bash_print(run_cmd)
-        remote_execute_async(node_ip, run_cmd)
+        remote_execute_async(node_address, run_cmd)
         if cpu_limit != 100:
           bash_print(limit_cmd)
-          remote_execute_async(node_ip, limit_cmd)
+          remote_execute_async(node_address, limit_cmd)
       
-      client_ip : str = node_ips_list[-1]
-      equal_print(client_ip, 2)
+      client_address : str = node_addresses[-1]
+      equal_print(client_address, 2)
 
       # configures `profile.sh` and `workload` for the current algorithm
       raft_leader_endpoint : typing.Union[None, str] = None
@@ -133,7 +135,7 @@ CPU freq: {cpu_freqs}''')
       if alg == 'raft':
         raft_leader_determiner : str = f'/local/etcd/ETCD/bin/etcdctl --endpoints={",".join([f"{node_ip}:2379" for node_ip in node_ips_list[:-1]])} endpoint status --write-out=json'
         bash_print(raft_leader_determiner)
-        raft_data : str = remote_execute_sync(client_ip, raft_leader_determiner)
+        raft_data : str = remote_execute_sync(client_address, raft_leader_determiner)
         output_print(raft_data)
         for node_data in json.loads(raft_data):
           node_status : typing.Dict = node_data['Status']
@@ -145,14 +147,14 @@ CPU freq: {cpu_freqs}''')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list]))
       workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg]), path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
-      remote_execute_async(client_ip, workload_cmd)
+      remote_execute_async(client_address, workload_cmd)
       profile_setup_cmd : str = SCRIPT_LOADER.format(script = profile_string, path = '/local/go-ycsb/workloads/profile.sh')
       bash_print(profile_setup_cmd)
-      remote_execute_async(client_ip, profile_setup_cmd)
+      remote_execute_async(client_address, profile_setup_cmd)
 
       # run the current test
       bash_print('sh /local/go-ycsb/workloads/profile.sh')
-      profiling_output : str = remote_execute_sync(client_ip, 'sh /local/go-ycsb/workloads/profile.sh')
+      profiling_output : str = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
       output_print(profiling_output)
 
       # records the data from the test
