@@ -15,7 +15,7 @@ def reset_nodes(num_nodes : int) -> None:
   resets the nodes
   :param num_nodes: the number of nodes
   '''
-  for node_address in ip_lister(num_nodes):
+  for node_address in [f'root@{node_ip}' for node_ip in ip_lister(num_nodes)]:
     equal_print(node_address, 5)
     kill_cpulimit : str = KILL_PROCESS.format(process = 'cpulimit')
     bash_print(kill_cpulimit)
@@ -32,7 +32,7 @@ def reset_delay_packets_cpus(num_nodes : int) -> None:
   removes any network delay and packet drop percentage on the inputted nodes
   :param num_nodes: the number of nodes
   '''
-  for node_address in ip_lister(num_nodes):
+  for node_address in [f'root@{node_ip}' for node_ip in ip_lister(num_nodes)]:
     equal_print(node_address, 5)
     bash_print('tc qdisc del dev enp4s0f1 root')
     remote_execute_async(node_address, 'tc qdisc del dev enp4s0f1 root')
