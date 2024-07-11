@@ -1,12 +1,11 @@
 '''run this script to execute all configured tests'''
 
 import json
-import os
 import re
 import typing
 from time import time
 
-from plotting import data_size_discrete_all_write, threads_discrete_half_write_half_read
+from plotting import data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_discrete_5_write_95_read, threads_discrete_half_write_half_read
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
@@ -167,14 +166,11 @@ reset_nodes(total_nodes)
 for curr_test in test_configs:
   test : str = curr_test['test']
 
-  # removes old plots to save space
-  for root_dir, dirs, files in os.walk(f'plots/{curr_test}'):
-    for curr_filename in files:
-      if curr_filename.startswith('plot'):
-        os.remove(os.path.join(root_dir, curr_filename))
-
   # generates the plots
+  if test == 'data_size-discrete-all_read': data_size_discrete_all_read()
   if test == 'data_size-discrete-all_write': data_size_discrete_all_write()
+  if test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
+  if test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
   if test == 'threads-discrete-half_write_half_read' : threads_discrete_half_write_half_read()
 
 # saves all new data to the github repo
@@ -184,5 +180,6 @@ git_interact(['push', 'origin', 'main'])
 
 five_equal_print()
 print('''all tests run, all data collected, and all plots generated
-data has been appended to the associated datasets in the \'data\' directory\nplots can be found in the associated subdirectories in \'plots\'
+data has been appended to the associated datasets in the \'data\' directory
+plots can be found in the associated subdirectories in \'plots\'
 all new data has been pushed to the remote repo''')
