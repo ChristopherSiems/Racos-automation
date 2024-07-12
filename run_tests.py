@@ -11,13 +11,7 @@ from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-ALG_COUNTS : typing.Dict[str, str] = {
-  'racos' : ['2750', '2500', '2250', '2000', '1750', '1500', '1250', '1000'],
-  'tracos' : ['2750', '2500', '2250', '2000', '1750', '1500', '1250', '1000'],
-  'rabia' : ['2750', '2500', '2250', '2000', '1750', '1500', '1250', '1000'],
-  'raft' : ['2750', '2500', '2250', '2000', '1750', '1500', '1250', '1000'],
-  'paxos' : ['2750', '2500', '2250', '2000', '1750', '1500', '1250', '1000']
-}
+COUNTS : typing.List[str] = ['2050', '1900', '1750', '1600', '1450', '1300', '1150', '1000']
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
@@ -131,7 +125,7 @@ CPU freq: {cpu_freqs}''')
       # configures `profile.sh` and `workload` for the current algorithm
       if alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list]))
-      workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = ALG_COUNTS[alg][i] if test.startswith('data_size') else ALG_COUNTS[alg][7 - i]), path = '/local/go-ycsb/workloads/workload')
+      workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = COUNTS[i] if test.startswith('data_size') else COUNTS[7 - i]), path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
       remote_execute_async(client_address, workload_cmd)
       profile_setup_cmd : str = SCRIPT_LOADER.format(script = profile_string, path = '/local/go-ycsb/workloads/profile.sh')
