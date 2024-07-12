@@ -36,7 +36,7 @@ def data_size_discrete_all_read() -> None:
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-all_read/data_size/throughput/data_size-throughput-all_read.png')
+    pyplot.savefig('plots/data_size-discrete-all_read/data_size-throughput-all_read.png')
 
     # generating plot 5.4.3
     pyplot.figure(figsize = DIMENSIONS)
@@ -50,7 +50,7 @@ def data_size_discrete_all_read() -> None:
     pyplot.ylabel('Latency (ms)')
     pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-all_read/data_size/latency/data_size-latency-all_read.png')
+    pyplot.savefig('plots/data_size-discrete-all_read/data_size-latency-all_read.png')
 
 def data_size_discrete_all_write() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-all_write.csv`'''
@@ -67,7 +67,7 @@ def data_size_discrete_all_write() -> None:
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_WRITE, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-all_write/data_size/throughput/data_size-throughput-all_write.png')
+    pyplot.savefig('plots/data_size-discrete-all_write/data_size-throughput-all_write.png')
 
     # generating plot 5.4.1
     pyplot.figure(figsize = DIMENSIONS)
@@ -81,7 +81,7 @@ def data_size_discrete_all_write() -> None:
     pyplot.ylabel('Latency (ms)')
     pyplot.legend(handles = BAR_LEGEND_WRITE, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-all_write/data_size/latency/data_size-latency-all_write.png')
+    pyplot.savefig('plots/data_size-discrete-all_write/data_size-latency-all_write.png')
 
 def data_size_discrete_half_write_half_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-half_write_half_read.csv`'''
@@ -96,7 +96,7 @@ def data_size_discrete_half_write_half_read() -> None:
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size/throughput/data_size-throughput-half_write_half_read.png')
+    pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size-throughput-half_write_half_read.png')
 
     # generating plot 5.4.2
     pyplot.figure(figsize = DIMENSIONS)
@@ -110,7 +110,7 @@ def data_size_discrete_half_write_half_read() -> None:
     pyplot.ylabel('Latency (ms)')
     pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size/latency/data_size-latency-half_write_half_read.png')
+    pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size-latency-half_write_half_read.png')
 
 def data_size_discrete_5_write_95_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-5_write_95_read.csv`'''
@@ -125,7 +125,7 @@ def data_size_discrete_5_write_95_read() -> None:
     pyplot.ylabel('Throughput (Mbps)')
     pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size/throughput/data_size-throughput-5_write_95_read.png')
+    pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size-throughput-5_write_95_read.png')
 
     # generating plot 5.4.4
     pyplot.figure(figsize = DIMENSIONS)
@@ -139,26 +139,36 @@ def data_size_discrete_5_write_95_read() -> None:
     pyplot.ylabel('Latency (ms)')
     pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
     pyplot.tight_layout()
-    pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size/latency/data_size-latency-5_write_95_read.png')
+    pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size-latency-5_write_95_read.png')
 
-# def threads_discrete_half_write_half_read() -> None:
-#   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
-#   data : pandas.DataFrame = pandas.read_csv('data/threads-discrete-half_write_half_read.csv')
-#   for num_nodes, group_outer in data.groupby('num_nodes'):
-#     for config, group_med in group_outer.groupby(CONFIGS):
+def threads_discrete_half_write_half_read() -> None:
+  '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
+  plot_data : pandas.DataFrame = setup_dataframe(pandas.read_csv('data/threads-discrete-half_write_half_read.csv'))
+  if len(plot_data['alg'].unique()) == 5:
 
-#       # plotting throughput against p99 latency
-#       pyplot.figure(figsize = DIMENSIONS)
-#       for alg, group_inner in group_med.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
-#         pyplot.plot(group_inner['ops'] * 10.666792, group_inner['p99_latency'] / 1000, marker = 'o', color = ALG_VANITY[alg][0])
-#       pyplot.xlabel('Throughput (Mbps)')
-#       pyplot.ylabel('P99 latency (ms)')
-#       pyplot.title('Half write and half read workload. P99 latencies at different throughputs.')
-#       pyplot.legend(handles = LINE_LEGEND, loc = 'upper left')
-#       pyplot.tight_layout()
-#       pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput/latency/plot-{num_nodes}-{config[0]}-{config[1]}-{config[2]}-{config[3]}-{config[4]}-1_50-{TIMESTAMP().strftime(TIMESTAMP_FORMAT)}.png')
+    # generating plot 5.5.1
+    pyplot.figure(figsize = DIMENSIONS)
+    for alg, group in plot_data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
+      pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][3], linestyle = ALG_VANITY[alg][4], color = ALG_VANITY[alg][0])
+    pyplot.xlabel('Throughput (Mbps)')
+    pyplot.ylabel('P99 latency (ms)')
+    pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
+    pyplot.tight_layout()
+    pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput-med_latency-half_write_half_read.png')
+
+    # generating plot 5.5.2
+    pyplot.figure(figsize = DIMENSIONS)
+    for alg, group in plot_data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
+      pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][3], linestyle = ALG_VANITY[alg][4], color = ALG_VANITY[alg][0])
+    pyplot.xlabel('Throughput (Mbps)')
+    pyplot.ylabel('P99 latency (ms)')
+    pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
+    pyplot.tight_layout()
+    pyplot.savefig(f'plots/threads-discrete-half_write_half_read/throughput-med_latency-half_write_half_read.png')
 
 if __name__ == '__main__':
   data_size_discrete_all_read()
   data_size_discrete_all_write()
   data_size_discrete_half_write_half_read()
+  data_size_discrete_5_write_95_read()
+  threads_discrete_half_write_half_read()
