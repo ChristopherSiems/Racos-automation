@@ -144,18 +144,18 @@ CPU freq: {cpu_freqs}''')
       output_print(profiling_output)
 
       # log the raw output strings
-      # output_lines : typing.List[str] = profiling_output.splitlines()
-      # for i in range(len(output_lines) - 1, 0, -1):
-      #   if len(set(output_lines[i].strip())) == 1:
-      #     with open(f'logs/{test}.txt', mode = 'a', encoding = 'utf-8') as output_log:
-      #       output_log.write(f'{alg},{node_count},{unit_size}')
-      #       output_log.write('\n'.join(output_lines[i:]) + '\n')
-      #     break
+      output_lines : typing.List[str] = profiling_output.splitlines()
+      for i in range(len(output_lines) - 1, 0, -1):
+        if len(set(output_lines[i].strip())) == 1:
+          with open(f'logs/{test}.txt', mode = 'a', encoding = 'utf-8') as output_log:
+            output_log.write(f'{alg},{node_count},{unit_size}')
+            output_log.write('\n'.join(output_lines[i:]) + '\n')
+          break
 
-      # # records the data from the test
-      # output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
-      # with open(f'data/{test}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
-      #   data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
+      # records the data from the test
+      output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
+      with open(f'data/{test}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
+        data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
     reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
