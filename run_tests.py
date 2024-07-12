@@ -114,7 +114,7 @@ CPU freq: {cpu_freqs}''')
         limit_cmd : str = f'cpulimit -e etcd -l {cpu_limit}'
         if node_address == worker_addresses[-1]: 
           bash_print(run_cmd)
-          remote_execute_async(node_address, run_cmd, 60 if i == 0 else 0.03)
+          remote_execute_async(node_address, run_cmd, 60 if i == 0 else 30)
           if cpu_limit != 100:
             bash_print(limit_cmd)
             remote_execute_async(node_address, limit_cmd)
