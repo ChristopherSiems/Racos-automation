@@ -143,6 +143,14 @@ CPU freq: {cpu_freqs}''')
       profiling_output : str = remote_execute_sync(client_address, 'sh /local/go-ycsb/workloads/profile.sh')
       output_print(profiling_output)
 
+      # log the raw output strings
+      output_lines : typing.List[str] = profiling_output.splitlines()
+      for i in range(len(output_lines) - 1, 0, -1):
+        if len(set(output_lines[i].strip())) == 1:
+          with open(f'logs/{test}.txt', mode = 'a', encoding = 'utf-8') as output_log:
+            output_log.write('\n'.join(output_lines[i:] + '\n'))
+          break
+
       # records the data from the test
       output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
       with open(f'data/{test}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
