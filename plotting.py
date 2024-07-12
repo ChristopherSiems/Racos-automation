@@ -69,3 +69,4 @@ if __name__ == '__main__':
   data_size_discrete_half_write_half_read()
   data_size_discrete_5_write_95_read()
   threads_discrete_half_write_half_read()
+  threads_discrete_5_write_95_read()

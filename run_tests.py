@@ -5,7 +5,7 @@ import re
 import typing
 from time import time
 
-from plotting import data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_discrete_5_write_95_read, threads_discrete_half_write_half_read
+from plotting import data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_discrete_5_write_95_read, threads_discrete_half_write_half_read, threads_discrete_5_write_95_read
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
@@ -148,6 +148,7 @@ CPU freq: {cpu_freqs}''')
       for i in range(len(output_lines) - 1, 0, -1):
         if len(set(output_lines[i].strip())) == 1:
           with open(f'logs/{test}.txt', mode = 'a', encoding = 'utf-8') as output_log:
+            output_log.write
             output_log.write('\n'.join(output_lines[i:]) + '\n')
           break
 
@@ -167,9 +168,10 @@ for curr_test in test_configs:
   if test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
   if test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
   if test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
+  if test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
 
 # saves all new data to the github repo
-git_interact(['add', 'data', 'plots'])
+git_interact(['add', 'data', 'plots', 'logs'])
 git_interact(['commit', '-m', f'"data update @ {time()}"'])
 git_interact(['push', 'origin', 'main'])
 
