@@ -12,10 +12,10 @@ from helpers.execute import git_interact, remote_execute_async, remote_execute_s
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
 ALG_COUNTS : typing.Dict[str, str] = {
-  'racos' : ['8000', '7000', '6000', '5000', '4000', '3000', '2000', '1000'],
-  'tracos' : ['8000', '7000', '6000', '5000', '4000', '3000', '2000', '1000'],
+  'racos' : ['4500', '4000', '3500', '3000', '2500', '2000', '1500', '1000'],
+  'tracos' : ['4500', '4000', '3500', '3000', '2500', '2000', '1500', '1000'],
   'rabia' : ['4500', '4000', '3500', '3000', '2500', '2000', '1500', '1000'],
-  'raft' : ['8000', '7000', '6000', '5000', '4000', '3000', '2000', '1000'],
+  'raft' : ['4500', '4000', '3500', '3000', '2500', '2000', '1500', '1000'],
   'paxos' : ['4500', '4000', '3500', '3000', '2500', '2000', '1500', '1000']
 }
 
@@ -114,7 +114,7 @@ CPU freq: {cpu_freqs}''')
         limit_cmd : str = f'cpulimit -e etcd -l {cpu_limit}'
         if node_address == worker_addresses[-1]: 
           bash_print(run_cmd)
-          remote_execute_async(node_address, run_cmd, 60)
+          remote_execute_async(node_address, run_cmd, 60 if i == 1 else 0.03)
           if cpu_limit != 100:
             bash_print(limit_cmd)
             remote_execute_async(node_address, limit_cmd)
