@@ -148,7 +148,7 @@ CPU freq: {cpu_freqs}''')
       for i in range(len(output_lines) - 1, 0, -1):
         if len(set(output_lines[i].strip())) == 1:
           with open(f'logs/{test}.txt', mode = 'a', encoding = 'utf-8') as output_log:
-            output_log.write('\n'.join(output_lines[i:] + '\n'))
+            output_log.write('\n'.join(output_lines[i:]) + '\n')
           break
 
       # records the data from the test
