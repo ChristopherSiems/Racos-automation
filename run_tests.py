@@ -15,7 +15,7 @@ ALG_COUNTS : typing.Dict[str, str] = {
   'racos' : '2700',
   'tracos' : '2700',
   'rabia' : '1900',
-  'raft' : '900',
+  'raft' : '1800',
   'paxos' : '1900'
 }
 
@@ -148,7 +148,7 @@ CPU freq: {cpu_freqs}''')
       for i in range(len(output_lines) - 1, 0, -1):
         if len(set(output_lines[i].strip())) == 1:
           with open(f'logs/{test}.txt', mode = 'a', encoding = 'utf-8') as output_log:
-            output_log.write
+            output_log.write(f'{alg},{node_count},{unit_size}')
             output_log.write('\n'.join(output_lines[i:]) + '\n')
           break
 
