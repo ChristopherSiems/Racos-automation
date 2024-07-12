@@ -10,23 +10,6 @@ BASH_ECHOER : str = 'bash -c "echo {string} > {path}"'
 CLEAR_DB : str = 'rm -r /local/etcd/ETCD/node-{node_num}.etcd'
 KILL_PROCESS : str = 'killall {process}'
 
-def reset_nodes(num_nodes : int) -> None:
-  '''
-  resets the nodes
-  :param num_nodes: the number of nodes
-  '''
-  for node_address in [f'root@{node_ip}' for node_ip in ip_lister(num_nodes)]:
-    equal_print(node_address, 5)
-    kill_cpulimit : str = KILL_PROCESS.format(process = 'cpulimit')
-    bash_print(kill_cpulimit)
-    remote_execute_async(node_address, kill_cpulimit)
-    kill_etcd : str = KILL_PROCESS.format(process = 'etcd')
-    bash_print(kill_etcd)
-    remote_execute_async(node_address, kill_etcd)
-    bash_print(CLEAR_DB.format(node_num = node_address[-1]))
-    for node_num in range(1, num_nodes + 1):
-      remote_execute_async(node_address, CLEAR_DB.format(node_num = str(node_num)))
-
 def reset_delay_packets_cpus(num_nodes : int) -> None:
   '''
   removes any network delay and packet drop percentage on the inputted nodes
@@ -43,3 +26,20 @@ def reset_delay_packets_cpus(num_nodes : int) -> None:
       cpu_freq_cmd : str = BASH_ECHOER.format(string = '3200000', path = f'/sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq')
       bash_print(cpu_freq_cmd)
       remote_execute_async(node_address, cpu_freq_cmd, disconnect_timeout = 0)
+
+def reset_nodes(num_nodes : int) -> None:
+  '''
+  resets the nodes
+  :param num_nodes: the number of nodes
+  '''
+  for node_address in [f'root@{node_ip}' for node_ip in ip_lister(num_nodes)]:
+    equal_print(node_address, 5)
+    kill_cpulimit : str = KILL_PROCESS.format(process = 'cpulimit')
+    bash_print(kill_cpulimit)
+    remote_execute_async(node_address, kill_cpulimit)
+    kill_etcd : str = KILL_PROCESS.format(process = 'etcd')
+    bash_print(kill_etcd)
+    remote_execute_async(node_address, kill_etcd)
+    bash_print(CLEAR_DB.format(node_num = node_address[-1]))
+    for node_num in range(1, num_nodes + 1):
+      remote_execute_async(node_address, CLEAR_DB.format(node_num = str(node_num)))
