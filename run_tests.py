@@ -105,11 +105,11 @@ CPU freq: {cpu_freqs}''')
     with open(f'tests/{test}.json', 'r', encoding = 'utf-8') as test_file:
       test_config = json.load(test_file)
 
-    for variable, unit_size in zip(test_config['variable'], test_config['unit_size']):
+    for variable, unit_size, i in zip(test_config['variable'], test_config['unit_size'], range(8)):
       reset_nodes(total_nodes)
 
       # runs the current algorithm with input parameters and limits cpu usage
-      for node_address, cpu_limit, i in zip(worker_addresses, cpu_limits, range(len(worker_addresses))):
+      for node_address, cpu_limit in zip(worker_addresses, cpu_limits):
         equal_print(node_address, 2)
         limit_cmd : str = f'cpulimit -e etcd -l {cpu_limit}'
         if node_address == worker_addresses[-1]: 
