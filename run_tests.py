@@ -144,7 +144,7 @@ CPU freq: {cpu_freqs}''')
       remote_execute_async(client_address, workload_cmd)
       profile_setup_cmd : str = SCRIPT_LOADER.format(script = profile_string, path = '/local/go-ycsb/workloads/profile.sh')
       bash_print(profile_setup_cmd)
-      remote_execute_async(client_address, profile_setup_cmd)
+      remote_execute_async(client_address, profile_setup_cmd, 1)
 
       # run the current test
       bash_print('sh /local/go-ycsb/workloads/profile.sh')
