@@ -92,7 +92,18 @@ CPU freq: {cpu_freqs}''')
 
   for alg in algs:
     equal_print(alg, 1)
-    run_cmd : str = f'sh /local/run.sh {alg if alg != "tracos" else "racos"} 1 3 {"false" if alg != "tracos" else "true"}'
+    run_cmd : str = f'sh /local/run.sh '
+    if alg == 'racos': run_cmd += 'racos 1 3 false'
+    elif alg == 'tracos': run_cmd += 'racos 1 3 true'
+    elif alg == 'racos34': run_cmd += 'racos 2 3 false'
+    elif alg == 'tracos34': run_cmd += 'racos 2 3 true'
+    elif alg == 'racos42': run_cmd += 'racos 1 4 false'
+    elif alg == 'tracos42': run_cmd += 'racos 1 4 true'
+    elif alg == 'racos52': run_cmd += 'racos 1 5 false'
+    elif alg == 'tracos52': run_cmd += 'racos 1 5 true'
+    elif alg == 'paxos': run_cmd += 'paxos 1 3 false'
+    elif alg == 'rabia': run_cmd += 'rabia 1 3 false'
+    elif alg == 'raft': run_cmd += 'raft 1 3 false'
 
     # fetch the test configuration
     test_config : typing.Dict[str, typing.Union[float, str]] = {}
@@ -125,7 +136,7 @@ CPU freq: {cpu_freqs}''')
       # configures `profile.sh` and `workload` for the current algorithm
       if alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list]))
-      workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = COUNTS[i] if test.startswith('data_size') else COUNTS[7 - i]), path = '/local/go-ycsb/workloads/workload')
+      workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = COUNTS[i] if test.startswith('data_size') else COUNTS[7 - i]) if not test.startswith('scalability') else test_config['workload'], path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
       remote_execute_async(client_address, workload_cmd)
       profile_setup_cmd : str = SCRIPT_LOADER.format(script = profile_string, path = '/local/go-ycsb/workloads/profile.sh')
@@ -158,11 +169,11 @@ for curr_test in test_configs:
 
   # generates the plots
   if test == 'data_size-discrete-all_read': data_size_discrete_all_read()
-  if test == 'data_size-discrete-all_write': data_size_discrete_all_write()
-  if test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
-  if test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
-  if test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
-  if test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
+  elif test == 'data_size-discrete-all_write': data_size_discrete_all_write()
+  elif test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
+  elif test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
+  elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
+  elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots', 'logs'])

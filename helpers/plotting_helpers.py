@@ -36,10 +36,26 @@ def plot_53(data : pandas.DataFrame, legend : typing.List[pyplot.Line2D], path :
   pyplot.tight_layout()
   pyplot.savefig(f'plots/{path}.png')
 
-def plot_55(test : str, name_med : str, name_p99: str) -> None:
+def plot_55(test : str, name_med : str, name_p99: str, loc : str) -> None:
   plot_data : pandas.DataFrame = setup_dataframe(pandas.read_csv(f'data/{test}.csv'))
-  throughput_med_latency_plot(plot_data, f'{test}/{name_med}')
-  throughput_p99_latency_plot(plot_data, f'{test}/{name_p99}')
+
+  pyplot.figure(figsize = DIMENSIONS)
+  for alg, group in plot_data.groupby(['alg', 'unit_size'])[['ops', 'med_latency']].mean().reset_index().groupby('alg'):
+    pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.xlabel('Throughput (Mbps)')
+  pyplot.ylabel('Median latency (ms)')
+  pyplot.legend(handles = LINE_LEGEND_READ, loc = f'upper {loc}')
+  pyplot.tight_layout()
+  pyplot.savefig(f'plots/{test}/{name_med}.png')
+
+  pyplot.figure(figsize = DIMENSIONS)
+  for alg, group in plot_data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
+    pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.xlabel('Throughput (Mbps)')
+  pyplot.ylabel('P99 latency (ms)')
+  pyplot.legend(handles = LINE_LEGEND_READ, loc = f'upper {loc}')
+  pyplot.tight_layout()
+  pyplot.savefig(f'plots/{test}/{name_p99}.png')
 
 def read_plot(test : str, name_53 : str, name_54: str) -> None:
   '''
@@ -82,33 +98,3 @@ def setup_dataframe(data : pandas.DataFrame) -> pandas.DataFrame:
   '''
   working_data : pandas.DataFrame = prune_dataframe(data)
   return working_data.loc[(((working_data['alg'] == 'racos') | (working_data['alg'] == 'tracos') | (working_data['alg'] == 'paxos')) & (working_data['num_nodes'] == 6)) | (((working_data['alg'] == 'rabia') | (working_data['alg'] == 'raft')) & (working_data['num_nodes'] == 4))]
-
-def throughput_med_latency_plot(data : pandas.DataFrame, path : str) -> None:
-  '''
-  generates plots in the style of those in 5.5 for median latency
-  :param data: the data in a DataFrame
-  :param path: the path to save to
-  '''
-  pyplot.figure(figsize = DIMENSIONS)
-  for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'med_latency']].mean().reset_index().groupby('alg'):
-    pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
-  pyplot.xlabel('Throughput (Mbps)')
-  pyplot.ylabel('Median latency (ms)')
-  pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
-  pyplot.tight_layout()
-  pyplot.savefig(f'plots/{path}.png')
-
-def throughput_p99_latency_plot(data : pandas.DataFrame, path : str) -> None:
-  '''
-  generates plots in the style of those in 5.5 for p99 latency
-  :param data: the data in a DataFrame
-  :param path: the path to save to
-  '''
-  pyplot.figure(figsize = DIMENSIONS)
-  for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
-    pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
-  pyplot.xlabel('Throughput (Mbps)')
-  pyplot.ylabel('P99 latency (ms)')
-  pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
-  pyplot.tight_layout()
-  pyplot.savefig(f'plots/{path}.png')

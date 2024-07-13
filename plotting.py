@@ -55,13 +55,16 @@ def data_size_discrete_5_write_95_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-5_write_95_read.csv`'''
   read_plot('data_size-discrete-5_write_95_read', 'data_size-throughput-5_write_95_read', 'data_size-latency-5_write_95_read')
 
+def scalability_6667_5_write_95_read() -> None:
+  '''creates all configured plots from the data found in `data/scalability-666.7-5_write_95_read.csv`'''
+
 def threads_discrete_half_write_half_read() -> None:
   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
-  plot_55('threads-discrete-half_write_half_read', 'throughput-med_latency-half_write_half_read', 'throughput-p99_latency-half_write_half_read')
+  plot_55('threads-discrete-half_write_half_read', 'throughput-med_latency-half_write_half_read', 'throughput-p99_latency-half_write_half_read', 'right')
 
 def threads_discrete_5_write_95_read() -> None:
   '''creates all configured plots from the data in `data/threads-discrete-5_write_95_read.csv`'''
-  plot_55('threads-discrete-5_write_95_read', 'throughput-med_latency-5_write_95_read', 'throughput-p99_latency-5_write_95_read')
+  plot_55('threads-discrete-5_write_95_read', 'throughput-med_latency-5_write_95_read', 'throughput-p99_latency-5_write_95_read', 'left')
 
 if __name__ == '__main__':
   data_size_discrete_all_read()
