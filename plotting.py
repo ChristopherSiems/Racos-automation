@@ -80,7 +80,7 @@ def scalability_13_50_write_50_read() -> None:
   pyplot.bar(3.08, plot_56_getter(plot_data, 'racos52', 8, 'ops'), .16, color = 'C1', hatch = '\\\\\\')
   pyplot.bar(3.24, plot_56_getter(plot_data, 'tracos52', 8, 'ops'), .16, color = 'C2', hatch = '\\\\\\')
   pyplot.bar(3.4, plot_56_getter(plot_data, 'paxos52', 8, 'ops'), .16, color = 'C3', hatch = '\\\\\\')
-  pyplot.ylim(top = 22500)
+  pyplot.ylim(top = 45)
   pyplot.xticks(range(4), ['3', '5', '6', '7'])
   pyplot.xlabel('Number of nodes')
   pyplot.ylabel('Throughput (Mbps)')

@@ -83,9 +83,10 @@ def plot_56_getter(data: pandas.DataFrame, alg : str, num_nodes : int, col : str
   :param num_nodes: the number of nodes to get from
   :param col:
   '''
-  raw_val : float = data.loc[(data['alg'] == alg) & (data['num_nodes'] == num_nodes)][col].mean()
+  pruned_data : pandas.DataFrame = data.loc[(data['alg'] == alg) & (data['num_nodes'] == num_nodes)]
+  raw_val : float = pruned_data[col].mean()
   if not col.endswith('_latency'):
-    return raw_val * 5.336
+    return raw_val * pruned_data['unit_size'].mean() / 125
   return raw_val / 1000
 
 def plot_loss(test : str, name_53 : str, name_54: str) -> None:
