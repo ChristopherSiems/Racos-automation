@@ -137,7 +137,7 @@ CPU freq: {cpu_freqs}''')
       equal_print(client_address, 2)
 
       # configures `profile.sh` and `workload` for the current algorithm
-      if alg == 'paxos': profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
+      if alg.startswith('paxos'): profile_string = PROFILE_CONFIG.format(leader_endpoint = '10.10.1.1:2379')
       else: profile_string = PROFILE_CONFIG.format(leader_endpoint = ','.join([f"{node_ip}:2379" if node_ip != "10.10.1.2" else f"{node_ip}:2379,{node_ip}:2379" for node_ip in node_ips_list[:-1]]))
       workload_cmd : str = SCRIPT_LOADER.format(script = test_config["workload"].format(variable = str(variable), counts = COUNTS[i] if test.startswith('data_size') else COUNTS[7 - i]) if not test.startswith('scalability') else test_config['workload'], path = '/local/go-ycsb/workloads/workload')
       bash_print(workload_cmd)
