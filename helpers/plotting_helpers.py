@@ -6,7 +6,7 @@ import numpy
 import pandas
 from matplotlib import pyplot
 
-from helpers.encoding import matches_default
+from helpers.encoding import config_matches, matches_default
 
 DIMENSIONS : typing.Tuple[int] = 9, 4
 ALG_VANITY : typing.Dict[str, typing.Tuple[typing.Union[str, float]]] = {
@@ -36,6 +36,24 @@ def plot_53(data : pandas.DataFrame, legend : typing.List[pyplot.Line2D], path :
   pyplot.tight_layout()
   pyplot.savefig(f'plots/{path}.png')
 
+def plot_54(data : pandas.DataFrame, legend : typing.List[pyplot.Line2D], path : str) -> None:
+  pyplot.figure(figsize = DIMENSIONS)
+  x_axis : numpy.ndarray = numpy.arange(8)
+  for alg, group in data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
+    pyplot.bar(x_axis + ALG_VANITY[alg][1], group['med_latency'] / 1000, .2, color = ALG_VANITY[alg][0])
+    pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
+    pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
+  pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.xlabel('Data size (kB)')
+  pyplot.ylabel('Latency (ms)')
+  pyplot.legend(handles = legend, loc = 'upper left')
+  pyplot.tight_layout()
+  pyplot.savefig(f'plots/{path}.png')
+
+def plot_53_54(data : pandas.DataFrame, test : str, name_53 : str, name_54 : str) -> None:
+  plot_53(data, LINE_LEGEND_READ, f'{test}/{name_53}')
+  plot_54(data, BAR_LEGEND_READ, f'{test}/{name_54}')
+
 def plot_55(test : str, name_med : str, name_p99: str, loc : str) -> None:
   plot_data : pandas.DataFrame = setup_dataframe(pandas.read_csv(f'data/{test}.csv'))
 
@@ -59,14 +77,22 @@ def plot_55(test : str, name_med : str, name_p99: str, loc : str) -> None:
 
 def plot_56_getter(data: pandas.DataFrame, alg : str, num_nodes : int, col : str) -> float:
   '''
-  gets the throughput for the alg and number of nodes inputted, for plots in section 5.6
+  gets the throughput or latency for the alg and number of nodes inputted, for plots in section 5.6
+  :param data: the DataFrame
   :param alg: the algorithm in question
   :param num_nodes: the number of nodes to get from
+  :param col:
   '''
   raw_val : float = data.loc[(data['alg'] == alg) & (data['num_nodes'] == num_nodes)][col].mean()
   if not col.endswith('_latency'):
     return raw_val * 5.336
   return raw_val / 1000
+
+def plot_loss(test : str, name_53 : str, name_54: str) -> None:
+  loss_data : pandas.DataFrame = setup_dataframe(pandas.read_csv(f'data/{test}.csv'), 'packet_loss_config')
+  loss_data = loss_data.loc[loss_data['packet_loss_config'].apply(lambda config : config_matches(r'^2(_2)*$', config))]
+  if len(loss_data) > 4:
+    plot_53_54(loss_data, test, name_53, name_54)
 
 def read_plot(test : str, name_53 : str, name_54: str) -> None:
   '''
@@ -74,21 +100,9 @@ def read_plot(test : str, name_53 : str, name_54: str) -> None:
   :param test: the name of the test
   '''
   plot_data : pandas.DataFrame = setup_dataframe(pandas.read_csv(f'data/{test}.csv'))
-  plot_53(plot_data, LINE_LEGEND_READ, f'{test}/{name_53}')
-  pyplot.figure(figsize = DIMENSIONS)
-  x_axis : numpy.ndarray = numpy.arange(8)
-  for alg, group in plot_data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
-    pyplot.bar(x_axis + ALG_VANITY[alg][1], group['med_latency'] / 1000, .2, color = ALG_VANITY[alg][0])
-    pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
-    pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
-  pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
-  pyplot.xlabel('Data size (kB)')
-  pyplot.ylabel('Latency (ms)')
-  pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
-  pyplot.tight_layout()
-  pyplot.savefig(f'plots/{test}/{name_54}.png')
+  plot_53_54(plot_data, test, name_53, name_54)
 
-def prune_dataframe(data : pandas.DataFrame) -> pandas.DataFrame:
+def prune_dataframe(data : pandas.DataFrame, keep : str = 'none') -> pandas.DataFrame:
   '''
   prunes the inputted DataFrame such that tall config columns are default
   :param data: the DataFrame to be pruned
@@ -96,16 +110,16 @@ def prune_dataframe(data : pandas.DataFrame) -> pandas.DataFrame:
   '''
   working_data : pandas.DataFrame = data
   for col in working_data.columns:
-    if not col.endswith('_config'):
+    if not col.endswith('_config') or col == keep:
       continue
     working_data = working_data.loc[working_data[col].apply(lambda config : matches_default(col, config))]
   return working_data
 
-def setup_dataframe(data : pandas.DataFrame) -> pandas.DataFrame:
+def setup_dataframe(data : pandas.DataFrame, keep : str = 'none') -> pandas.DataFrame:
   '''
   sets up the inputted dataframe so that it may be plotted
   :param data: the DataFrame
   :returns: the setup dataframe
   '''
-  working_data : pandas.DataFrame = prune_dataframe(data)
+  working_data : pandas.DataFrame = prune_dataframe(data, keep)
   return working_data.loc[(((working_data['alg'] == 'racos') | (working_data['alg'] == 'tracos') | (working_data['alg'] == 'paxos')) & (working_data['num_nodes'] == 6)) | (((working_data['alg'] == 'rabia') | (working_data['alg'] == 'raft')) & (working_data['num_nodes'] == 4))]
