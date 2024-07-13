@@ -57,6 +57,17 @@ def plot_55(test : str, name_med : str, name_p99: str, loc : str) -> None:
   pyplot.tight_layout()
   pyplot.savefig(f'plots/{test}/{name_p99}.png')
 
+def plot_56_getter(data: pandas.DataFrame, alg : str, num_nodes : int, col : str) -> float:
+  '''
+  gets the throughput for the alg and number of nodes inputted, for plots in section 5.6
+  :param alg: the algorithm in question
+  :param num_nodes: the number of nodes to get from
+  '''
+  raw_val : float = data.loc[(data['alg'] == alg) & (data['num_nodes'] == num_nodes)][col].mean()
+  if not col.endswith('_latency'):
+    return raw_val * 5.336
+  return raw_val / 1000
+
 def read_plot(test : str, name_53 : str, name_54: str) -> None:
   '''
   generates plots in styles 5.3 and 5.4, for tests that read

@@ -5,7 +5,7 @@ import re
 import typing
 from time import time
 
-from plotting import data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_discrete_5_write_95_read, threads_discrete_half_write_half_read, threads_discrete_5_write_95_read
+from plotting import data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_discrete_5_write_95_read, threads_discrete_half_write_half_read, threads_discrete_5_write_95_read, scalability_6667_5_write_95_read, scalability_13_50_write_50_read
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
@@ -177,6 +177,8 @@ for curr_test in test_configs:
   elif test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
   elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
   elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
+  elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
+  elif test == 'scalability-1.3-50_write_50_read': scalability_13_50_write_50_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots', 'logs'])
