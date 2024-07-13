@@ -102,6 +102,9 @@ CPU freq: {cpu_freqs}''')
     elif alg == 'racos52': run_cmd += 'racos 1 5 false'
     elif alg == 'tracos52': run_cmd += 'racos 1 5 true'
     elif alg == 'paxos': run_cmd += 'paxos 1 3 false'
+    elif alg == 'paxos34': run_cmd += 'paxos 2 3 false'
+    elif alg == 'paxos42': run_cmd += 'paxos 1 4 false'
+    elif alg == 'paxos52': run_cmd += 'paxos 1 5 false'
     elif alg == 'rabia': run_cmd += 'rabia 1 3 false'
     elif alg == 'raft': run_cmd += 'raft 1 3 false'
 
