@@ -1,5 +1,5 @@
 {
-  "unit_size" : [666.7],
-  "variable" : [500000],
+  "unit_size" : [2000.0],
+  "variable" : [1500000],
   "workload" : "fieldlength=500000\nrecordcount=4000\noperationcount=4000\nfieldcount=1\nreadproportion=0.5\nupdateproportion=0.5\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount=50\nrequestdistribution=zipfian"
 }
