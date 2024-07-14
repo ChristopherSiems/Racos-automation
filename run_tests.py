@@ -11,7 +11,7 @@ from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-COUNTS : typing.List[str] = ['900', '850', '954', '950', '900', '850', '800', '700']
+COUNTS : typing.List[str] = ['900', '850', '800', '750', '700', '650', '600', '550']
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
@@ -173,7 +173,7 @@ CPU freq: {cpu_freqs}''')
       output_string : str = re.findall(LINE_PATTERN, profiling_output)[-1]
       with open(f'data/{test}.csv', mode = 'a', encoding = 'utf-8') as data_csv:
         data_csv.write(f'{alg},{node_count},{unit_size},{re.findall(R_PATTERN, re.findall(OPS_PATTERN, output_string)[0])[0]},{re.findall(N_PATTERN, re.findall(MED_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P95_PATTERN, output_string)[0])[1]},{re.findall(N_PATTERN, re.findall(P99_PATTERN, output_string)[0])[1]},{config_to_str(delays)},{config_to_str(packet_loss_percents)},{config_to_str(disable_cpus)},{config_to_str(cpu_limits)},{config_to_str(cpu_freqs)}\n')
-    reset_delay_packets_cpus(total_nodes)
+  reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
 for curr_test in test_configs:
