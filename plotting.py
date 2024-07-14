@@ -89,7 +89,7 @@ def scalability_13_50_write_50_read() -> None:
   pyplot.savefig('plots/scalability-1.3-50_write_50_read/nodes-throughput-50_write_50_read.png')
 
   # plot 5.6.4
-  pyplot.figure(figsize = DIMENSIONS)
+  pyplot.figure(figsize = (10, 4))
   pyplot.bar(-.08, plot_56_getter(plot_data, 'rabia', 4, 'med_latency'), .16, color = 'C4')
   pyplot.bar(.08, plot_56_getter(plot_data, 'raft', 4, 'med_latency'), .16, color = 'C5')
   pyplot.bar(.68, plot_56_getter(plot_data, 'rabia', 6, 'med_latency'), .16, color = 'C4')
@@ -138,10 +138,11 @@ def scalability_13_50_write_50_read() -> None:
   pyplot.plot(3.08, plot_56_getter(plot_data, 'racos52', 8, 'p99_latency'), color = 'C1', marker = 'o', linestyle = '')
   pyplot.plot(3.24, plot_56_getter(plot_data, 'tracos52', 8, 'p99_latency'), color = 'C2', marker = 'o', linestyle = '')
   pyplot.plot(3.4, plot_56_getter(plot_data, 'paxos52', 8, 'p99_latency'), color = 'C3', marker = 'o', linestyle = '')
+  pyplot.ylim(top = 250)
   pyplot.xticks(range(4), ['3', '5', '6', '7'])
   pyplot.xlabel('Number of nodes')
   pyplot.ylabel('Latency (ms)')
-  pyplot.legend(handles = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', label = 'No coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '|||', label = '(3, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '///', label = '(4, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '---', label = '(3, 4) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '\\\\\\', label = '(5, 2) coding')], loc = 'upper left')
+  pyplot.legend(handles = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', label = 'No coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '|||', label = '(3, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '///', label = '(4, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '---', label = '(3, 4) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '\\\\\\', label = '(5, 2) coding')], loc = 'upper left', ncols = 5)
   pyplot.tight_layout()
   pyplot.savefig('plots/scalability-1.3-50_write_50_read/nodes-latency-50_write_50_read.png')
 

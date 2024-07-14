@@ -11,7 +11,7 @@ from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-COUNTS : typing.List[str] = ['1000', '1000', '1000', '1000', '1000', '1000', '1000', '1000']
+COUNTS : typing.List[str] = ['2050', '1900', '1750', '1600', '1450', '1300', '1150', '1000']
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
@@ -187,6 +187,7 @@ for curr_test in test_configs:
   elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
   elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
   elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
+  elif test == 'scalability-666.7-half_write_half_read': scalability_6667_half_write_half_read()
   elif test == 'scalability-1.3-50_write_50_read': scalability_13_50_write_50_read()
 
 # saves all new data to the github repo
