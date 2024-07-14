@@ -91,7 +91,7 @@ def plot_56_getter(data: pandas.DataFrame, alg : str, num_nodes : int, col : str
 
 def plot_loss(test : str, name_53 : str, name_54: str) -> None:
   loss_data : pandas.DataFrame = setup_dataframe(pandas.read_csv(f'data/{test}.csv'), 'packet_loss_config')
-  loss_data = loss_data.loc[loss_data['packet_loss_config'].apply(lambda config : config_matches(r'^2(_2)*$', config))]
+  loss_data = loss_data.loc[loss_data['packet_loss_config'].apply(lambda config : config_matches(r'^2(_2)*_0$', config))]
   if len(loss_data) > 4:
     plot_53_54(loss_data, test, name_53, name_54)
 
