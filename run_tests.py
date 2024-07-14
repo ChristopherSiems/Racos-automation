@@ -11,7 +11,7 @@ from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-COUNTS : typing.List[str] = ['2050', '1900', '1750', '1600', '900', '850', '800', '700']
+COUNTS : typing.List[str] = ['900', '850', '954', '950', '900', '850', '800', '700']
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
