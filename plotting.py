@@ -13,11 +13,13 @@ from helpers.plotting_helpers import plot_53, plot_53_54, plot_55, plot_56_gette
 DIMENSIONS : typing.Tuple[int] = 9, 4
 ALG_VANITY : typing.Dict[str, typing.Tuple[typing.Union[str, float]]] = {
   'racos' : ('C1', -.3),
+  'tracos' : ('C2', None),
   'paxos' : ('C3', -.1),
   'rabia' : ('C4', .1),
   'raft' : ('C5', .3),
 }
 
+BAR_LEGEND_READ : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia (3)'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft (3)')]
 BAR_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia (3)'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft (3)')]
 LINE_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = 'o', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '--', marker = 's', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = ':', marker = 'p', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-.', marker = '*', label = 'Raft (3)')]
 
@@ -316,6 +318,32 @@ def scalability_6667_half_write_half_read() -> None:
   pyplot.tight_layout()
   pyplot.savefig('plots/scalability-666.7-half_write_half_read/nodes-latency-half_write_half_read-666.7.png')
 
+def scalability_2000_half_write_half_read() -> None:
+  data : pandas.DataFrame = pandas.read_csv('data/scalability-2000.0-half_write_half_read.csv')
+  pyplot.figure(figsize = DIMENSIONS)
+  pyplot.bar(0, data.loc[data['alg'] == 'racos']['med_latency'].mean() / 1000, .9, color = 'C1')
+  pyplot.bar(1, data.loc[data['alg'] == 'tracos']['med_latency'].mean() / 1000, .9, color = 'C2')
+  pyplot.bar(2, data.loc[data['alg'] == 'paxos']['med_latency'].mean() / 1000, .9, color = 'C3')
+  pyplot.bar(3, data.loc[data['alg'] == 'rabia']['med_latency'].mean() / 1000, .9, color = 'C4')
+  pyplot.bar(4, data.loc[data['alg'] == 'raft']['med_latency'].mean() / 1000, .9, color = 'C5')
+  pyplot.xticks(range(5), ['', '', '', '', ''])
+  pyplot.ylabel('Latency (ms)')
+  pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
+  pyplot.tight_layout()
+  pyplot.savefig('plots/scalability-2000.0-half_write_half_read/latency-half_write_half_read-loss_.01.png')
+
+  pyplot.figure(figsize = DIMENSIONS)
+  pyplot.bar(0, data.loc[data['alg'] == 'racos']['ops'].mean() * 16, .9, color = 'C1')
+  pyplot.bar(1, data.loc[data['alg'] == 'tracos']['ops'].mean() * 16, .9, color = 'C2')
+  pyplot.bar(2, data.loc[data['alg'] == 'paxos']['ops'].mean() * 16, .9, color = 'C3')
+  pyplot.bar(3, data.loc[data['alg'] == 'rabia']['ops'].mean() * 16, .9, color = 'C4')
+  pyplot.bar(4, data.loc[data['alg'] == 'raft']['ops'].mean() * 16, .9, color = 'C5')
+  pyplot.xticks(range(5), ['', '', '', '', ''])
+  pyplot.ylabel('Throughput (Mbps)')
+  pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper right')
+  pyplot.tight_layout()
+  pyplot.savefig('plots/scalability-2000.0-half_write_half_read/throughput-half_write_half_read-loss_.01.png')
+
 def threads_discrete_half_write_half_read() -> None:
   '''creates all configured plots from the data in `data/threads-discrete-half_write_half_read.csv`'''
   plot_55('threads-discrete-half_write_half_read', 'throughput-med_latency-half_write_half_read', 'throughput-p99_latency-half_write_half_read', 'right')
@@ -325,12 +353,13 @@ def threads_discrete_5_write_95_read() -> None:
   plot_55('threads-discrete-5_write_95_read', 'throughput-med_latency-5_write_95_read', 'throughput-p99_latency-5_write_95_read', 'left')
 
 if __name__ == '__main__':
-  data_size_discrete_all_read()
-  data_size_discrete_all_write()
-  data_size_discrete_half_write_half_read()
-  data_size_discrete_5_write_95_read()
-  threads_discrete_half_write_half_read()
-  threads_discrete_5_write_95_read()
-  scalability_6667_5_write_95_read()
-  scalability_13_50_write_50_read()
-  scalability_6667_half_write_half_read()
+  # data_size_discrete_all_read()
+  # data_size_discrete_all_write()
+  # data_size_discrete_half_write_half_read()
+  # data_size_discrete_5_write_95_read()
+  # threads_discrete_half_write_half_read()
+  # threads_discrete_5_write_95_read()
+  # scalability_6667_5_write_95_read()
+  # scalability_13_50_write_50_read()
+  # scalability_6667_half_write_half_read()
+  scalability_2000_half_write_half_read()
