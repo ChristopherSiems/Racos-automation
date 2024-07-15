@@ -18,8 +18,16 @@ ALG_VANITY : typing.Dict[str, typing.Tuple[typing.Union[str, float]]] = {
   'rabia' : ('C4', .1),
   'raft' : ('C5', .3),
 }
+ALG_VANITY_2 : typing.Dict[str, typing.Tuple[typing.Union[str, float]]] = {
+  'racos' : ('C1', -.38, 'o', '-'),
+  'tracos' : ('C2', -.19, '^', '-'),
+  'paxos' : ('C3', 0, 's', '--'),
+  'rabia' : ('C4', .19, 'p', ':'),
+  'raft' : ('C5', .38, '*', '-.'),
+}
 
 BAR_LEGEND_READ : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia (3)'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft (3)')]
+LINE_LEGEND_READ : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = 'o', label = 'Racos w/ Quorum Read'), pyplot.Line2D([0], [0], color = 'C2', linestyle = '-', marker = '^', label = 'Racos w/o Quorum Read'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '--', marker = 's', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = ':', marker = 'p', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-.', marker = '*', label = 'Raft (3)')]
 BAR_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia (3)'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft (3)')]
 LINE_LEGEND_WRITE : typing.List[pyplot.Rectangle] = [pyplot.Line2D([0], [0], color = 'C1', linestyle = '-', marker = 'o', label = 'Racos'), pyplot.Line2D([0], [0], color = 'C3', linestyle = '--', marker = 's', label = 'RS-Paxos'), pyplot.Line2D([0], [0], color = 'C4', linestyle = ':', marker = 'p', label = 'Rabia (3)'), pyplot.Line2D([0], [0], color = 'C5', linestyle = '-.', marker = '*', label = 'Raft (3)')]
 
@@ -53,12 +61,37 @@ def data_size_discrete_all_write() -> None:
 def data_size_discrete_half_write_half_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-half_write_half_read.csv`'''
   read_plot('data_size-discrete-half_write_half_read', 'data_size-throughput-half_write_half_read', 'data_size-latency-half_write_half_read')
-  plot_loss('data_size-discrete-half_write_half_read', 'data_size-throughput-half_write_half_read-loss_2', 'data_size-latency-half_write_half_read-loss_2')
+  plot_loss('data_size-discrete-half_write_half_read', 'data_size-throughput-half_write_half_read-loss_.01', 'data_size-latency-half_write_half_read-loss_.01')
 
 def data_size_discrete_5_write_95_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-5_write_95_read.csv`'''
   read_plot('data_size-discrete-5_write_95_read', 'data_size-throughput-5_write_95_read', 'data_size-latency-5_write_95_read')
   plot_loss('data_size-discrete-5_write_95_read', 'data_size-throughput-5_write_95_read-loss_2', 'data_size-latency-5_write_95_read-loss_2')
+
+def data_size_small_half_write_half_read() -> None:
+  data : pandas.DataFrame = pandas.read_csv('data/data_size-small-half_write_half_read.csv')
+
+  pyplot.figure(figsize = DIMENSIONS)
+  for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
+    pyplot.plot(group['unit_size'] * 1.35, group['ops'] * group['unit_size'] * 1.35 * 8 / 1000000, linestyle = ALG_VANITY_2[alg][3], marker = ALG_VANITY_2[alg][2], color = ALG_VANITY_2[alg][0])
+  pyplot.xlabel('Data size (B)')
+  pyplot.ylabel('Throughput (Mbps)')
+  pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
+  pyplot.tight_layout()
+  pyplot.savefig(f'plots/data_size-small-half_write_half_read/data_size-throughput-half_write_half_read-small.png')
+
+  pyplot.figure(figsize = DIMENSIONS)
+  x_axis : numpy.ndarray = numpy.arange(4)
+  for alg, group in data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
+    pyplot.bar(x_axis + ALG_VANITY_2[alg][1], group['med_latency'] / 1000, .19, color = ALG_VANITY_2[alg][0])
+    pyplot.plot(x_axis + ALG_VANITY_2[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY_2[alg][0])
+    pyplot.plot(x_axis + ALG_VANITY_2[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY_2[alg][0])
+  pyplot.xticks(x_axis, ['270', '540', '810', '1080'])
+  pyplot.xlabel('Data size (B)')
+  pyplot.ylabel('Latency (ms)')
+  pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper right', ncols = 2)
+  pyplot.tight_layout()
+  pyplot.savefig(f'plots/data_size-small-half_write_half_read/data_size-latency-half_write_half_read-small.png.png')
 
 def scalability_13_50_write_50_read() -> None:
   '''creates all configured plots from the data found in `data/scalability-1.3-50_write_50_read.csv`'''
@@ -362,4 +395,5 @@ if __name__ == '__main__':
   # scalability_6667_5_write_95_read()
   # scalability_13_50_write_50_read()
   # scalability_6667_half_write_half_read()
-  scalability_2000_half_write_half_read()
+  # scalability_2000_half_write_half_read()
+  data_size_small_half_write_half_read()
