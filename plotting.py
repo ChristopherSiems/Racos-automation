@@ -66,7 +66,7 @@ def data_size_discrete_half_write_half_read() -> None:
 def data_size_discrete_5_write_95_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-discrete-5_write_95_read.csv`'''
   read_plot('data_size-discrete-5_write_95_read', 'data_size-throughput-5_write_95_read', 'data_size-latency-5_write_95_read')
-  plot_loss('data_size-discrete-5_write_95_read', 'data_size-throughput-5_write_95_read-loss_2', 'data_size-latency-5_write_95_read-loss_2')
+  plot_loss('data_size-discrete-5_write_95_read', 'data_size-throughput-5_write_95_read-loss_.01', 'data_size-latency-5_write_95_read-loss_.01')
 
 def data_size_small_half_write_half_read() -> None:
   data : pandas.DataFrame = pandas.read_csv('data/data_size-small-half_write_half_read.csv')
@@ -389,11 +389,11 @@ if __name__ == '__main__':
   # data_size_discrete_all_read()
   # data_size_discrete_all_write()
   # data_size_discrete_half_write_half_read()
-  # data_size_discrete_5_write_95_read()
+  data_size_discrete_5_write_95_read()
   # threads_discrete_half_write_half_read()
   # threads_discrete_5_write_95_read()
   # scalability_6667_5_write_95_read()
   # scalability_13_50_write_50_read()
   # scalability_6667_half_write_half_read()
   # scalability_2000_half_write_half_read()
-  data_size_small_half_write_half_read()
+  # data_size_small_half_write_half_read()
