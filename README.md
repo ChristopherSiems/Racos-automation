@@ -98,22 +98,22 @@ After completing these steps new data will be added to the datasets associated w
 
 ## Algorithms
 
-Keyword | Algorithm | Failures | Segments | Coding | Transaction read
+Keyword | Algorithm | Failures | Segments | Coding | Read Type
 -|-|-|-|-|-
-racos | Racos | 1 | 3 | (3, 2) | False
-racos34 | Racos | 2 | 3 | (3, 4) | False
-racos36 | Racos | 3 | 3 | (3, 6) | False
-racos38 | Racos | 4 | 3 | (3, 8) | False
-racos310 | Racos | 5 | 3 | (3, 10) | False
-racos42 | Racos | 1 | 4 | (4, 2) | False
-racos52 | Racos | 1 | 5 | (5, 2) | False
-tracos | Racos | 1 | 3 | (3, 2) | True
-tracos34 | Racos | 2 | 3 | (3, 4) | True
-tracos36 | Racos | 3 | 3 | (3, 6) | True
-tracos38 | Racos | 4 | 3 | (3, 8) | True
-tracos310 | Racos | 5 | 3 | (3, 10) | True
-tracos42 | Racos | 1 | 4 | (4, 2) | True
-tracos52 | Racos | 1 | 5 | (5, 2) | True
+racos | Racos | 1 | 3 | (3, 2) | Quorum
+racos34 | Racos | 2 | 3 | (3, 4) | Quorum
+racos36 | Racos | 3 | 3 | (3, 6) | Quorum
+racos38 | Racos | 4 | 3 | (3, 8) | Quorum
+racos310 | Racos | 5 | 3 | (3, 10) | Quorum
+racos42 | Racos | 1 | 4 | (4, 2) | Quorum
+racos52 | Racos | 1 | 5 | (5, 2) | Quorum
+tracos | Racos | 1 | 3 | (3, 2) | Transaction
+tracos34 | Racos | 2 | 3 | (3, 4) | Transaction
+tracos36 | Racos | 3 | 3 | (3, 6) | Transaction
+tracos38 | Racos | 4 | 3 | (3, 8) | Transaction
+tracos310 | Racos | 5 | 3 | (3, 10) | Transaction
+tracos42 | Racos | 1 | 4 | (4, 2) | Transaction
+tracos52 | Racos | 1 | 5 | (5, 2) | Transaction
 paxos | RS-Paxos | 1 | 3 | (3, 2) | N/A
 paxos34 | RS-Paxos | 2 | 3 | (3, 4) | N/A
 paxos36 | RS-Paxos | 3 | 3 | (3, 6) | N/A
@@ -195,3 +195,425 @@ elif test == '<name of your test>': <plotting function>()
 ```
 
 Upon completion of these steps, your test should be runnable via the usage protocol explained above.
+
+## Plot Configurations
+
+### Fig. 1.a and 2.a
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-discrete-all_read",
+    "algs" : ["racos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-discrete-all_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 1.b and 2.b
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-discrete-all_write",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-discrete-all_write",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 1.c and 2.c
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-discrete-half_write_half_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-discrete-half_write_half_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 1.d and 2.d
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-discrete-5_write_95_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-discrete-5_write_95_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 3.a and 3.b
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "threads-discrete-half_write_half_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "threads-discrete-half_write_half_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 3.c and 3.d
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "threads-discrete-5_write_95_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "threads-discrete-5_write_95_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 4
+
+```json
+[
+  {
+    "total_nodes" : 14
+  },
+  {
+    "node_count" : 8,
+    "test" : "scalability-666.7-half_write_half_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 10,
+    "test" : "scalability-666.7-half_write_half_read",
+    "algs" : ["rabia", "raft", "racos36", "tracos36", "paxos36"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 12,
+    "test" : "scalability-666.7-half_write_half_read",
+    "algs" : ["rabia", "raft", "racos38", "tracos38", "paxos38"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 14,
+    "test" : "scalability-666.7-half_write_half_read",
+    "algs" : ["racos310", "tracos310", "paxos310"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 5
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-small-half_write_half_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-small-half_write_half_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 6
+
+```json
+[
+  {
+    "total_nodes" : 8
+  },
+  {
+    "node_count" : 4,
+    "test" : "scalability-1.3-half_write_half_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 6,
+    "test" : "scalability-1.3-half_write_half_read",
+    "algs" : ["rabia", "raft", "racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 7,
+    "test" : "scalability-1.3-half_write_half_read",
+    "algs" : ["racos42", "tracos42", "paxos42"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 8,
+    "test" : "scalability-1.3-half_write_half_read",
+    "algs" : ["racos34", "tracos34", "paxos34", "racos52", "tracos52", "paxos52"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 7
+
+```json
+[
+  {
+    "total_nodes" : 8
+  },
+  {
+    "node_count" : 4,
+    "test" : "scalability-666.7-5_write_95_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 6,
+    "test" : "scalability-666.7-5_write_95_read",
+    "algs" : ["rabia", "raft", "racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 7,
+    "test" : "scalability-666.7-5_write_95_read",
+    "algs" : ["racos42", "tracos42", "paxos42"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 8,
+    "test" : "scalability-666.7-5_write_95_read",
+    "algs" : ["racos34", "tracos34", "paxos34", "racos52", "tracos52", "paxos52"],
+    "delays" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 8
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-discrete-half_write_half_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0.01, 0.01, 0.01, 0.01, 0.01, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-discrete-half_write_half_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0.01, 0.01, 0.01, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
+
+### Fig. 9
+
+```json
+[
+  {
+    "total_nodes" : 6
+  },
+  {
+    "node_count" : 6,
+    "test" : "data_size-discrete-5_write_95_read",
+    "algs" : ["racos", "tracos", "paxos"],
+    "delays" : [0, 0, 0, 0, 0, 0],
+    "packet_loss_percents" : [0.01, 0.01, 0.01, 0.01, 0.01, 0],
+    "disable_cpus" : [0, 0, 0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2, 3.2, 3.2]
+  },
+  {
+    "node_count" : 4,
+    "test" : "data_size-discrete-5_write_95_read",
+    "algs" : ["rabia", "raft"],
+    "delays" : [0, 0, 0, 0],
+    "packet_loss_percents" : [0.01, 0.01, 0.01, 0],
+    "disable_cpus" : [0, 0, 0, 0],
+    "cpu_limits" : [100, 100, 100],
+    "cpu_freq_maxes" : [3.2, 3.2, 3.2, 3.2]
+  }
+]
+```
