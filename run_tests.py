@@ -5,13 +5,13 @@ import re
 import typing
 from time import time
 
-from plotting import data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_discrete_5_write_95_read, threads_discrete_half_write_half_read, threads_discrete_5_write_95_read, scalability_6667_5_write_95_read, scalability_13_50_write_50_read
+from plotting import data_size_discrete_5_write_95_read, data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_small_half_write_half_read, scalability_13_50_write_50_read, scalability_6667_5_write_95_read, scalability_6667_half_write_half_read, scalability_2000_half_write_half_read, threads_discrete_5_write_95_read, threads_discrete_half_write_half_read
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-COUNTS : typing.List[str] = ['16000', '16000', '16000', '16000', '1600', '1500', '1400', '1300']
+COUNTS : typing.List[str] = ['16000', '14000', '12000', '10000', '8000', '6000', '4000', '2000'] # sometimes nodes will run out of space and run into issues, adjust these numbers to alleviate these issues and calibrate the lengths of tests
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')
@@ -176,19 +176,21 @@ CPU freq: {cpu_freqs}''')
   reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
-# for curr_test in test_configs:
-#   test : str = curr_test['test']
+for curr_test in test_configs:
+  test : str = curr_test['test']
 
-#   # generates the plots
-#   if test == 'data_size-discrete-all_read': data_size_discrete_all_read()
-#   elif test == 'data_size-discrete-all_write': data_size_discrete_all_write()
-#   elif test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
-#   elif test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
-#   elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
-#   elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
-#   elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
-#   elif test == 'scalability-666.7-half_write_half_read': scalability_6667_half_write_half_read()
-#   elif test == 'scalability-1.3-50_write_50_read': scalability_13_50_write_50_read()
+  # generates the plots
+  if test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
+  elif test == 'data_size-discrete-all_read': data_size_discrete_all_read()
+  elif test == 'data_size-discrete-all_write': data_size_discrete_all_write()
+  elif test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
+  elif test == 'data_size-small-half_write_half_read': data_size_small_half_write_half_read()
+  elif test == 'scalability-1.3-50_write_50_read': scalability_13_50_write_50_read()
+  elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
+  elif test == 'scalability-666.7-half_write_half_read': scalability_6667_half_write_half_read()
+  elif test == 'scalability-2000.0-half_write_half_read': scalability_2000_half_write_half_read()
+  elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
+  elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots', 'logs'])
