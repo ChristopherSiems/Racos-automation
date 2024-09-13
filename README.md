@@ -49,7 +49,7 @@ git pull origin main
 
 5. Configure the tests to run by opening `auto_config.json` with `vim` or `nano` or your text editor of choice. This file is a `json` list of `json` objects where each object after the first is a test configuration. The first object contains one key-value pair and should be set to the same number of nodes configured in the CloudLab setup. The rest of the list can be configured to contain any finite number of test configurations. Each test, as configured, will be executed on all configured algorithms sequentially. Below is an example of the contents of `auto_config.json`.
 
-- `"node_count"`: The number of nodes to run this test with, including all working nodes and the client node
+- `"node_count"`: The number of nodes to run this test with, including all working nodes and the client node. ___Not including the control node___. This should be set to $n + 1$ of whatever the experiment's $n$ value is.
 - `"test"`: The name of the test to run. A list of configured tests can be found later in this document.
 - `"algs"`: A list of the algorithms to run the test with. A table of supported algorithms can be found below.
 - `"delays"`: The number of milliseconds of network delay to simulate, as a list, where each value of the list is the amount of delay on each node in order. The last value is the client node.
