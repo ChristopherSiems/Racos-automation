@@ -5,7 +5,25 @@ import re
 import typing
 from time import time
 
-from plotting import data_size_discrete_5_write_95_read, data_size_discrete_all_read, data_size_discrete_all_write, data_size_discrete_half_write_half_read, data_size_small_half_write_half_read, scalability_13_50_write_50_read, scalability_6667_5_write_95_read, scalability_6667_half_write_half_read, scalability_2000_half_write_half_read, threads_discrete_5_write_95_read, threads_discrete_half_write_half_read
+from plotting import (
+  data_size_discrete_5_write_95_read,
+  data_size_discrete_all_read,
+  data_size_discrete_all_write,
+  data_size_discrete_half_write_half_read,
+  data_size_light_5_write_95_read,
+  data_size_light_all_read,
+  data_size_light_all_write,
+  data_size_light_half_write_half_read,
+  data_size_small_light_half_write_half_read,
+  data_size_small_half_write_half_read,
+  scalability_13_half_write_half_read,
+  scalability_6667_5_write_95_read,
+  scalability_6667_half_write_half_read,
+  scalability_2000_half_write_half_read,
+  threads_discrete_5_write_95_read,
+  threads_discrete_half_write_half_read,
+  threads_light_5_write_95_read,
+  threads_light_half_write_half_read)
 from helpers.custom_prints import bash_print, equal_print, five_equal_print, output_print
 from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
@@ -76,14 +94,14 @@ CPU freq: {cpu_freqs}''')
         cpu_freq_cmd : str = ECHO_EXECUTE.format(string = str(cpu_freq * 1000000), path = f'/sys/devices/system/cpu/cpufreq/policy{cpu_num}/scaling_max_freq')
         bash_print(cpu_freq_cmd)
         remote_execute_async(node_address, cpu_freq_cmd)
-    
+
     # disables the number of cpu cores inputted
     if disable_cpu:
       for cpu_num in range(31, 31 - disable_cpus, -1):
         disable_cmd : str = ECHO_EXECUTE.format(string = '0', path = f'/sys/devices/system/cpu/cpu{cpu_num}/online')
         bash_print(disable_cmd)
         remote_execute_async(node_address, disable_cmd)
-    
+
     # adds network delay and packet loss to the nodes
     if delay or packet_loss_percent:
       net_cmd : str = f'tc qdisc add dev enp4s0f1 root netem delay {delay}ms loss {packet_loss_percent}%'
@@ -92,7 +110,7 @@ CPU freq: {cpu_freqs}''')
 
   for alg in algs:
     equal_print(alg, 1)
-    run_cmd : str = f'sh /local/run.sh '
+    run_cmd : str = 'sh /local/run.sh '
     if alg == 'racos': run_cmd += 'racos 1 3 false'
     elif alg == 'tracos': run_cmd += 'racos 1 3 true'
     elif alg == 'racos34': run_cmd += 'racos 2 3 false'
@@ -129,7 +147,7 @@ CPU freq: {cpu_freqs}''')
       for node_address, cpu_limit in zip(worker_addresses, cpu_limits):
         equal_print(node_address, 2)
         limit_cmd : str = f'cpulimit -e etcd -l {cpu_limit}'
-        if node_address == worker_addresses[-1]: 
+        if node_address == worker_addresses[-1]:
           bash_print(run_cmd)
           remote_execute_async(node_address, run_cmd, 60 if i == 0 else 30)
           if cpu_limit != 100:
@@ -141,7 +159,7 @@ CPU freq: {cpu_freqs}''')
         if cpu_limit != 100:
           bash_print(limit_cmd)
           remote_execute_async(node_address, limit_cmd)
-      
+
       client_address : str = node_addresses[-1]
       equal_print(client_address, 2)
 
@@ -184,13 +202,20 @@ for curr_test in test_configs:
   elif test == 'data_size-discrete-all_read': data_size_discrete_all_read()
   elif test == 'data_size-discrete-all_write': data_size_discrete_all_write()
   elif test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
+  elif test == 'data_size-light-5_write_95_read': data_size_light_5_write_95_read()
+  elif test == 'data_size-light-all_read': data_size_light_all_read()
+  elif test == 'data_size-light-all_write': data_size_light_all_write()
+  elif test == 'data_size-light-half_write_half_read': data_size_light_half_write_half_read()
   elif test == 'data_size-small-half_write_half_read': data_size_small_half_write_half_read()
-  elif test == 'scalability-1.3-50_write_50_read': scalability_13_50_write_50_read()
+  elif test == 'data_size-small_light-half_write_half_read': data_size_small_light_half_write_half_read()
+  elif test == 'scalability-1.3-50_write_50_read': scalability_13_half_write_half_read()
   elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
   elif test == 'scalability-666.7-half_write_half_read': scalability_6667_half_write_half_read()
   elif test == 'scalability-2000.0-half_write_half_read': scalability_2000_half_write_half_read()
   elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
   elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
+  elif test == 'threads-light-5_write_95_read': threads_light_5_write_95_read()
+  elif test == 'threads-light-half_write_half_read': threads_light_half_write_half_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots', 'logs'])

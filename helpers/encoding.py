@@ -3,7 +3,7 @@
 import re
 import typing
 
-DEFAULT_PATTERNS : typing.Dict[str, re.Pattern] = {
+DEFAULT_PATTERNS : typing.Dict[str, str] = {
   'delay_config' : r'^0(_0)*$',
   'packet_loss_config' : r'^0(_0)*$',
   'disable_cpus_config' : r'^0(_0)*$',
@@ -11,7 +11,7 @@ DEFAULT_PATTERNS : typing.Dict[str, re.Pattern] = {
   'cpu_freq_config' : r'^3\.2(_3\.2)*$'
 }
 
-def config_matches(pattern : re.Pattern, config : str) -> bool:
+def config_matches(pattern : str, config : str) -> bool:
   '''
   determines if a given string matches a given pattern
   :param pattern: the pattern to be matched

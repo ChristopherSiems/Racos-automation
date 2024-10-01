@@ -1,12 +1,10 @@
 '''contains helper functions for the plotting script'''
 
-import typing
-
 import numpy
 import pandas
 from matplotlib import pyplot
 
-from helpers.encoding import config_matches, matches_default
+from helpers.encoding import matches_default
 
 def data_getter(data: pandas.DataFrame, alg : str, num_nodes : int, col : str) -> float:
   '''

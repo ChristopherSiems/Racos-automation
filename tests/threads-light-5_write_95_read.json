@@ -1,0 +1,5 @@
+{
+  "unit_size" : [1, 3, 5, 10, 20, 30, 40, 50],
+  "variable" : [1, 3, 5, 10, 20, 30, 40, 50],
+  "workload" : "fieldlength=500000\nrecordcount={counts}\noperationcount={counts}\nfieldcount=1\nreadproportion=0.95\nupdateproportion=0.05\nreadmodifywriteproportion=0.0\nscanproportion=0\ninsertproportion=0\nworkload=core\nreadallfields=true\nthreadcount={variable}\nrequestdistribution=zipflight"
+}
