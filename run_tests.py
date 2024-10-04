@@ -31,7 +31,7 @@ from helpers.encoding import config_to_str, ip_lister
 from helpers.execute import git_interact, remote_execute_async, remote_execute_sync
 from helpers.reset_nodes import reset_delay_packets_cpus, reset_nodes
 
-COUNTS : typing.List[str] = ['16000', '14000', '12000', '10000', '8000', '6000', '4000', '2000'] # sometimes nodes will run out of space and run into issues, adjust these numbers to alleviate these issues and calibrate the lengths of tests
+COUNTS : typing.List[str] = ['8000', '7000', '6000', '5000', '4000', '3000', '2000', '1000'] # sometimes nodes will run out of space and run into issues, adjust these numbers to alleviate these issues and calibrate the lengths of tests
 
 LINE_PATTERN : re.Pattern = re.compile(r'TOTAL.+')
 OPS_PATTERN : re.Pattern = re.compile(r'OPS: \d+\.\d')

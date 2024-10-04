@@ -100,6 +100,7 @@ def data_size_discrete_all_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 450)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
@@ -230,6 +231,7 @@ def data_size_light_all_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 450)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
@@ -711,4 +713,3 @@ def threads_light_half_write_half_read() -> None:
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
   pyplot.tight_layout()
   pyplot.savefig('plots/threads-light-half_write_half_read/throughput-p99_latency-half_write_half_read-light.png')
-
