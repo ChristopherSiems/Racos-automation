@@ -3,6 +3,8 @@
 import json
 import re
 import typing
+
+from sys import argv
 from time import time
 
 from plotting import (
@@ -194,28 +196,30 @@ CPU freq: {cpu_freqs}''')
   reset_delay_packets_cpus(total_nodes)
 
 reset_nodes(total_nodes)
-for curr_test in test_configs:
-  test : str = curr_test['test']
 
-  # generates the plots
-  if test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
-  elif test == 'data_size-discrete-all_read': data_size_discrete_all_read()
-  elif test == 'data_size-discrete-all_write': data_size_discrete_all_write()
-  elif test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
-  elif test == 'data_size-light-5_write_95_read': data_size_light_5_write_95_read()
-  elif test == 'data_size-light-all_read': data_size_light_all_read()
-  elif test == 'data_size-light-all_write': data_size_light_all_write()
-  elif test == 'data_size-light-half_write_half_read': data_size_light_half_write_half_read()
-  elif test == 'data_size-small-half_write_half_read': data_size_small_half_write_half_read()
-  elif test == 'data_size-small_light-half_write_half_read': data_size_small_light_half_write_half_read()
-  elif test == 'scalability-1.3-50_write_50_read': scalability_13_half_write_half_read()
-  elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
-  elif test == 'scalability-666.7-half_write_half_read': scalability_6667_half_write_half_read()
-  elif test == 'scalability-2000.0-half_write_half_read': scalability_2000_half_write_half_read()
-  elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
-  elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
-  elif test == 'threads-light-5_write_95_read': threads_light_5_write_95_read()
-  elif test == 'threads-light-half_write_half_read': threads_light_half_write_half_read()
+if len(argv) == 1 or argv[1] != 'skip_plot':
+  for curr_test in test_configs:
+    test : str = curr_test['test']
+
+    # generates the plots
+    if test == 'data_size-discrete-5_write_95_read': data_size_discrete_5_write_95_read()
+    elif test == 'data_size-discrete-all_read': data_size_discrete_all_read()
+    elif test == 'data_size-discrete-all_write': data_size_discrete_all_write()
+    elif test == 'data_size-discrete-half_write_half_read': data_size_discrete_half_write_half_read()
+    elif test == 'data_size-light-5_write_95_read': data_size_light_5_write_95_read()
+    elif test == 'data_size-light-all_read': data_size_light_all_read()
+    elif test == 'data_size-light-all_write': data_size_light_all_write()
+    elif test == 'data_size-light-half_write_half_read': data_size_light_half_write_half_read()
+    elif test == 'data_size-small-half_write_half_read': data_size_small_half_write_half_read()
+    elif test == 'data_size-small_light-half_write_half_read': data_size_small_light_half_write_half_read()
+    elif test == 'scalability-1.3-50_write_50_read': scalability_13_half_write_half_read()
+    elif test == 'scalability-666.7-5_write_95_read': scalability_6667_5_write_95_read()
+    elif test == 'scalability-666.7-half_write_half_read': scalability_6667_half_write_half_read()
+    elif test == 'scalability-2000.0-half_write_half_read': scalability_2000_half_write_half_read()
+    elif test == 'threads-discrete-5_write_95_read': threads_discrete_5_write_95_read()
+    elif test == 'threads-discrete-half_write_half_read': threads_discrete_half_write_half_read()
+    elif test == 'threads-light-5_write_95_read': threads_light_5_write_95_read()
+    elif test == 'threads-light-half_write_half_read': threads_light_half_write_half_read()
 
 # saves all new data to the github repo
 git_interact(['add', 'data', 'plots', 'logs'])
