@@ -11,7 +11,7 @@ def git_interact(cmd : typing.List[str]) -> None:
   performs the inputted git command locally
   :param cmd: the git command to be performed
   '''
-  subprocess.run(['sudo', 'git'] + cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
+  subprocess.run(['git'] + cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE, check = True)
 
 def remote_execute_async(remote_address : str, remote_cmd : str, disconnect_timeout : int = .03) -> None:
   '''
