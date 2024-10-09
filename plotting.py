@@ -389,7 +389,7 @@ def scalability_13_half_write_half_read() -> None:
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', label = 'No coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '|||', label = '(3, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '///', label = '(4, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '---', label = '(3, 4) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '\\\\\\', label = '(5, 2) coding')], loc = 'upper left', ncols = 5)
   pyplot.tight_layout()
-  pyplot.savefig('plots/scalability-1.3-half_write_half_read/nodes-throughput-half_write_half_read.png')
+  pyplot.savefig('plots/scalability-1.3-half_write_half_read/nodes-throughput-half_write_half_read-1.3.png')
 
   pyplot.figure(figsize = (10, 4))
   pyplot.bar(-.08, data_getter(plot_data, 'rabia', 4, 'med_latency'), .16, color = 'C4')
@@ -446,7 +446,7 @@ def scalability_13_half_write_half_read() -> None:
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', label = 'No coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '|||', label = '(3, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '///', label = '(4, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '---', label = '(3, 4) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '\\\\\\', label = '(5, 2) coding')], loc = 'upper left', ncols = 5)
   pyplot.tight_layout()
-  pyplot.savefig('plots/scalability-1.3-half_write_half_read/nodes-latency-half_write_half_read.png')
+  pyplot.savefig('plots/scalability-1.3-half_write_half_read/nodes-latency-half_write_half_read-1.3.png')
 
 def scalability_6667_5_write_95_read() -> None:
   '''creates all configured plots from the data found in `data/scalability-666.7-5_write_95_read`'''
@@ -475,7 +475,7 @@ def scalability_6667_5_write_95_read() -> None:
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', label = 'No coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '|||', label = '(3, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '///', label = '(4, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '---', label = '(3, 4) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '\\\\\\', label = '(5, 2) coding')], loc = 'upper left', ncols = 5)
   pyplot.tight_layout()
-  pyplot.savefig('plots/scalability-666.7-5_write_95_read/nodes-throughput-5_write_95_read.png')
+  pyplot.savefig('plots/scalability-666.7-5_write_95_read/nodes-throughput-5_write_95_read-666.7.png')
 
   pyplot.figure(figsize = (10, 4))
   pyplot.bar(-.08, data_getter(plot_data, 'rabia', 4, 'med_latency'), .16, color = 'C4')
@@ -532,7 +532,7 @@ def scalability_6667_5_write_95_read() -> None:
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = [pyplot.Rectangle((0,0), 1, 1, facecolor = 'C1', label='Racos w/ Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C2', label='Racos w/o Quorum Read'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C3', label = 'RS-Paxos'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C4', label = 'Rabia'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'C5', label = 'Raft'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', label = 'No coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '|||', label = '(3, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '///', label = '(4, 2) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '---', label = '(3, 4) coding'), pyplot.Rectangle((0,0), 1, 1, facecolor = 'none', hatch = '\\\\\\', label = '(5, 2) coding')], loc = 'upper left', ncols = 5)
   pyplot.tight_layout()
-  pyplot.savefig('plots/scalability-666.7-5_write_95_read/nodes-latency-5_write_95_read.png')
+  pyplot.savefig('plots/scalability-666.7-5_write_95_read/nodes-latency-5_write_95_read-666.7.png')
 
 def scalability_6667_half_write_half_read() -> None:
   '''creates all configured plots from the data found in `data/scalability-666.7-half_write_half_read`'''
@@ -628,7 +628,7 @@ def scalability_2000_half_write_half_read() -> None:
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/scalability-2000.0-half_write_half_read/latency-half_write_half_read-loss_.01.png')
+  pyplot.savefig('plots/scalability-2000.0-half_write_half_read/latency-half_write_half_read-loss.1.png')
 
   pyplot.figure(figsize = (10, 4))
   pyplot.bar(0, data.loc[data['alg'] == 'racos']['ops'].mean() * 16, .9, color = 'C1')
@@ -640,7 +640,7 @@ def scalability_2000_half_write_half_read() -> None:
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper right')
   pyplot.tight_layout()
-  pyplot.savefig('plots/scalability-2000.0-half_write_half_read/throughput-half_write_half_read-loss_.01.png')
+  pyplot.savefig('plots/scalability-2000.0-half_write_half_read/throughput-half_write_half_read-loss.1.png')
 
 def threads_discrete_5_write_95_read() -> None:
   '''creates all configured plots from the data in `data/threads-discrete-5_write_95_read`'''
@@ -674,6 +674,7 @@ def threads_discrete_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'med_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 500)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('Median latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -683,6 +684,7 @@ def threads_discrete_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 1700)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('P99 latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -721,6 +723,7 @@ def threads_light_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'med_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 500)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('Median latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -730,6 +733,7 @@ def threads_light_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 1700)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('P99 latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -737,7 +741,5 @@ def threads_light_half_write_half_read() -> None:
   pyplot.savefig('plots/threads-light-half_write_half_read/throughput-p99_latency-half_write_half_read-light.png')
 
 if __name__ == '__main__':
-  scalability_13_half_write_half_read()
-  scalability_2000_half_write_half_read()
-  scalability_6667_5_write_95_read()
-  scalability_6667_half_write_half_read()
+  threads_discrete_half_write_half_read()
+  threads_light_half_write_half_read()
