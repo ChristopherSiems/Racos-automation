@@ -37,6 +37,7 @@ def data_size_discrete_5_write_95_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 9000)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -50,6 +51,7 @@ def data_size_discrete_5_write_95_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 750)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
@@ -87,6 +89,7 @@ def data_size_discrete_all_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 9500)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -116,6 +119,7 @@ def data_size_discrete_all_write() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 1100)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_WRITE, loc = 'upper left')
@@ -129,6 +133,7 @@ def data_size_discrete_all_write() -> None:
     pyplot.plot(x_axis + ALG_VANITY_WRITE[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY_WRITE[alg][0])
     pyplot.plot(x_axis + ALG_VANITY_WRITE[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY_WRITE[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 6000)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_WRITE, loc = 'upper left')
@@ -142,11 +147,12 @@ def data_size_discrete_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 2100)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size-throughput-half_write_half_read.png')
+  pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size-throughput-half_write_half_read.png')
 
   pyplot.figure(figsize = DIMENSIONS)
   x_axis : numpy.ndarray = numpy.arange(8)
@@ -155,11 +161,12 @@ def data_size_discrete_half_write_half_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 3500)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size-latency-half_write_half_read.png')
+  pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size-latency-half_write_half_read.png')
 
   loss_data : pandas.DataFrame = setup_dataframe(data, 'packet_loss_config')
   loss_data = loss_data.loc[loss_data['packet_loss_config'].apply(lambda config : config_matches(r'^0\.01(_0\.01)*_0$', config))]
@@ -171,7 +178,7 @@ def data_size_discrete_half_write_half_read() -> None:
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size-throughput-half_write_half_read-loss.png')
+  pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size-throughput-half_write_half_read-loss.png')
 
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in loss_data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
@@ -183,7 +190,7 @@ def data_size_discrete_half_write_half_read() -> None:
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-discrete-5_write_95_read/data_size-latency-half_write_half_read-loss.png')
+  pyplot.savefig('plots/data_size-discrete-half_write_half_read/data_size-latency-half_write_half_read-loss.png')
 
 def data_size_light_5_write_95_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-light-5_write_95_read`'''
@@ -192,6 +199,7 @@ def data_size_light_5_write_95_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 9000)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -205,6 +213,7 @@ def data_size_light_5_write_95_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 750)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
@@ -218,6 +227,7 @@ def data_size_light_all_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 9500)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -247,6 +257,7 @@ def data_size_light_all_write() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 1100)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_WRITE, loc = 'upper left')
@@ -260,6 +271,7 @@ def data_size_light_all_write() -> None:
     pyplot.plot(x_axis + ALG_VANITY_WRITE[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY_WRITE[alg][0])
     pyplot.plot(x_axis + ALG_VANITY_WRITE[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY_WRITE[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 6000)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_WRITE, loc = 'upper left')
@@ -273,11 +285,12 @@ def data_size_light_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 2100)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-light-5_write_95_read/data_size-throughput-half_write_half_read-light.png')
+  pyplot.savefig('plots/data_size-light-half_write_half_read/data_size-throughput-half_write_half_read-light.png')
 
   pyplot.figure(figsize = DIMENSIONS)
   x_axis : numpy.ndarray = numpy.arange(8)
@@ -286,37 +299,40 @@ def data_size_light_half_write_half_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
+  pyplot.ylim(top = 3500)
   pyplot.xlabel('Data size (kB)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-light-5_write_95_read/data_size-latency-half_write_half_read-light.png')
+  pyplot.savefig('plots/data_size-light-half_write_half_read/data_size-latency-half_write_half_read-light.png')
 
 def data_size_small_light_half_write_half_read() -> None:
-  '''creates all configured plots from the data found in `data/data_size-light-half_write_half_read`'''
-  data : pandas.DataFrame = setup_dataframe(pandas.read_csv('data/data_size-light-half_write_half_read.csv'))
+  '''creates all configured plots from the data found in `data/data_size-small_light-half_write_half_read`'''
+  data : pandas.DataFrame = pandas.read_csv('data/data_size-small_light-half_write_half_read.csv')
 
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
-    pyplot.plot(group['unit_size'], group['ops'] * group['unit_size'] / 125, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
-  pyplot.xlabel('Data size (kB)')
+    pyplot.plot(group['unit_size'] * 1.35, group['ops'] * group['unit_size'] * 1.35 * 8 / 1000000, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 30)
+  pyplot.xlabel('Data size (B)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-light-5_write_95_read/data_size-throughput-half_write_half_read-light.png')
+  pyplot.savefig('plots/data_size-small_light-half_write_half_read/data_size-throughput-half_write_half_read-small_light.png')
 
   pyplot.figure(figsize = DIMENSIONS)
-  x_axis : numpy.ndarray = numpy.arange(8)
+  x_axis : numpy.ndarray = numpy.arange(4)
   for alg, group in data.groupby(['alg', 'unit_size'])[['med_latency', 'p95_latency', 'p99_latency']].mean().reset_index().groupby('alg'):
     pyplot.bar(x_axis + ALG_VANITY[alg][1], group['med_latency'] / 1000, .19, color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
-  pyplot.xticks(x_axis, ['1.3', '6.7', '13.3', '66.7', '133.3', '666.7', '1333.3', '2000.0'])
-  pyplot.xlabel('Data size (kB)')
+  pyplot.xticks(x_axis, ['270', '540', '810', '1080'])
+  pyplot.ylim(top = 150)
+  pyplot.xlabel('Data size (B)')
   pyplot.ylabel('Latency (ms)')
-  pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper left')
+  pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper right', ncols = 2)
   pyplot.tight_layout()
-  pyplot.savefig('plots/data_size-light-5_write_95_read/data_size-latency-half_write_half_read-light.png')
+  pyplot.savefig('plots/data_size-small_light-half_write_half_read/data_size-latency-half_write_half_read-small_light.png')
 
 def data_size_small_half_write_half_read() -> None:
   '''creates all configured plots from the data found in `data/data_size-small-half_write_half_read`'''
@@ -325,6 +341,7 @@ def data_size_small_half_write_half_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])['ops'].mean().reset_index().groupby('alg'):
     pyplot.plot(group['unit_size'] * 1.35, group['ops'] * group['unit_size'] * 1.35 * 8 / 1000000, linestyle = ALG_VANITY[alg][3], marker = ALG_VANITY[alg][2], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 30)
   pyplot.xlabel('Data size (B)')
   pyplot.ylabel('Throughput (Mbps)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper left')
@@ -338,6 +355,7 @@ def data_size_small_half_write_half_read() -> None:
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p95_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
     pyplot.plot(x_axis + ALG_VANITY[alg][1], group['p99_latency'] / 1000, marker = 'o', linestyle = '', color = ALG_VANITY[alg][0])
   pyplot.xticks(x_axis, ['270', '540', '810', '1080'])
+  pyplot.ylim(top = 150)
   pyplot.xlabel('Data size (B)')
   pyplot.ylabel('Latency (ms)')
   pyplot.legend(handles = BAR_LEGEND_READ, loc = 'upper right', ncols = 2)
@@ -632,6 +650,7 @@ def threads_discrete_5_write_95_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'med_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 65)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('Median latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -641,6 +660,7 @@ def threads_discrete_5_write_95_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 190)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('P99 latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -677,6 +697,7 @@ def threads_light_5_write_95_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'med_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['med_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 65)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('Median latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -686,6 +707,7 @@ def threads_light_5_write_95_read() -> None:
   pyplot.figure(figsize = DIMENSIONS)
   for alg, group in data.groupby(['alg', 'unit_size'])[['ops', 'p99_latency']].mean().reset_index().groupby('alg'):
     pyplot.plot(group['ops'] * 5.3336, group['p99_latency'] / 1000, marker = ALG_VANITY[alg][2], linestyle = ALG_VANITY[alg][3], color = ALG_VANITY[alg][0])
+  pyplot.ylim(top = 190)
   pyplot.xlabel('Throughput (Mbps)')
   pyplot.ylabel('P99 latency (ms)')
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
@@ -713,3 +735,18 @@ def threads_light_half_write_half_read() -> None:
   pyplot.legend(handles = LINE_LEGEND_READ, loc = 'upper right')
   pyplot.tight_layout()
   pyplot.savefig('plots/threads-light-half_write_half_read/throughput-p99_latency-half_write_half_read-light.png')
+
+if __name__ == '__main__':
+  data_size_light_5_write_95_read()
+  data_size_light_all_read()
+  data_size_light_all_write()
+  data_size_light_half_write_half_read()
+  data_size_small_light_half_write_half_read()
+  threads_light_5_write_95_read()
+  data_size_discrete_5_write_95_read()
+  data_size_discrete_all_read()
+  data_size_discrete_all_write()
+  data_size_discrete_half_write_half_read()
+  data_size_small_half_write_half_read()
+  threads_discrete_5_write_95_read()
+  threads_discrete_half_write_half_read()
