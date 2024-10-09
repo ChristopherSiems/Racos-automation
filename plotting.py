@@ -538,7 +538,7 @@ def scalability_6667_half_write_half_read() -> None:
   '''creates all configured plots from the data found in `data/scalability-666.7-half_write_half_read`'''
   plot_data : pandas.DataFrame = pandas.read_csv('data/scalability-666.7-half_write_half_read.csv')
 
-  pyplot.figure(figsize = DIMENSIONS)
+  pyplot.figure(figsize = (10, 4))
   pyplot.bar(-.095, data_getter(plot_data, 'rabia', 8, 'ops'), .19, color = 'C4')
   pyplot.bar(.095, data_getter(plot_data, 'raft', 8, 'ops'), .19, color = 'C5')
   pyplot.bar(.62, data_getter(plot_data, 'rabia', 10, 'ops'), .19, color = 'C4')
@@ -618,7 +618,7 @@ def scalability_6667_half_write_half_read() -> None:
 def scalability_2000_half_write_half_read() -> None:
   '''creates all configured plots from the data found in `data/scalability-2000-half_write_half_read`'''
   data : pandas.DataFrame = pandas.read_csv('data/scalability-2000.0-half_write_half_read.csv')
-  pyplot.figure(figsize = DIMENSIONS)
+  pyplot.figure(figsize = (10, 4))
   pyplot.bar(0, data.loc[data['alg'] == 'racos']['med_latency'].mean() / 1000, .9, color = 'C1')
   pyplot.bar(1, data.loc[data['alg'] == 'tracos']['med_latency'].mean() / 1000, .9, color = 'C2')
   pyplot.bar(2, data.loc[data['alg'] == 'paxos']['med_latency'].mean() / 1000, .9, color = 'C3')
@@ -630,7 +630,7 @@ def scalability_2000_half_write_half_read() -> None:
   pyplot.tight_layout()
   pyplot.savefig('plots/scalability-2000.0-half_write_half_read/latency-half_write_half_read-loss_.01.png')
 
-  pyplot.figure(figsize = DIMENSIONS)
+  pyplot.figure(figsize = (10, 4))
   pyplot.bar(0, data.loc[data['alg'] == 'racos']['ops'].mean() * 16, .9, color = 'C1')
   pyplot.bar(1, data.loc[data['alg'] == 'tracos']['ops'].mean() * 16, .9, color = 'C2')
   pyplot.bar(2, data.loc[data['alg'] == 'paxos']['ops'].mean() * 16, .9, color = 'C3')
@@ -737,16 +737,7 @@ def threads_light_half_write_half_read() -> None:
   pyplot.savefig('plots/threads-light-half_write_half_read/throughput-p99_latency-half_write_half_read-light.png')
 
 if __name__ == '__main__':
-  data_size_light_5_write_95_read()
-  data_size_light_all_read()
-  data_size_light_all_write()
-  data_size_light_half_write_half_read()
-  data_size_small_light_half_write_half_read()
-  threads_light_5_write_95_read()
-  data_size_discrete_5_write_95_read()
-  data_size_discrete_all_read()
-  data_size_discrete_all_write()
-  data_size_discrete_half_write_half_read()
-  data_size_small_half_write_half_read()
-  threads_discrete_5_write_95_read()
-  threads_discrete_half_write_half_read()
+  scalability_13_half_write_half_read()
+  scalability_2000_half_write_half_read()
+  scalability_6667_5_write_95_read()
+  scalability_6667_half_write_half_read()
